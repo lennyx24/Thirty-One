@@ -14,3 +14,12 @@
 .idea
 #mac
 .DS_Store
+#sbt
+project/project
+project/target
+target/
+#scala
+.tasty
+#bloop and metals
+.bloop
+.bsp
