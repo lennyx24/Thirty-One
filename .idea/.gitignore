@@ -23,3 +23,7 @@ target/
 #bloop and metals
 .bloop
 .bsp
+# other?
+.history
+.scala_dependencies
+.cache-main
