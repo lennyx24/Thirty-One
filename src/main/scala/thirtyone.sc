@@ -1,15 +1,15 @@
-def cardTUI(x:Int): Unit = {
-  val strTB = "+" + ("-" * x) + "+"
-  val strMid = {
-    "|" + (" " * x) + "|"
-  }
-  println(strTB)
-  println(strMid)
-  println(strMid)
-  println(strMid)
-  println(strMid)
-  println(strMid)
-  println(strTB)
+def cardTUI(x: Int, n: Int): Unit = {
+  val topBot = "+" + ("-" * x) + "+"
+  val mid = "|" + (" " * x) + "|"
+  val gap = "  "
+  val topRow = (topBot + gap) * n
+  val midRow = (mid + gap) * n
+  val midRows = (midRow + "\n") * (x / 2) + midRow
+  
+  println("             -- Runde 1 --")
+  println(topRow)
+  println(midRows)
+  print(topRow)
 }
 
-cardTUI(20)
+cardTUI(10, 3)
