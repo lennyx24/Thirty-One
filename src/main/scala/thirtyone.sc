@@ -13,4 +13,6 @@ def cardTUI(x: Int, n: Int): Unit = {
   print(topRow)
 }
 
+//merge konflikt
+
 cardTUI(10, 3)
