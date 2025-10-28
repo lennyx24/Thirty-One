@@ -14,6 +14,5 @@ def cardTUI(x: Int, n: Int): Unit = {
 }
 
 //merge konflikt von Lenny
-//merge konflikt von Daniel
 
 cardTUI(10, 3)
