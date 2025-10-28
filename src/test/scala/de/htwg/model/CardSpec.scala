@@ -18,5 +18,12 @@ class CardSpec extends AnyWordSpec{
       c.cells(2) should be("|  |")
       c.cells(5) should be("|     |")
     }
+
+    "have a scalable size" in {
+      val c = Card()
+      c.cardSize(1) should be("+-+\n+-+\n")
+      c.cardSize(2) should be("+--+\n|  |\n+--+\n")
+      c.cardSize(5) should be("+-----+\n|     |\n|     |\n+-----+\n")
+    }
   }
 }
