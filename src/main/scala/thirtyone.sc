@@ -13,6 +13,4 @@ def cardTUI(x: Int, n: Int): Unit = {
   print(topRow)
 }
 
-//merge konflikt von Lenny
-
 cardTUI(10, 3)
