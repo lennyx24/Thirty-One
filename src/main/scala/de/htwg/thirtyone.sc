@@ -13,4 +13,4 @@ def cardTUI(x: Int, n: Int): Unit = {
   print(topRow)
 }
 
-cardTUI(10, 3)
+cardTUI(2, 1)
