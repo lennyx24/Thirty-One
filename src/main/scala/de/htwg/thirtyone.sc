@@ -1,3 +1,5 @@
+import de.htwg.model._
+
 def cardTUI(x: Int, n: Int): Unit = {
   val topBot = "+" + ("-" * x) + "+"
   val mid = "|" + (" " * x) + "|"
@@ -14,3 +16,9 @@ def cardTUI(x: Int, n: Int): Unit = {
 }
 
 cardTUI(2, 1)
+
+val cardC: Card = Card(5)
+
+val tab: Table = Table(3, 5)
+//tab.set(1,1, cardC.card)
+print(tab)
