@@ -21,9 +21,9 @@ class CardSpec extends AnyWordSpec{
 
     "have a scalable size" in {
       val c = Card()
-      c.cardSize(1) should be("+-+\n+-+\n")
-      c.cardSize(2) should be("+--+\n|  |\n+--+\n")
-      c.cardSize(5) should be("+-----+\n|     |\n|     |\n+-----+\n")
+      c.cardSize(1) should be("+-+\n| |\n+-+\n")
+      c.cardSize(2) should be("+--+\n|  |\n|  |\n+--+\n")
+      c.cardSize(5) should be("+-----+\n|     |\n|     |\n|     |\n+-----+\n")
     }
   }
 }

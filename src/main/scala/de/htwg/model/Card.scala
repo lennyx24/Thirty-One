@@ -5,7 +5,7 @@ case class Card() {
   def cells(size: Int): String = "|" + (" " * size) + "|"
   def cardSize(size: Int): String = {
     bar(size) + "\n" +
-    (cells(size) + "\n") * (size/2) + 
+    (cells(size) + "\n") * (size/2 + 1) + 
     bar(size) + "\n"
   }
 }
