@@ -15,10 +15,15 @@ def cardTUI(x: Int, n: Int): Unit = {
   print(topRow)
 }
 
-cardTUI(2, 1)
 
-val cardC: Card = Card(5)
 
 val tab: Table = Table(3, 5)
-//tab.set(1,1, cardC.card)
-print(tab)
+val h10: Card = Card(10)
+val h8: Card = Card(10)
+val h2: Card = Card(10)
+
+tab.set(1,1, h10.card)
+tab.set(1,2, h8.card)
+tab.set(1,3, h2.card)
+val cards = tab.cells(1)(1) + tab.cells(1)(2) + tab.cells(1)(3)
+print(cards)
