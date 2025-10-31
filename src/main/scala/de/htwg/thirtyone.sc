@@ -17,13 +17,11 @@ def cardTUI(x: Int, n: Int): Unit = {
 
 
 
-val tab: Table = Table(3, 5)
-val h10: Card = Card(10)
-val h8: Card = Card(10)
-val h2: Card = Card(10)
+val tab: Table = Table()
+val h10: Card = Card('h', "10")
+val d4: Card = Card('d', "4")
+val s7: Card = Card('s', "7")
 
-tab.set(1,1, h10.card)
-tab.set(1,2, h8.card)
-tab.set(1,3, h2.card)
-val cards = tab.cells(1)(1) + tab.cells(1)(2) + tab.cells(1)(3)
-print(cards)
+tab.set(0,1, h10)
+tab.set(0,2, d4)
+tab.set(0,3, s7)
