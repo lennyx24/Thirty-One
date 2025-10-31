@@ -5,9 +5,9 @@ case class Card(symbol: Char, value: String, size: Int = 10) {
   def bar: String = "+" + ("-" * size) + "+"
   def cells: String = "|" + (" " * size) + "|"
   def cardSize: String = {
-    bar(size) + "\n" +
-    (cells(size) + "\n") * (size/2) +
-    bar(size) + "\n"
+    bar + "\n" +
+    (cells + "\n") * (size/2) +
+    bar + "\n"
   }
 
   //def invBar(size: Int): String = " " * size + "  "
