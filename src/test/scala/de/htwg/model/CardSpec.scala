@@ -6,7 +6,7 @@ import org.scalatest.matchers.should.Matchers._
 class CardSpec extends AnyWordSpec{
   "Card" should {
     "have a scalable bar" in {
-      val c = Card(1)
+      val c = Card()
        c.bar(1) should be("+-+")
        c.bar(2) should be("+--+")
        c.bar(5) should be("+-----+")
