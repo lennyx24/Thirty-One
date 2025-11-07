@@ -1,7 +1,7 @@
 package de.htwg.se.thirtyone.model
 
 case class Deck(size: Int = 10) {
-  val deck = Vector[Card]  (
+  def deck = Vector[Card]  (
     //diamonds
     Card('d', "2", size),
     Card('d', "3", size),
