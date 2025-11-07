@@ -9,6 +9,4 @@ case class Table(height: Int = 3, width: Int = 9) {
     val newTbl = table.updated(height, newRow)
     newTbl
   }
-  
-  //override def toString: String = super.toString TODO: for schleife, jede Zeile in Matrix darstellen und in String zusammenfassen
 }

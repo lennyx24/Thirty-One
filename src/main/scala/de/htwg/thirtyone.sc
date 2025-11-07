@@ -15,13 +15,14 @@ def cardTUI(x: Int, n: Int): Unit = {
   print(topRow)
 }
 
-
-
 val tab: Table = Table()
-val h10: Card = Card('h', "10")
+val h10: Card = Card('h', "10", 5)
 val d4: Card = Card('d', "4")
+val d3: Card = Card('d', "9", 1)
 val s7: Card = Card('s', "7")
 
 tab.set(0,1, h10)
 tab.set(0,2, d4)
 tab.set(0,3, s7)
+
+print(d3.cardSize)
