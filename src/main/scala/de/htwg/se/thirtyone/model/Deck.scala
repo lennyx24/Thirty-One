@@ -1,4 +1,4 @@
-package de.htwg.model
+package de.htwg.se.thirtyone.model
 
 object Deck {
   def size(s: Int): Vector[Card] = {
