@@ -1,4 +1,4 @@
-package de.htwg.model
+package de.htwg.se.thirtyone.model
 
 case class InvisibleCard(size: Int = 10) {
   def invCell: String = " " * size + "  "
