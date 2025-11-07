@@ -1,0 +1,62 @@
+package de.htwg.model
+
+class Deck(size: Int = 10) {
+  val deck: Vector[Card] = Vector(
+    //diamonds
+    Card('d', "2", size),
+    Card('d', "3", size),
+    Card('d', "4", size),
+    Card('d', "5", size),
+    Card('d', "6", size),
+    Card('d', "7", size),
+    Card('d', "8", size),
+    Card('d', "9", size),
+    Card('d', "10", size),
+    Card('d', "J", size),
+    Card('d', "Q", size),
+    Card('d', "K", size),
+    Card('d', "A", size),
+    //spades
+    Card('s', "2", size),
+    Card('s', "3", size),
+    Card('s', "4", size),
+    Card('s', "5", size),
+    Card('s', "6", size),
+    Card('s', "7", size),
+    Card('s', "8", size),
+    Card('s', "9", size),
+    Card('s', "10", size),
+    Card('s', "J", size),
+    Card('s', "Q", size),
+    Card('s', "K", size),
+    Card('s', "A", size),
+    //hearts
+    Card('h', "2", size),
+    Card('h', "3", size),
+    Card('h', "4", size),
+    Card('h', "5", size),
+    Card('h', "6", size),
+    Card('h', "7", size),
+    Card('h', "8", size),
+    Card('h', "9", size),
+    Card('h', "10", size),
+    Card('h', "J", size),
+    Card('h', "Q", size),
+    Card('h', "K", size),
+    Card('h', "A", size),
+    //clubs
+    Card('c', "2", size),
+    Card('c', "3", size),
+    Card('c', "4", size),
+    Card('c', "5", size),
+    Card('c', "6", size),
+    Card('c', "7", size),
+    Card('c', "8", size),
+    Card('c', "9", size),
+    Card('c', "10", size),
+    Card('c', "J", size),
+    Card('c', "Q", size),
+    Card('c', "K", size),
+    Card('c', "A", size)
+  )
+}
