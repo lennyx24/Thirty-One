@@ -21,6 +21,12 @@ class CardSpec extends AnyWordSpec{
       val c1 = Card('d', "K", 1).cardSize should be("+-+\n+-+\n")
       val c2 = Card('d', "K", 2).cardSize should be("+--+\n|  |\n+--+\n")
       val c3 = Card('d', "K", 5).cardSize should be("+-----+\n|     |\n|     |\n+-----+\n")
+
+      /**
+       * val c1 = Card('d', "K", 5).cardSize should be("+-----+\n|dK   |\n|     |\n+-----+\n")
+       * val c2 = Card('d', "9", 8).cardSize should be("+--------+\n|d9      |\n|        |\n|        |\n|        |\n+--------+")
+       * val c3 = Card('d', "9", 10).cardSize should be("+----------+\n|d9        |\|          |\n|          |\|          |\|          |\n+----------+")
+       */
     }
   }
 }
