@@ -25,3 +25,5 @@ val s7: Card = Card('s', "7")
 tab.set(0,1, h10)
 tab.set(0,2, d4)
 tab.set(0,3, s7)
+
+Deck.size(10).foreach(println)
