@@ -15,6 +15,8 @@ def cardTUI(x: Int, n: Int): Unit = {
   print(topRow)
 }
 
+
+
 val tab: Table = Table()
 val h10: Card = Card('h', "10", 5)
 val d4: Card = Card('d', "4")
@@ -26,3 +28,5 @@ tab.set(0,2, d4)
 tab.set(0,3, s7)
 
 print(d3.cardSize)
+
+Deck.size(10).foreach(println)
