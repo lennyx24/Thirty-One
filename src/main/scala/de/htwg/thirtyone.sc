@@ -29,4 +29,4 @@ tab.set(0,3, s7)
 
 print(d3.cardSize)
 
-Deck.size(10).foreach(println)
+Deck.size(10)
