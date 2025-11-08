@@ -1,15 +1,19 @@
 package de.htwg.se.thirtyone.model
 
-case class Table(
-  height: Int = 3,
-  width: Int = 9,
-  grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])
-) {
-  def set(h: Int, w: Int, card: Card): Table = {
-    val row = grid(h)
-    val newRow = row.updated(w, Some(card))
-    val newTbl = grid.updated(h, newRow)
-    copy(grid = newTbl)
+case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])) {
+  val height: Int = 3
+  val width: Int = 9
+
+  def set(pos: List[(Int, Int)], cards: List[Card]): Table = {
+    var i: Int = 0
+    val newGrid =
+      pos.foldLeft(grid) { case (g, (h, w)) =>
+        val row = g(h)
+        val changedRow = row.updated(w, Some(cards(i)))
+        i+=1
+        g.updated(h, changedRow)
+      }
+    copy(grid = newGrid)
   }
 
   override def toString: String = {
