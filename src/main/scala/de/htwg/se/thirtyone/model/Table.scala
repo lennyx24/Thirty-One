@@ -19,6 +19,7 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
   override def toString: String = {
     val invisibleCard: InvisibleCard = InvisibleCard()
     val output: StringBuilder = new StringBuilder()
+    
     grid.foreach { row =>
       val barString: StringBuilder = new StringBuilder()
       val topCellString: StringBuilder = new StringBuilder()
