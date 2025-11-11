@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers._
 
 class TableSpec extends AnyWordSpec{
   "Table" should {
-    "be editable" in {
+    "be able to set its value" in {
       val tab: Table = Table()
       val h10: Card = Card('h', "10")
       val d4: Card = Card('d', "4")
@@ -31,6 +31,33 @@ class TableSpec extends AnyWordSpec{
       s3 should include ("d4")
       s3 should include ("s7")
       s3 should include ("+----------")
+    }
+    "be able to get its value" in {
+      val tab: Table = Table()
+      val h10: Card = Card('h', "10")
+      val d4: Card = Card('d', "4")
+      val s7: Card = Card('s', "7")
+      val newTab = tab.set(0,0,h10)
+      val newTab2 = newTab(1,1,d4)
+      val newTab3 = newTab2(2,0,s7)
+      
+      val c1 = newTab3.get(0,0)
+      c1 should be(Card('h', "10",10))
+      val c2 = newTab3.get(1,1)
+      c2 should be(Card('d', "4",10))
+      val c3 = newTab3.get(1, 1)
+      c3 should be(Card('s', "7", 10))
+    }
+    "be able to swap cards" in {
+      val tab: Table = Table()
+      val h10: Card = Card('h', "10")
+      val d4: Card = Card('d', "4")
+      val s7: Card = Card('s', "7")
+      val newTab = tab.set(0, 0, h10)
+      val newTab2 = newTab(1, 1, d4)
+      val newTab3 = newTab2(2, 0, s7)
+      
+      //???
     }
   }
 }
