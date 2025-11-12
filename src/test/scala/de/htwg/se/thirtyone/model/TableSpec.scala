@@ -38,14 +38,14 @@ class TableSpec extends AnyWordSpec{
       val d4: Card = Card('d', "4")
       val s7: Card = Card('s', "7")
       val newTab = tab.set(0,0,h10)
-      val newTab2 = newTab(1,1,d4)
-      val newTab3 = newTab2(2,0,s7)
+      val newTab2 = newTab.set(1,1,d4)
+      val newTab3 = newTab2.set(2,0,s7)
       
       val c1 = newTab3.get(0,0)
       c1 should be(Card('h', "10",10))
       val c2 = newTab3.get(1,1)
       c2 should be(Card('d', "4",10))
-      val c3 = newTab3.get(1, 1)
+      val c3 = newTab3.get(2, 0)
       c3 should be(Card('s', "7", 10))
     }
     "be able to swap cards" in {
@@ -54,10 +54,17 @@ class TableSpec extends AnyWordSpec{
       val d4: Card = Card('d', "4")
       val s7: Card = Card('s', "7")
       val newTab = tab.set(0, 0, h10)
-      val newTab2 = newTab(1, 1, d4)
-      val newTab3 = newTab2(2, 0, s7)
+      val newTab2 = newTab.set(1, 1, d4)
+      val newTab3 = newTab2.set(2, 0, s7)
       
-      //???
+      val newTab4 = newTab3.swap(0,0,2,0)
+      newTab4.toString should not be newTab3.toString
+      val newTab5 = newTab4.swap(0,0,2,0)
+      newTab5 should be (newTab3)
+    }
+    "be able to setAll cards" in {
+      val tab: Table = Table()
+      //val newTab = tab.setAll(List((1, 3), (1, 4), (1, 5)),) 
     }
   }
 }

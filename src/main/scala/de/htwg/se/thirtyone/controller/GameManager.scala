@@ -35,12 +35,12 @@ object GameManager {
   def swap(playersTurn: Int, gameTable: Table): String = {
     var swapped: Boolean = false
     while (!swapped) {
-      printf("Spieler %d, welche Karte möchtest du abgeben? (1,2,3,alle)\n", playersTurn)
+      printf("Spieler %d, welche Karte möchtest du abgeben? (1,2,3,alle): ", playersTurn)
       val indexToGive = readLine()
       indexToGive match {
         case "1" | "2" | "3" =>
           val index = indexToGive.toInt - 1
-          printf("Spieler %d, welche Karte möchtest du erhalten? (1,2 oder 3)\n", playersTurn)
+          printf("Spieler %d, welche Karte möchtest du erhalten? (1,2,3): ", playersTurn)
           val indexToReceive: Int = readLine().toInt - 1
           if (indexToReceive > 2 || indexToReceive < 0) {
             printf("Spieler %d das ist keine valide Option\n", playersTurn)
