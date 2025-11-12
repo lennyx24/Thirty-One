@@ -16,6 +16,51 @@ object GameManager {
 
   private var gameRunning: Boolean = true
 
+  def printNewRound(gameTable: Table): Unit = {
+    for (i <- 1 until 20) {
+      println()
+    }
+    print(gameTable)
+  }
+
+  def pass(playersTurn: Int): String = {
+    "Spieler " + playersTurn + " passt diese Runde\n"
+  }
+
+  def knock(playersTurn: Int): String = {
+    //TODO:eine Runde noch, dann fertig
+    "Spieler " + playersTurn + " klopft diese Runde\n"
+  }
+
+  def swap(playersTurn: Int, gameTable: Table): String = {
+    var swapped: Boolean = false
+    while (!swapped) {
+      printf("Spieler %d, welche Karte möchtest du abgeben? (1,2,3,alle)\n", playersTurn)
+      val indexToGive = readLine()
+      indexToGive match {
+        case "1" | "2" | "3" =>
+          val index = indexToGive.toInt - 1
+          printf("Spieler %d, welche Karte möchtest du erhalten? (1,2 oder 3)\n", playersTurn)
+          val indexToReceive: Int = readLine().toInt - 1
+          if (indexToReceive > 2 || indexToReceive < 0) {
+            printf("Spieler %d das ist keine valide Option\n", playersTurn)
+          } else {
+            gameTable.swap(cardPositions(playersTurn)(index)._1, cardPositions(playersTurn)(index)._2,
+              cardPositions(0)(indexToReceive)._1, cardPositions(0)(indexToReceive)._2)
+            swapped = true
+          }
+        case "alle" =>
+          gameTable.swap(cardPositions(playersTurn)(0)._1, cardPositions(playersTurn)(0)._2, cardPositions(0)(0)._1, cardPositions(0)(0)._2)
+          gameTable.swap(cardPositions(playersTurn)(1)._1, cardPositions(playersTurn)(1)._2, cardPositions(0)(1)._1, cardPositions(0)(1)._2)
+          gameTable.swap(cardPositions(playersTurn)(2)._1, cardPositions(playersTurn)(2)._2, cardPositions(0)(2)._1, cardPositions(0)(2)._2)
+          swapped = true
+        case _ =>
+          printf("Spieler %d das ist keine valide Option\n", playersTurn)
+      }
+    }
+    "Spieler " + playersTurn + " tauscht diese Runde\n"
+  }
+
   def main(args: Array[String]): Unit = {
     print("Enter Player Amount: ")
     val playerCount: Int = readLine().toInt
@@ -34,7 +79,7 @@ object GameManager {
     print(gameTable)
 
     var playersTurn: Int = 1
-    while(gameRunning) {
+    while (gameRunning) {
       if (playersTurn > playerCount) playersTurn = 1
 
       var playerChosen: Boolean = false
@@ -42,87 +87,21 @@ object GameManager {
         printf("Spieler %d ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen): ", playersTurn)
         val playersChoice: String = readLine()
         playersChoice match {
-          case "Passen" =>
-            print(gameTable)
-            printf("Spieler %d passt diese Runde\n", playersTurn)
+          case "Passen" | "passen" =>
+            print(pass(playersTurn))
             playerChosen = true
-          case "Klopfen" =>
-            print(gameTable)
-            printf("Spieler %d klopft diese Runde\n", playersTurn)
 
-            //TODO:eine Runde noch, dann fertig
-
+          case "Klopfen" | "klopfen" =>
+            print(knock(playersTurn))
             playerChosen = true
-          case "Tauschen" =>
-            //Karte tauschen
-            printf("Spieler %d, welche Karte möchtest du abgeben? (1,2,3,alle)\n", playersTurn)
-            val indexToGive = readLine()
-            indexToGive match {
-              case "1" =>
-                printf("Spieler %d, welche Karte möchtest du erhalten? (1,2,3)\n", playersTurn)
-                val indexToReceive: Int = readLine().toInt
-                indexToReceive match {
-                  case 1 =>// 1weg,1bek
-                    gameTable.swap(cardPositions(playersTurn)(0)._1,cardPositions(playersTurn)(0)._2,cardPositions(0)(0)._1,cardPositions(0)(0)._2)
-                  case 2 => // 1weg,2bek
-                    gameTable.swap(cardPositions(playersTurn)(0)._1,cardPositions(playersTurn)(0)._2,cardPositions(0)(1)._1,cardPositions(0)(1)._2)
-                  case 3 => // 1weg bek
-                    gameTable.swap(cardPositions(playersTurn)(0)._1,cardPositions(playersTurn)(0)._2,cardPositions(0)(2)._1,cardPositions(0)(2)._2)
-                  case _ =>
-                    printf("Spieler %d das ist keine valide Option\n", playersTurn)
-                    playersTurn -= 1
-                }
 
-                print(gameTable)
-              case "2" =>
-                printf("Spieler %d, welche Karte möchtest du erhalten?\n", playersTurn)
-                val indexToReceive: Int = readLine().toInt
-
-                indexToReceive match {
-                  case 1 =>// 2weg,1bek
-                    gameTable.swap(cardPositions(playersTurn)(1)._1,cardPositions(playersTurn)(1)._2,cardPositions(0)(0)._1,cardPositions(0)(0)._2)
-                  case 2 => // 2weg,2bek
-                    gameTable.swap(cardPositions(playersTurn)(1)._1,cardPositions(playersTurn)(1)._2,cardPositions(0)(1)._1,cardPositions(0)(1)._2)
-                  case 3 => // 2weg bek
-                    gameTable.swap(cardPositions(playersTurn)(1)._1,cardPositions(playersTurn)(1)._2,cardPositions(0)(2)._1,cardPositions(0)(2)._2)
-                  case _ =>
-                    printf("Spieler %d das ist keine valide Option\n", playersTurn)
-                    playersTurn -= 1
-                }
-
-                print(gameTable)
-              case "3" =>
-                printf("Spieler %d, welche Karte möchtest du erhalten?\n", playersTurn)
-                val indexToReceive: Int = readLine().toInt
-
-                indexToReceive match {
-                  case 1 =>// 3weg,1bek
-                    gameTable.swap(cardPositions(playersTurn)(2)._1,cardPositions(playersTurn)(2)._2,cardPositions(0)(0)._1,cardPositions(0)(0)._2)
-                  case 2 => // 3weg,2bek
-                    gameTable.swap(cardPositions(playersTurn)(2)._1,cardPositions(playersTurn)(2)._2,cardPositions(0)(1)._1,cardPositions(0)(1)._2)
-                  case 3 => // 3weg bek
-                    gameTable.swap(cardPositions(playersTurn)(2)._1,cardPositions(playersTurn)(2)._2,cardPositions(0)(2)._1,cardPositions(0)(2)._2)
-                  case _ =>
-                    printf("Spieler %d das ist keine valide Option\n", playersTurn)
-                    playersTurn -= 1
-                }
-
-                print(gameTable)
-              case "alle" =>
-
-                gameTable.swap(cardPositions(playersTurn)(0)._1,cardPositions(playersTurn)(0)._2,cardPositions(0)(0)._1,cardPositions(0)(0)._2)
-                gameTable.swap(cardPositions(playersTurn)(1)._1,cardPositions(playersTurn)(1)._2,cardPositions(0)(1)._1,cardPositions(0)(1)._2)
-                gameTable.swap(cardPositions(playersTurn)(2)._1,cardPositions(playersTurn)(2)._2,cardPositions(0)(2)._1,cardPositions(0)(2)._2)
-                
-              case _ =>
-                printf("Spieler %d das ist keine valide Option\n", playersTurn)
-                playersTurn -= 1
-              print(gameTable)
-
-            }
+          case "Tauschen" | "tauschen" =>
+            print(swap(playersTurn, gameTable))
             playerChosen = true
+
           case _ => printf("Spieler %d das ist keine valide Option\n", playersTurn)
         }
+        printNewRound(gameTable)
       }
       playersTurn += 1
     }
