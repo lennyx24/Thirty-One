@@ -58,7 +58,7 @@ class TableSpec extends AnyWordSpec{
       val newTab3 = newTab2.set(2, 0, s7)
       
       val newTab4 = newTab3.swap(0,0,2,0)
-      newTab4.toString should not be newTab3.toString
+      newTab4 should not be newTab3
       val newTab5 = newTab4.swap(0,0,2,0)
       newTab5 should be (newTab3)
     }
