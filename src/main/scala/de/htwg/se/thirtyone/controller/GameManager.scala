@@ -1,6 +1,6 @@
 package de.htwg.se.thirtyone.controller
 
-import de.htwg.se.thirtyone.model.*
+import de.htwg.se.thirtyone.model._
 
 import scala.io.StdIn.readLine
 import scala.util.Random
@@ -10,8 +10,8 @@ object GameManager {
     List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
     List((0, 1), (0, 2), (0, 3)), //Position Player 1
     List((0, 5), (0, 6), (0, 7)), //Position Player 2
-    List((2, 1), (2, 2), (2, 3)), //Position Player 3
-    List((2, 5), (2, 6), (2, 7)), //Position Player 4
+    List((2, 5), (2, 6), (2, 7)), //Position Player 3
+    List((2, 1), (2, 2), (2, 3)), //Position Player 4
   )
 
   private var gameRunning: Boolean = true
@@ -32,7 +32,8 @@ object GameManager {
     "Spieler " + playersTurn + " klopft diese Runde\n"
   }
 
-  def swap(playersTurn: Int, gameTable: Table): String = {
+  def swap(playersTurn: Int, gameT: Table): Table = {
+    var gT: Table = gameT
     var swapped: Boolean = false
     while (!swapped) {
       printf("Spieler %d, welche Karte möchtest du abgeben? (1,2,3,alle): ", playersTurn)
@@ -45,20 +46,19 @@ object GameManager {
           if (indexToReceive > 2 || indexToReceive < 0) {
             printf("Spieler %d das ist keine valide Option\n", playersTurn)
           } else {
-            gameTable.swap(cardPositions(playersTurn)(index)._1, cardPositions(playersTurn)(index)._2,
-              cardPositions(0)(indexToReceive)._1, cardPositions(0)(indexToReceive)._2)
+            gT = gameT.swap(cardPositions(playersTurn)(index), cardPositions(0)(indexToReceive))
             swapped = true
           }
         case "alle" =>
-          gameTable.swap(cardPositions(playersTurn)(0)._1, cardPositions(playersTurn)(0)._2, cardPositions(0)(0)._1, cardPositions(0)(0)._2)
-          gameTable.swap(cardPositions(playersTurn)(1)._1, cardPositions(playersTurn)(1)._2, cardPositions(0)(1)._1, cardPositions(0)(1)._2)
-          gameTable.swap(cardPositions(playersTurn)(2)._1, cardPositions(playersTurn)(2)._2, cardPositions(0)(2)._1, cardPositions(0)(2)._2)
+          gT = gameT.swap(cardPositions(playersTurn)(0), cardPositions(0)(0))
+          gT = gT.swap(cardPositions(playersTurn)(1), cardPositions(0)(1))
+          gT = gT.swap(cardPositions(playersTurn)(2), cardPositions(0)(2))
           swapped = true
         case _ =>
           printf("Spieler %d das ist keine valide Option\n", playersTurn)
       }
     }
-    "Spieler " + playersTurn + " tauscht diese Runde\n"
+    gT
   }
 
   def main(args: Array[String]): Unit = {
@@ -66,7 +66,7 @@ object GameManager {
     val playerCount: Int = readLine().toInt
     val cardDeck: Deck = Deck()
 
-    val gameTable: Table =
+    var gameTable: Table =
       (0 to playerCount).foldLeft(Table()) { (t, i) =>
         val cards: List[Card] = List(
           cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
@@ -96,7 +96,7 @@ object GameManager {
             playerChosen = true
 
           case "Tauschen" | "tauschen" =>
-            print(swap(playersTurn, gameTable))
+            gameTable = swap(playersTurn, gameTable)
             playerChosen = true
 
           case _ => printf("Spieler %d das ist keine valide Option\n", playersTurn)

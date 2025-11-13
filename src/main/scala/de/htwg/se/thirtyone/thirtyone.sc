@@ -17,16 +17,22 @@ def cardTUI(x: Int, n: Int): Unit = {
 
 
 
-val tab: Table = Table()
+var tab: Table = Table()
 val h10: Card = Card('h', "10")
 val d4: Card = Card('d', "4")
 val s7: Card = Card('s', "7")
 
-//val newTab1 = tab.set(0,1, h10)
-//val newTab2 = newTab1.set(0,2, d4)
-//val newTab3 = newTab2.set(0,3, s7)
-//val newTab4 = newTab3.set(1,0, s7)
-//val newTab5 = newTab4.set(1,2, s7)
-//val newTab6 = newTab5.set(1,4, s7)
+tab = tab.set(0,0,h10)
+tab = tab.set(0,1,h10)
+tab = tab.set(0,2,h10)
+tab = tab.set(1,1,d4)
+tab = tab.set(1,2,d4)
+tab = tab.set(1,3,d4)
+tab = tab.set(2,0,s7)
+print(tab)
 
-//print(newTab6)
+tab = tab.swap((0,1), (1,1))
+print(tab)
+
+var xtab: Table = Table()
+val newTab = xtab.setAll((0, 0) :: (0, 1) :: (0, 2) :: Nil, List(Card('h', "10", 10), Card('d', "4", 10), Card('s', "7", 10)))

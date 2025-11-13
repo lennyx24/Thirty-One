@@ -4,15 +4,15 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
   val height: Int = 3
   val width: Int = 9
 
-  def get(h: Int, w: Int): Card = {
-    grid.lift(h).flatMap(_.lift(w)).flatten.getOrElse(
-      throw new NoSuchElementException(s"Keine Karte an Position ($h,$w)")
+  def get(pos: (Int, Int)): Card = {
+    grid.lift(pos._1).flatMap(_.lift(pos._2)).flatten.getOrElse(
+      throw new NoSuchElementException(s"Keine Karte an Position ($pos)")
     )
   }
 
-  def set(h: Int, w: Int, card: Card): Table = {
-    val changedRow = grid(h).updated(w, Some(card))
-    val newGrid = grid.updated(h, changedRow)
+  def set(pos: (Int, Int), card: Card): Table = {
+    val changedRow = grid(pos._1).updated(pos._2, Some(card))
+    val newGrid = grid.updated(pos._1, changedRow)
     copy(grid = newGrid)
   }
 
@@ -28,11 +28,11 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     copy(grid = newGrid)
   }
 
-  def swap(h1: Int, w1: Int, h2: Int, w2: Int): Table = {
-    val c1: Card = this.get(h1, w1)
-    val c2: Card = this.get(h2, w2)
-    val newTab1 = this.set(h1, w1, c2)
-    val newTab2 = newTab1.set(h2, w2, c1)
+  def swap(pos1: (Int, Int), pos2: (Int, Int)): Table = {
+    val c1: Card = this.get((pos1._1, pos1._2))
+    val c2: Card = this.get((pos2._1, pos2._2))
+    val newTab1 = this.set((pos1._1, pos1._2), c2)
+    val newTab2 = newTab1.set((pos2._1, pos2._2), c1)
     newTab2
   }
 
