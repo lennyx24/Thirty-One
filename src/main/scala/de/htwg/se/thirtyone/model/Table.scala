@@ -5,9 +5,11 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
   val width: Int = 9
 
   def get(pos: (Int, Int)): Card = {
-    grid.lift(pos._1).flatMap(_.lift(pos._2)).flatten.getOrElse(
-      throw new NoSuchElementException(s"Keine Karte an Position ($pos)")
-    )
+    val oc = grid(pos._1)(pos._2)
+    oc match {
+      case Some(c) => c
+      case None => throw new NoSuchElementException("No card at position " + pos)
+    }
   }
 
   def set(pos: (Int, Int), card: Card): Table = {

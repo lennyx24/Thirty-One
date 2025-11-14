@@ -46,8 +46,8 @@ class TableSpec extends AnyWordSpec{
       c1 should be(Card('♥', "10", 10))
       val c2 = newTab3.get((1,1))
       c2 should be(Card('♦', "4", 10))
-      val c3 = newTab3.get((2, 0))
-      c3 should be(Card('♠', "7", 10))
+
+      an[NoSuchElementException] should be thrownBy(newTab3.get((2, 1)))
     }
 
     "be able to swap cards" in {
