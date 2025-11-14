@@ -2,7 +2,7 @@ package de.htwg.se.thirtyone.model
 
 case class Card(symbol: Char, value: String, size: Int = 10) {
   require(size > 3)
-  private val valueString: String = symbol.toString + value
+  private val valueString: String = value + symbol.toString
   val cardString: String = cardSize
   def bar: String = "+" + ("-" * size) + "+ "
   def topCell: String = "| " + valueString +(" " * (size - valueString.length - 1)) + "| "

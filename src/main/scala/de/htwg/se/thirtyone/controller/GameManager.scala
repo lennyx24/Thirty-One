@@ -32,6 +32,14 @@ object GameManager {
     "Spieler " + playersTurn + " klopft diese Runde\n"
   }
 
+  def swapAll(playersTurn: Int, gameT: Table): Table = {
+    var gT: Table = gameT
+    gT = gameT.swap(cardPositions(playersTurn)(0), cardPositions(0)(0))
+    gT = gT.swap(cardPositions(playersTurn)(1), cardPositions(0)(1))
+    gT = gT.swap(cardPositions(playersTurn)(2), cardPositions(0)(2))
+    gT
+  }
+
   def swap(playersTurn: Int, gameT: Table): Table = {
     var gT: Table = gameT
     var swapped: Boolean = false
@@ -50,9 +58,7 @@ object GameManager {
             swapped = true
           }
         case "alle" =>
-          gT = gameT.swap(cardPositions(playersTurn)(0), cardPositions(0)(0))
-          gT = gT.swap(cardPositions(playersTurn)(1), cardPositions(0)(1))
-          gT = gT.swap(cardPositions(playersTurn)(2), cardPositions(0)(2))
+          gT = swapAll(playersTurn, gameT)
           swapped = true
         case _ =>
           printf("Spieler %d das ist keine valide Option\n", playersTurn)
@@ -78,7 +84,6 @@ object GameManager {
     val cardDeck: Deck = Deck()
 
     var gameTable: Table = createGameTable(playerCount, cardDeck)
-
     print(gameTable)
 
     var playersTurn: Int = 1
