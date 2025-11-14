@@ -16,8 +16,8 @@ object GameManager {
 
   private var gameRunning: Boolean = true
 
-  def printNewRound(gameTable: Table): Unit = {
-    for (i <- 1 until 20) {
+  private def printNewRound(gameTable: Table): Unit = {
+    for (i <- 1 until 50) {
       println()
     }
     print(gameTable)
@@ -40,6 +40,8 @@ object GameManager {
     gT
   }
 
+  def calculateIndex(indexToGive: String): Int = indexToGive.toInt - 1
+
   def swap(playersTurn: Int, gameT: Table): Table = {
     var gT: Table = gameT
     var swapped: Boolean = false
@@ -48,13 +50,14 @@ object GameManager {
       val indexToGive = readLine()
       indexToGive match {
         case "1" | "2" | "3" =>
-          val index = indexToGive.toInt - 1
+          val indexGive = calculateIndex(indexToGive)
           printf("Spieler %d, welche Karte möchtest du erhalten? (1,2,3): ", playersTurn)
-          val indexToReceive: Int = readLine().toInt - 1
-          if (indexToReceive > 2 || indexToReceive < 0) {
+          val indexToReceive = readLine()
+          val indexReceive = calculateIndex(indexToReceive)
+          if (indexReceive > 2 || indexReceive < 0) {
             printf("Spieler %d das ist keine valide Option\n", playersTurn)
           } else {
-            gT = gameT.swap(cardPositions(playersTurn)(index), cardPositions(0)(indexToReceive))
+            gT = gameT.swap(cardPositions(playersTurn)(indexGive), cardPositions(0)(indexReceive))
             swapped = true
           }
         case "alle" =>
@@ -67,7 +70,7 @@ object GameManager {
     gT
   }
 
-  def createGameTable(playerCount: Int, cardDeck: Deck): Table = {
+  private def createGameTable(playerCount: Int, cardDeck: Deck): Table = {
     (0 to playerCount).foldLeft(Table()) { (t, i) =>
       val cards: List[Card] = List(
         cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
