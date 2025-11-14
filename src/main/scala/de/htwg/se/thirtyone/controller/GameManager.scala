@@ -5,7 +5,7 @@ import de.htwg.se.thirtyone.model._
 import scala.io.StdIn.readLine
 import scala.util.Random
 
-object GameManager {
+object GameManager { //TODO: case class mit gameRunning und gameTable als Parameter (alle vars im Code!)
   private val cardPositions = List(
     List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
     List((0, 1), (0, 2), (0, 3)), //Position Player 1

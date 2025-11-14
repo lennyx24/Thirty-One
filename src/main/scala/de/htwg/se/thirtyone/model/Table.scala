@@ -5,8 +5,8 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
   val width: Int = 9
 
   def get(pos: (Int, Int)): Card = {
-    val oc = grid(pos._1)(pos._2)
-    oc match {
+    val card = grid(pos._1)(pos._2)
+    card match {
       case Some(c) => c
       case None => throw new NoSuchElementException("No card at position " + pos)
     }
@@ -40,7 +40,7 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
 
   override def toString: String = {
     val invisibleCard: InvisibleCard = InvisibleCard()
-    val output: StringBuilder = new StringBuilder()
+    val output: StringBuilder = new StringBuilder() //TODO: StringBuilder durch String ersetzen
     grid.foreach { row =>
       val barString: StringBuilder = new StringBuilder()
       val topCellString: StringBuilder = new StringBuilder()
