@@ -61,20 +61,23 @@ object GameManager {
     gT
   }
 
+  def createGameTable(playerCount: Int, cardDeck: Deck): Table = {
+    (0 to playerCount).foldLeft(Table()) { (t, i) =>
+      val cards: List[Card] = List(
+        cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
+        cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
+        cardDeck.deck(Random.nextInt(cardDeck.deck.length))
+      )
+      t.setAll(cardPositions(i), cards)
+    }
+  }
+
   def main(args: Array[String]): Unit = {
     print("Enter Player Amount: ")
     val playerCount: Int = readLine().toInt
     val cardDeck: Deck = Deck()
 
-    var gameTable: Table =
-      (0 to playerCount).foldLeft(Table()) { (t, i) =>
-        val cards: List[Card] = List(
-          cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
-          cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
-          cardDeck.deck(Random.nextInt(cardDeck.deck.length))
-        )
-        t.setAll(cardPositions(i), cards)
-      }
+    var gameTable: Table = createGameTable(playerCount, cardDeck)
 
     print(gameTable)
 
