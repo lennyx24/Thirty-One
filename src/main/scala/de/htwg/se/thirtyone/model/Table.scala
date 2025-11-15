@@ -1,24 +1,24 @@
 package de.htwg.se.thirtyone.model
 
-case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])) {
+import scala.util.Random
+
+case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])):
   val height: Int = 3
   val width: Int = 9
 
-  def get(pos: (Int, Int)): Card = {
+  def get(pos: (Int, Int)): Card =
     val oc = grid(pos._1)(pos._2)
     oc match {
       case Some(c) => c
       case None => throw new NoSuchElementException("No card at position " + pos)
     }
-  }
 
-  def set(pos: (Int, Int), card: Card): Table = {
+  def set(pos: (Int, Int), card: Card): Table = 
     val changedRow = grid(pos._1).updated(pos._2, Some(card))
     val newGrid = grid.updated(pos._1, changedRow)
     copy(grid = newGrid)
-  }
 
-  def setAll(pos: List[(Int, Int)], cards: List[Card]): Table = {
+  def setAll(pos: List[(Int, Int)], cards: List[Card]): Table =
     var i: Int = 0
     val newGrid =
       pos.foldLeft(grid) { case (g, (h, w)) =>
@@ -28,15 +28,23 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
         g.updated(h, changedRow)
       }
     copy(grid = newGrid)
-  }
 
-  def swap(pos1: (Int, Int), pos2: (Int, Int)): Table = {
+  def swap(pos1: (Int, Int), pos2: (Int, Int)): Table =
     val c1: Card = this.get((pos1._1, pos1._2))
     val c2: Card = this.get((pos2._1, pos2._2))
     val newTab1 = this.set((pos1._1, pos1._2), c2)
     val newTab2 = newTab1.set((pos2._1, pos2._2), c1)
     newTab2
-  }
+
+  def createGameTable(playerCount: Int, cardDeck: Deck, cardPositions: List[List[(Int, Int)]]): Table =
+    (0 to playerCount).foldLeft(Table()) { (t, i) =>
+      val cards: List[Card] = List(
+        cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
+        cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
+        cardDeck.deck(Random.nextInt(cardDeck.deck.length))
+      )
+      t.setAll(cardPositions(i), cards)
+    }
 
   override def toString: String = {
     val invisibleCard: InvisibleCard = InvisibleCard()
@@ -75,4 +83,3 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     }
     output.result()
   }
-}

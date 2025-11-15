@@ -103,3 +103,8 @@ project/plugins/project/
 .cache
 .lib/
 .bsp/
+.idea/modules.xml
+.metals/
+.vscode/
+project/
+src/main/scala/de/htwg/se/thirtyone/controller/.scala-build/

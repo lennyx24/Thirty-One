@@ -3,118 +3,96 @@ package de.htwg.se.thirtyone.controller
 import de.htwg.se.thirtyone.model._
 
 import scala.io.StdIn.readLine
-import scala.util.Random
 
-object GameManager {
-  private val cardPositions = List(
+case class GameManager(
+  cardPositions: List[List[(Int, Int)]] = List(
     List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
     List((0, 1), (0, 2), (0, 3)), //Position Player 1
     List((0, 5), (0, 6), (0, 7)), //Position Player 2
     List((2, 5), (2, 6), (2, 7)), //Position Player 3
     List((2, 1), (2, 2), (2, 3)), //Position Player 4
-  )
+  ),
+  gameTable: Table = Table(),
+  gameRunning: Boolean = true
+):
 
-  private var gameRunning: Boolean = true
-
-  private def printNewRound(gameTable: Table): Unit = {
-    for (i <- 1 until 50) {
-      println()
-    }
+  def printNewRound(gameTable: Table): Unit = 
+    (1 until 20).foreach(x => println)
     print(gameTable)
-  }
+    (1 until 20).foreach(x => println)
 
-  def pass(playersTurn: Int): String = {
-    "Spieler " + playersTurn + " passt diese Runde\n"
-  }
+  def pass(playersTurn: Int): String = "Spieler " + playersTurn + " passt diese Runde\n"
 
-  def knock(playersTurn: Int): String = {
+  def knock(playersTurn: Int): String = 
     //TODO:eine Runde noch, dann fertig
     "Spieler " + playersTurn + " klopft diese Runde\n"
-  }
-
-  def swapAll(playersTurn: Int, gameT: Table): Table = {
-    var gT: Table = gameT
-    gT = gameT.swap(cardPositions(playersTurn)(0), cardPositions(0)(0))
-    gT = gT.swap(cardPositions(playersTurn)(1), cardPositions(0)(1))
-    gT = gT.swap(cardPositions(playersTurn)(2), cardPositions(0)(2))
-    gT
-  }
 
   def calculateIndex(indexToGive: String): Int = indexToGive.toInt - 1
 
-  def swap(playersTurn: Int, gameT: Table): Table = {
-    var gT: Table = gameT
-    var swapped: Boolean = false
-    while (!swapped) {
-      printf("Spieler %d, welche Karte möchtest du abgeben? (1,2,3,alle): ", playersTurn)
-      val indexToGive = readLine()
-      indexToGive match {
+  def swap(playersTurn: Int, gameT: Table, indexToGive: String, indexReceive: Int): GameManager =
+    val stopRecursion = 3
+
+    if indexReceive > 2 then this.copy(gameTable = gameT)
+    else
+      indexToGive match
         case "1" | "2" | "3" =>
           val indexGive = calculateIndex(indexToGive)
-          printf("Spieler %d, welche Karte möchtest du erhalten? (1,2,3): ", playersTurn)
-          val indexToReceive = readLine()
-          val indexReceive = calculateIndex(indexToReceive)
-          if (indexReceive > 2 || indexReceive < 0) {
-            printf("Spieler %d das ist keine valide Option\n", playersTurn)
-          } else {
-            gT = gameT.swap(cardPositions(playersTurn)(indexGive), cardPositions(0)(indexReceive))
-            swapped = true
-          }
+          val nextGameT = gameT.swap(cardPositions(playersTurn)(indexGive), cardPositions(0)(indexReceive))
+          swap(playersTurn, nextGameT, indexToGive, stopRecursion)
         case "alle" =>
-          gT = swapAll(playersTurn, gameT)
-          swapped = true
-        case _ =>
-          printf("Spieler %d das ist keine valide Option\n", playersTurn)
-      }
-    }
-    gT
-  }
+          val nextGameT = gameT.swap(cardPositions(playersTurn)(indexReceive), cardPositions(0)(indexReceive))
+          swap(playersTurn, nextGameT, indexToGive, indexReceive + 1)
 
-  private def createGameTable(playerCount: Int, cardDeck: Deck): Table = {
-    (0 to playerCount).foldLeft(Table()) { (t, i) =>
-      val cards: List[Card] = List(
-        cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
-        cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
-        cardDeck.deck(Random.nextInt(cardDeck.deck.length))
-      )
-      t.setAll(cardPositions(i), cards)
-    }
-  }
-
-  def main(args: Array[String]): Unit = {
+object GameManager:
+  def main(args: Array[String]): Unit =
     print("Enter Player Amount: ")
     val playerCount: Int = readLine().toInt
     val cardDeck: Deck = Deck()
 
-    var gameTable: Table = createGameTable(playerCount, cardDeck)
-    print(gameTable)
+    val gm0 = GameManager()
+    val gm = gm0.copy(gameTable = Table().createGameTable(playerCount, cardDeck, gm0.cardPositions))
+    gameLoop(gm, 1)
 
-    var playersTurn: Int = 1
-    while (gameRunning) {
-      if (playersTurn > playerCount) playersTurn = 1
+    def gameLoop(gm: GameManager, playersTurn0: Int): Unit =
+      if !gm.gameRunning then ()
+      else
+        val playersTurn =
+          if playersTurn0 > playerCount then 1 else playersTurn0
 
-      var playerChosen: Boolean = false
-      while (!playerChosen) {
-        printf("Spieler %d ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen): ", playersTurn)
-        val playersChoice: String = readLine()
-        playersChoice match {
+        gm.printNewRound(gm.gameTable)
+        print(s"Spieler $playersTurn ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen): ")
+        val playersChoice = readLine()
+        playersChoice match
           case "Passen" | "passen" =>
-            print(pass(playersTurn))
-            playerChosen = true
+            print(gm.pass(playersTurn))
+            gameLoop(gm, playersTurn + 1) 
 
           case "Klopfen" | "klopfen" =>
-            print(knock(playersTurn))
-            playerChosen = true
+            print(gm.knock(playersTurn))
+            gameLoop(gm, playersTurn + 1)
 
           case "Tauschen" | "tauschen" =>
-            gameTable = swap(playersTurn, gameTable)
-            playerChosen = true
+            print(s"Spieler $playersTurn, welche Karte möchtest du abgeben? (1, 2, 3, alle): ")
+            val indexToGive = readLine()
+            indexToGive match
+              case "1" | "2" | "3" =>
+                printf(s"Spieler $playersTurn, welche Karte möchtest du erhalten? (1, 2, 3): ")
+                val indexToReceive = readLine()
+                val indexReceive = gm.calculateIndex(indexToReceive)
+                if indexReceive > 2 || indexReceive < 0 then 
+                  print(s"Spieler $playersTurn das ist keine valide Option\n")
+                  gameLoop(gm, playersTurn)
+                val nextGm = gm.swap(playersTurn, gm.gameTable, indexToGive, indexReceive)
+                gameLoop(nextGm, playersTurn + 1)
 
-          case _ => printf("Spieler %d das ist keine valide Option\n", playersTurn)
-        }
-        printNewRound(gameTable)
-      }
-      playersTurn += 1
-    }
-  }
-}
+              case "alle" =>
+                val nextGm = gm.swap(playersTurn, gm.gameTable, indexToGive, 0)
+                gameLoop(nextGm, playersTurn + 1)
+                
+              case _ => 
+                print(s"Spieler $playersTurn das ist keine valide Option\n")
+                gameLoop(gm, playersTurn)
+
+          case _ => 
+            print(s"Spieler $playersTurn das ist keine valide Option\n")
+            gameLoop(gm, playersTurn)
