@@ -29,6 +29,8 @@ case class GameManager(
 
   def calculateIndex(indexToGive: String): Int = indexToGive.toInt - 1
 
+  def InvalidMove(playersTurn: Int): String = s"Spieler $playersTurn das ist keine valide Option\n"
+
   def swap(playersTurn: Int, gameT: Table, indexToGive: String, indexReceive: Int): GameManager =
     val stopRecursion = 3
 
@@ -80,7 +82,7 @@ object GameManager:
                 val indexToReceive = readLine()
                 val indexReceive = gm.calculateIndex(indexToReceive)
                 if indexReceive > 2 || indexReceive < 0 then 
-                  print(s"Spieler $playersTurn das ist keine valide Option\n")
+                  print(gm.InvalidMove(playersTurn))
                   gameLoop(gm, playersTurn)
                 val nextGm = gm.swap(playersTurn, gm.gameTable, indexToGive, indexReceive)
                 gameLoop(nextGm, playersTurn + 1)
@@ -88,11 +90,11 @@ object GameManager:
               case "alle" =>
                 val nextGm = gm.swap(playersTurn, gm.gameTable, indexToGive, 0)
                 gameLoop(nextGm, playersTurn + 1)
-                
+
               case _ => 
-                print(s"Spieler $playersTurn das ist keine valide Option\n")
+                print(gm.InvalidMove(playersTurn))
                 gameLoop(gm, playersTurn)
 
           case _ => 
-            print(s"Spieler $playersTurn das ist keine valide Option\n")
+            
             gameLoop(gm, playersTurn)
