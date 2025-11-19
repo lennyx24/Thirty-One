@@ -37,14 +37,14 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     newTab2
 
   def createGameTable(playerCount: Int, cardDeck: Deck, cardPositions: List[List[(Int, Int)]]): Table =
-    (0 to playerCount).foldLeft(Table()) { (t, i) =>
-      val cards: List[Card] = List(
-        cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
-        cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
-        cardDeck.deck(Random.nextInt(cardDeck.deck.length))
-      )
-      t.setAll(cardPositions(i), cards)
+    val indexes = Random.shuffle(0 until cardDeck.deck.length).toVector
+    val (table, _) = (0 to playerCount).foldLeft(Table(), indexes) { case((t, idxs), i) =>
+      val takeCount = cardPositions(i).length
+      val (taken, rest) = idxs.splitAt(takeCount)
+      val cards: List[Card] = taken.map(cardDeck.deck).toList
+      (t.setAll(cardPositions(i), cards), rest)
     }
+    table
 
   override def toString: String = {
     val invisibleCard: InvisibleCard = InvisibleCard()
