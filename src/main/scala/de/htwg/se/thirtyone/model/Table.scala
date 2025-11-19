@@ -47,39 +47,24 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     table
 
   override def toString: String = {
-    val invisibleCard: InvisibleCard = InvisibleCard()
-    val output: StringBuilder = new StringBuilder()
-    grid.foreach { row =>
-      val barString: StringBuilder = new StringBuilder()
-      val topCellString: StringBuilder = new StringBuilder()
-      val cellString: StringBuilder = new StringBuilder()
-
-      var sizeCard: Int = 0
-
-      for (i <- row.indices) {
-        row(i) match {
-          case Some(s) => {
-            barString ++= s.bar
-            topCellString ++= s.topCell
-            cellString ++= s.cells
-
-            sizeCard = s.size
-          }
-          case None => {
-            barString ++= invisibleCard.invCell
-            topCellString ++= invisibleCard.invCell
-            cellString ++= invisibleCard.invCell
-          }
+    val invisibleCard: InvisibleCard= InvisibleCard()
+    grid.foldLeft("") { (output, row) =>
+      val (barString, topCellString, cellString, sizeCard) =
+        row.foldLeft(("" ,"" ,"" , 0)) { case((bar, topCell, cell, size), idx)=>
+          idx match 
+            case Some(card) =>
+              (bar + card.bar, topCell + card.topCell, cell + card.cells, card.size)
+            case None =>
+              (bar + invisibleCard.invCell, topCell + invisibleCard.invCell, cell + invisibleCard.invCell, size)
+          
         }
-      }
-      barString ++= "\n"
-      topCellString ++= "\n"
-      cellString ++= "\n"
-
-      output ++= barString
-      output ++= topCellString
-      for (i <- 1 until (sizeCard/2)) output ++= cellString
-      output ++= barString
+      val barNL = barString + "\n"
+      val topNL = topCellString + "\n"
+      val cellNL = cellString + "\n"
+      
+      val repeatCount = math.max(0, sizeCard / 2 - 1)
+      val repeatCells = List.fill(repeatCount)(cellNL).mkString
+      
+      output + barNL + topNL + repeatCells + barNL
     }
-    output.result()
   }
