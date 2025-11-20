@@ -32,9 +32,8 @@ jobs:
       uses: sbt/setup-sbt@v1
     - name: run test with coverage
       run: sbt clean coverage test
-    - name: upload coverage to coveralls.io
-      run: sbt coverageReport coveralls
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v2.3.6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        format: cobertura
