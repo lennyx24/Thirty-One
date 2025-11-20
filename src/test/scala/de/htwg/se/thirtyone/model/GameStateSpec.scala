@@ -65,6 +65,7 @@ class GameStateSpec extends AnyWordSpec {
       val pos1 = 1
       val pos2 = 1
       val swapFinished = false
+      val swapFinished2 = true
       
       val gameState2 = gameState.swap(playersTurn, pos1, pos2, swapFinished)
       gameState2.table should not be(gameState.table)
@@ -72,6 +73,10 @@ class GameStateSpec extends AnyWordSpec {
       val gameState3 = gameState2.swap(playersTurn, pos1, pos2, swapFinished)
       gameState3.table should be(gameState.table)
       gameState3.table should not be(gameState2.table)
+
+      val gameState4 = gameState2.swap(playersTurn, pos1, pos2, swapFinished2)
+      gameState4.table should be (gameState.table)
+      gameState4.table should not be (gameState2.table)
     }
   }
 } 
