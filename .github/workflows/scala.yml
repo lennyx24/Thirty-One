@@ -2,7 +2,6 @@
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
-
 name: Scala CI
 
 on:
@@ -31,6 +30,10 @@ jobs:
       run: sbt compile
     - name: Run tests
       run: sbt test
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@v2.3.6
       # Optional: This step uploads information to the GitHub dependency graph and unblocking Dependabot alerts for the repository
     - name: Upload dependency graph
       uses: scalacenter/sbt-dependency-submission@ab086b50c947c9774b70f39fc7f6e20ca2706c91
+    
+  
