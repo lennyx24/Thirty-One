@@ -37,7 +37,7 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     newTab2
 
   def createGameTable(playerCount: Int, cardDeck: Deck, cardPositions: List[List[(Int, Int)]]): Table =
-    val indexes = Random.shuffle(0 until cardDeck.deck.length).toVector
+    val indexes = Random.shuffle(cardDeck.deck.indices).toVector
     val (table, _) = (0 to playerCount).foldLeft(Table(), indexes) { case((t, idxs), i) =>
       val takeCount = cardPositions(i).length
       val (taken, rest) = idxs.splitAt(takeCount)
