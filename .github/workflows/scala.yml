@@ -30,6 +30,8 @@ jobs:
         cache: 'sbt'
     - name: Set up sbt
       uses: sbt/setup-sbt@v1
+    - name: run coverageReport
+      run: sbt clean coverage test coverageReport
     - name: run test with coverage
       run: sbt clean coverage test
     - name: Coveralls GitHub Action
