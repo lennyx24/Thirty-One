@@ -37,49 +37,34 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     newTab2
 
   def createGameTable(playerCount: Int, cardDeck: Deck, cardPositions: List[List[(Int, Int)]]): Table =
-    (0 to playerCount).foldLeft(Table()) { (t, i) =>
-      val cards: List[Card] = List(
-        cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
-        cardDeck.deck(Random.nextInt(cardDeck.deck.length)),
-        cardDeck.deck(Random.nextInt(cardDeck.deck.length))
-      )
-      t.setAll(cardPositions(i), cards)
+    val indexes = Random.shuffle(0 until cardDeck.deck.length).toVector
+    val (table, _) = (0 to playerCount).foldLeft(Table(), indexes) { case((t, idxs), i) =>
+      val takeCount = cardPositions(i).length
+      val (taken, rest) = idxs.splitAt(takeCount)
+      val cards: List[Card] = taken.map(cardDeck.deck).toList
+      (t.setAll(cardPositions(i), cards), rest)
     }
+    table
 
   override def toString: String = {
-    val invisibleCard: InvisibleCard = InvisibleCard()
-    val output: StringBuilder = new StringBuilder()
-    grid.foreach { row =>
-      val barString: StringBuilder = new StringBuilder()
-      val topCellString: StringBuilder = new StringBuilder()
-      val cellString: StringBuilder = new StringBuilder()
-
-      var sizeCard: Int = 0
-
-      for (i <- row.indices) {
-        row(i) match {
-          case Some(s) => {
-            barString ++= s.bar
-            topCellString ++= s.topCell
-            cellString ++= s.cells
-
-            sizeCard = s.size
-          }
-          case None => {
-            barString ++= invisibleCard.invCell
-            topCellString ++= invisibleCard.invCell
-            cellString ++= invisibleCard.invCell
-          }
+    val invisibleCard: InvisibleCard= InvisibleCard()
+    grid.foldLeft("") { (output, row) =>
+      val (barString, topCellString, cellString, sizeCard) =
+        row.foldLeft(("" ,"" ,"" , 0)) { case((bar, topCell, cell, size), idx)=>
+          idx match 
+            case Some(card) =>
+              (bar + card.bar, topCell + card.topCell, cell + card.cells, card.size)
+            case None =>
+              (bar + invisibleCard.invCell, topCell + invisibleCard.invCell, cell + invisibleCard.invCell, size)
+          
         }
-      }
-      barString ++= "\n"
-      topCellString ++= "\n"
-      cellString ++= "\n"
-
-      output ++= barString
-      output ++= topCellString
-      for (i <- 1 until (sizeCard/2)) output ++= cellString
-      output ++= barString
+      val barNL = barString + "\n"
+      val topNL = topCellString + "\n"
+      val cellNL = cellString + "\n"
+      
+      val repeatCount = math.max(0, sizeCard / 2 - 1)
+      val repeatCells = List.fill(repeatCount)(cellNL).mkString
+      
+      output + barNL + topNL + repeatCells + barNL
     }
-    output.result()
   }
