@@ -6,9 +6,9 @@ name: Scala CI
 
 on:
   push:
-    branches: [ "development" ]
+    branches: [ "master", "development" ]
   pull_request:
-    branches: [ "development" ]
+    branches: [ "master", "development" ]
 
 permissions:
   contents: read
