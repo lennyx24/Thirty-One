@@ -8,7 +8,7 @@ case class GameState(
     gameRunning: Boolean,
     cardPositions: List[List[(Int, Int)]]
 ):
-    private def nextPlayer(): Int = if currentPlayer >= playerCount then 1 else currentPlayer + 1
+    def nextPlayer(): Int = if currentPlayer >= playerCount then 1 else currentPlayer + 1
 
     def pass(playersTurn: Int): GameState = copy(currentPlayer = nextPlayer())
     
@@ -28,7 +28,8 @@ object GameState:
             List((2, 1), (2, 2), (2, 3)), //Position Player 4
         )
         val cardDeck = Deck()
-        val gameTable = Table().createGameTable(playerCount, cardDeck, positions)
+        val indexes = Table().indexes(cardDeck)
+        val gameTable = Table().createGameTable(playerCount, indexes, positions, cardDeck)
 
         GameState(
         table = gameTable,
