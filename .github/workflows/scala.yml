@@ -36,7 +36,3 @@ jobs:
       run: sbt clean coverage test
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v2.3.6
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/scala-3.3.7/scoverage-report/scoverage.xml
-        format: cobertura
