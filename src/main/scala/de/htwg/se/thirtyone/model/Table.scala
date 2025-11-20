@@ -1,24 +1,24 @@
 package de.htwg.se.thirtyone.model
 
-case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])) {
+import scala.util.Random
+
+case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])):
   val height: Int = 3
   val width: Int = 9
 
-  def get(pos: (Int, Int)): Card = {
-    val card = grid(pos._1)(pos._2)
-    card match {
+  def get(pos: (Int, Int)): Card =
+    val oc = grid(pos._1)(pos._2)
+    oc match {
       case Some(c) => c
       case None => throw new NoSuchElementException("No card at position " + pos)
     }
-  }
 
-  def set(pos: (Int, Int), card: Card): Table = {
+  def set(pos: (Int, Int), card: Card): Table = 
     val changedRow = grid(pos._1).updated(pos._2, Some(card))
     val newGrid = grid.updated(pos._1, changedRow)
     copy(grid = newGrid)
-  }
 
-  def setAll(pos: List[(Int, Int)], cards: List[Card]): Table = {
+  def setAll(pos: List[(Int, Int)], cards: List[Card]): Table =
     var i: Int = 0
     val newGrid =
       pos.foldLeft(grid) { case (g, (h, w)) =>
@@ -28,51 +28,43 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
         g.updated(h, changedRow)
       }
     copy(grid = newGrid)
-  }
 
-  def swap(pos1: (Int, Int), pos2: (Int, Int)): Table = {
+  def swap(pos1: (Int, Int), pos2: (Int, Int)): Table =
     val c1: Card = this.get((pos1._1, pos1._2))
     val c2: Card = this.get((pos2._1, pos2._2))
     val newTab1 = this.set((pos1._1, pos1._2), c2)
     val newTab2 = newTab1.set((pos2._1, pos2._2), c1)
     newTab2
-  }
+
+  def createGameTable(playerCount: Int, cardDeck: Deck, cardPositions: List[List[(Int, Int)]]): Table =
+    val indexes = Random.shuffle(cardDeck.deck.indices).toVector
+    val (table, _) = (0 to playerCount).foldLeft(Table(), indexes) { case((t, idxs), i) =>
+      val takeCount = cardPositions(i).length
+      val (taken, rest) = idxs.splitAt(takeCount)
+      val cards: List[Card] = taken.map(cardDeck.deck).toList
+      (t.setAll(cardPositions(i), cards), rest)
+    }
+    table
 
   override def toString: String = {
-    val invisibleCard: InvisibleCard = InvisibleCard()
-    val output: StringBuilder = new StringBuilder() //TODO: StringBuilder durch String ersetzen
-    grid.foreach { row =>
-      val barString: StringBuilder = new StringBuilder()
-      val topCellString: StringBuilder = new StringBuilder()
-      val cellString: StringBuilder = new StringBuilder()
-
-      var sizeCard: Int = 0
-
-      for (i <- row.indices) {
-        row(i) match {
-          case Some(s) => {
-            barString ++= s.bar
-            topCellString ++= s.topCell
-            cellString ++= s.cells
-
-            sizeCard = s.size
-          }
-          case None => {
-            barString ++= invisibleCard.invCell
-            topCellString ++= invisibleCard.invCell
-            cellString ++= invisibleCard.invCell
-          }
+    val invisibleCard: InvisibleCard= InvisibleCard()
+    grid.foldLeft("") { (output, row) =>
+      val (barString, topCellString, cellString, sizeCard) =
+        row.foldLeft(("" ,"" ,"" , 0)) { case((bar, topCell, cell, size), idx)=>
+          idx match 
+            case Some(card) =>
+              (bar + card.bar, topCell + card.topCell, cell + card.cells, card.size)
+            case None =>
+              (bar + invisibleCard.invCell, topCell + invisibleCard.invCell, cell + invisibleCard.invCell, size)
+          
         }
-      }
-      barString ++= "\n"
-      topCellString ++= "\n"
-      cellString ++= "\n"
-
-      output ++= barString
-      output ++= topCellString
-      for (i <- 1 until (sizeCard/2)) output ++= cellString
-      output ++= barString
+      val barNL = barString + "\n"
+      val topNL = topCellString + "\n"
+      val cellNL = cellString + "\n"
+      
+      val repeatCount = math.max(0, sizeCard / 2 - 1)
+      val repeatCells = List.fill(repeatCount)(cellNL).mkString
+      
+      output + barNL + topNL + repeatCells + barNL
     }
-    output.result()
   }
-}
