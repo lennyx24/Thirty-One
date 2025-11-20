@@ -11,6 +11,7 @@ case class ConsoleView(controller: GameManager) extends Observer:
             println("Wie viele Spieler seit ihr (2-4):")
             val playerCount = readLine().toInt
             controller.initializeGame(playerCount)
+            printNewRound(controller.gameState.table)
             gameLoop()
 
         case PlayerPassed(player) =>
@@ -49,10 +50,15 @@ case class ConsoleView(controller: GameManager) extends Observer:
                     case "1" | "2" | "3" =>
                         println(s"Welche Karte willst du dafür erhalten? (1, 2 oder 3):")
                         val indexReceive = readLine()
-                        controller.swap(currentPlayer, indexGive, indexReceive)
-                        gameLoop()
+                        indexReceive match
+                          case "1" | "2" | "3" =>
+                            controller.swap(currentPlayer, indexGive, indexReceive)
+                            gameLoop()
+                          case _ =>
+                            println(InvalidMove(currentPlayer))
+                            gameLoop()
                     case "alle" =>
-                        controller.swap(currentPlayer, indexGive, "0")
+                        controller.swap(currentPlayer, indexGive, "1")
                         gameLoop()
                     case _ =>
                         println(InvalidMove(currentPlayer))
@@ -66,7 +72,7 @@ case class ConsoleView(controller: GameManager) extends Observer:
     def printNewRound(gameTable: Table): Unit = 
         (1 until 20).foreach(x => println)
         print(gameTable)
-        (1 until 20).foreach(x => println)
+        (1 until 5).foreach(x => println)
 
     def pass(playersTurn: Int): String = s"Spieler $playersTurn passt diese Runde\n"
 

@@ -25,11 +25,13 @@ class GameManager(var gameState: GameState) extends Observable:
         iGiveStr match
           case "1" | "2" | "3" =>
             val indexGive = calculateIndex(iGiveStr)
-            val nextGS = currentGS.swap(playersTurn, indexGive, indexReceive)
+            val nextGS = currentGS.swap(playersTurn, indexGive, indexReceive, true)
             swapRec(nextGS, iGiveStr, "4") // Rekursion beenden
           case "alle" =>
-            val nextGS = currentGS.swap(playersTurn, indexReceive, indexReceive)
-            val nextIndex = (indexReceive + 1).toString
+            val nextGS =
+              if indexReceive > 1 then currentGS.swap(playersTurn, indexReceive, indexReceive, true)
+              else currentGS.swap(playersTurn, indexReceive, indexReceive, false)
+            val nextIndex = (indexReceive + 2).toString
             swapRec(nextGS, iGiveStr, nextIndex)
 
     gameState = swapRec(gameState, indexGiveString, indexReceiveString)

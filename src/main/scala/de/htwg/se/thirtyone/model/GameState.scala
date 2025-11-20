@@ -8,15 +8,15 @@ case class GameState(
     gameRunning: Boolean,
     cardPositions: List[List[(Int, Int)]]
 ):
-    def nextPlayer(): Int = if currentPlayer > playerCount then 1 else currentPlayer + 1
+    private def nextPlayer(): Int = if currentPlayer >= playerCount then 1 else currentPlayer + 1
 
     def pass(playersTurn: Int): GameState = copy(currentPlayer = nextPlayer())
     
     def knock(playersTurn: Int): GameState = copy(currentPlayer = nextPlayer())
     
-    def swap(playersTurn: Int, idx1: Int, idx2: Int): GameState =
-        table.swap(cardPositions(playersTurn)(idx1), cardPositions(0)(idx2))
-        copy(currentPlayer = nextPlayer())
+    def swap(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameState =
+        val gs = copy(table = table.swap(cardPositions(playersTurn)(idx1), cardPositions(0)(idx2)))
+        if swapFinished then gs.copy(currentPlayer = nextPlayer()) else gs
 
 object GameState:
     def newGame(playerCount: Int): GameState = 
