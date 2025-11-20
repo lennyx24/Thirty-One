@@ -36,15 +36,15 @@ class GameStateSpec extends AnyWordSpec {
       val dummyState = GameState(Table(), 3, 1, Deck(), false, Nil)
 
       val playersTurn = 1
-      val gameState = dummyState.pass(playersTurn)
+      val gameState = dummyState.knock(playersTurn)
       gameState should be(GameState(Table(), 3, 2, Deck(), false, Nil))
 
       val playersTurn2 = 2
-      val gameState2 = gameState.pass(playersTurn2)
+      val gameState2 = gameState.knock(playersTurn2)
       gameState2 should be(GameState(Table(), 3, 3, Deck(), false, Nil))
 
       val playersTurn3 = 3
-      val gameState3 = gameState2.pass(playersTurn3)
+      val gameState3 = gameState2.knock(playersTurn3)
       gameState3 should be(GameState(Table(), 3, 1, Deck(), false, Nil))
     }
     "be able to swap" in {
