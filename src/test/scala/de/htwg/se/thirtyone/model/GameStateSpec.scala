@@ -11,7 +11,7 @@ class GameStateSpec extends AnyWordSpec {
       nextPlayer should be(2)
       val dummyState2 = GameState(Table(), 3, nextPlayer, Deck(), false, Nil)
       val nextPlayer2 = dummyState2.nextPlayer()
-      nextPlayer2 should be (3)
+      nextPlayer2 should be(3)
       val dummyState3 = GameState(Table(), 3, nextPlayer2, Deck(), false, Nil)
       val nextPlayer3 = dummyState3.nextPlayer()
       nextPlayer3 should be(1)
@@ -57,7 +57,7 @@ class GameStateSpec extends AnyWordSpec {
       )
       val playersTurn = 2
       val deck = Deck()
-      val indexes = (0 until deck.deck.size).toVector
+      val indexes = deck.deck.indices.toVector
       val table = Table().createGameTable(4, indexes, cardPositions, deck)
       val gameState = GameState(table, 4, playersTurn, Deck(), true, cardPositions)
       gameState.table should be(table)
@@ -65,13 +65,13 @@ class GameStateSpec extends AnyWordSpec {
       val pos1 = 1
       val pos2 = 1
       val swapFinished = false
-      
+
       val gameState2 = gameState.swap(playersTurn, pos1, pos2, swapFinished)
-      gameState2.table should not be(gameState.table)
-      
+      gameState2.table should not be gameState.table
+
       val gameState3 = gameState2.swap(playersTurn, pos1, pos2, swapFinished)
       gameState3.table should be(gameState.table)
-      gameState3.table should not be(gameState2.table)
+      gameState3.table should not be gameState2.table
     }
   }
 } 
