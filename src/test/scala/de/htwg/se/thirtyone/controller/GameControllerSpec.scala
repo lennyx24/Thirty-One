@@ -33,7 +33,8 @@
 //       tab.get((1,3)) should be (Card('♦', "10", 10))
 //     }
 //     "have a calculatedIndex" in {
-//       GameManager.calculateIndex("3") should be(2)
+//       GameManager.calcul
+//       ateIndex("3") should be(2)
 //       GameManager.calculateIndex("2") should be(1)
 //       GameManager.calculateIndex("4") should be(3)
 //     }

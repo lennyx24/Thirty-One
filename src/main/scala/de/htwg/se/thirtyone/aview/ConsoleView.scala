@@ -4,7 +4,7 @@ import de.htwg.se.thirtyone.controller._
 import de.htwg.se.thirtyone.model._
 import scala.io.StdIn.readLine
 
-case class ConsoleView(controller: GameManager) extends Observer:    
+case class ConsoleView(controller: GameController) extends Observer:    
     override def update(event: GameEvent): Unit = event match
         case GameStarted =>
             println("-- Willkommen zu Thirty One, auch bekannt als Schwimmen! --")

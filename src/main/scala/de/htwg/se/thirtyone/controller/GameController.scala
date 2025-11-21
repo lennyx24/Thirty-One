@@ -4,7 +4,7 @@ import de.htwg.se.thirtyone.model.*
 
 import scala.annotation.tailrec
 
-class GameManager(var gameState: GameState) extends Observable:
+class GameController(var gameState: GameState) extends Observable:
 
   def pass(playersTurn: Int): Unit = 
     gameState = gameState.pass(playersTurn)
@@ -37,4 +37,4 @@ class GameManager(var gameState: GameState) extends Observable:
     gameState = swapRec(gameState, indexGiveString, indexReceiveString)
     notifyObservers(PlayerSwapped(playersTurn))
         
-  def initializeGame(playerCount: Int): Unit = gameState = GameState.newGame(playerCount)
+  def initializeGame(playerCount: Int): Unit = gameState = GameState(playerCount)
