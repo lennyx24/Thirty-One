@@ -1,0 +1,37 @@
+
+package de.htwg.se.thirtyone.controller
+
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
+import de.htwg.se.thirtyone.model.GameEvent
+
+class ObservableSpec extends AnyWordSpec with Matchers {
+
+  "An Observable" should {
+    "add a subscriber" in {
+      val observable = new Observable
+      val observer = new TestObserver
+      observable.add(observer)
+      observable.subscribers should have size 1
+      observable.subscribers should contain(observer)
+    }
+
+    "remove a subscriber" in {
+      val observable = new Observable
+      val observer = new TestObserver
+      observable.add(observer)
+      observable.remove(observer)
+      observable.subscribers shouldBe empty
+    }
+  }
+
+  class TestObserver extends Observer {
+    var lastEvent: Option[GameEvent] = None
+
+    override def update(event: GameEvent): Unit = {
+      lastEvent = Some(event)
+    }
+  }
+
+  case class TestEvent() extends GameEvent
+}
