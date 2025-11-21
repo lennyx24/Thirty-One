@@ -1,5 +1,7 @@
 package de.htwg.se.thirtyone.controller
 
+import de.htwg.se.thirtyone.model.GameEvent
+
 class Observable {
     var subscribers: Vector[Observer] = Vector()
     def add(s: Observer): Unit = subscribers = subscribers :+ s

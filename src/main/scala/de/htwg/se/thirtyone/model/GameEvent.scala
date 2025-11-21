@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.controller
+package de.htwg.se.thirtyone.model
 
 trait GameEvent
 
