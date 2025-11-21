@@ -1,5 +1,7 @@
 package de.htwg.se.thirtyone.model
 
+import scala.annotation.tailrec
+
 case class GameState(
     table: Table,
     playerCount: Int,
@@ -14,12 +16,34 @@ case class GameState(
     
     def knock(playersTurn: Int): GameState = copy(currentPlayer = nextPlayer())
     
-    def swap(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameState =
+    private def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameState =
         val gs = copy(table = table.swap(cardPositions(playersTurn)(idx1), cardPositions(0)(idx2)))
         if swapFinished then gs.copy(currentPlayer = nextPlayer()) else gs
 
+    def calculateIndex(indexToGive: String): Int = indexToGive.toInt - 1
+
+    def swap(currentGS: GameState, playersTurn: Int, indexGiveString: String, indexReceiveString: String): GameState =
+      @tailrec
+      def swapRec(currentGS: GameState, iGiveStr: String, iReceiveStr: String): GameState =
+        val indexReceive = calculateIndex(iReceiveStr)
+        if indexReceive > 2 then currentGS
+        else
+          iGiveStr match
+            case "1" | "2" | "3" =>
+              val indexGive = calculateIndex(iGiveStr)
+              val nextGS = currentGS.swapTable(playersTurn, indexGive, indexReceive, true)
+              swapRec(nextGS, iGiveStr, "4") // Rekursion beenden
+            case "alle" =>
+              val nextGS =
+                if indexReceive > 1 then currentGS.swapTable(playersTurn, indexReceive, indexReceive, true)
+                else currentGS.swapTable(playersTurn, indexReceive, indexReceive, false)
+              val nextIndex = (indexReceive + 2).toString
+              swapRec(nextGS, iGiveStr, nextIndex)
+
+      swapRec(currentGS, indexGiveString, indexReceiveString)
+
 object GameState:
-    def newGame(playerCount: Int): GameState = 
+    def apply(playerCount: Int): GameState =
         val positions = List(
             List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
             List((0, 1), (0, 2), (0, 3)), //Position Player 1

@@ -1,9 +1,9 @@
 package de.htwg.se.thirtyone.model
 
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
+import org.scalatest.wordspec.AnyWordSpec
 
-class CardSpec extends AnyWordSpec{
+class CardSpec extends AnyWordSpec {
   "Card" should {
     "have a scalable bar" in {
       val c1 = Card('♦', "K", 6).bar should be("+------+ ")
@@ -26,7 +26,7 @@ class CardSpec extends AnyWordSpec{
     "have a scalable size" in {
       val c1 = Card('♦', "K", 5).cardSize should be("+-----+ \n| K♦  | \n|     | \n+-----+ \n")
       val c2 = Card('♦', "9", 8).cardSize should be("+--------+ \n| 9♦     | \n|        | \n|        | \n|        | \n+--------+ \n")
-      val c3 = Card('♦', "9", 10).cardSize should be("+----------+ \n| 9♦       | \n|          | \n|          | \n|          | \n|          | \n+----------+ \n")
+      val c3 = Card('♦', "9").cardSize should be("+----------+ \n| 9♦       | \n|          | \n|          | \n|          | \n|          | \n+----------+ \n")
     }
   }
 }

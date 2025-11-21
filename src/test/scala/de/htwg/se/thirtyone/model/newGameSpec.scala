@@ -5,14 +5,14 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class newGameSpec extends AnyWordSpec {
   "GameState" should {
-    "be able to start a newGame" in {
+    "be able to start a apply" in {
       val seed = 42L
       scala.util.Random.setSeed(seed)
 
       val playerCount = 4
-      val gameState = GameState.newGame(playerCount)
+      val gameState = GameState(playerCount)
 
-      // dieselbe Seed-Position wiederherstellen, dann die selben indexes mit dem tatsächlich verwendeten Deck erzeugen
+      // Dieselbe Seed-Position wiederherstellen, dann die gleichen Indizes mit dem tatsächlich verwendeten Deck erzeugen
       scala.util.Random.setSeed(seed)
       val indexes = Table().indexes(gameState.deck)
 
