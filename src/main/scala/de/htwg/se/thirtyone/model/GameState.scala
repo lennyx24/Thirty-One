@@ -19,7 +19,7 @@ case class GameState(
         if swapFinished then gs.copy(currentPlayer = nextPlayer()) else gs
 
 object GameState:
-    def newGame(playerCount: Int): GameState = 
+    def apply(playerCount: Int): GameState =
         val positions = List(
             List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
             List((0, 1), (0, 2), (0, 3)), //Position Player 1
