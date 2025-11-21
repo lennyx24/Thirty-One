@@ -7,6 +7,10 @@
 
  class GameControllerSpec extends AnyWordSpec {
    "GameController" should {
+     "be able to swap recursive" in {
+       val dummyState = GameState(Table(), 3, 1, Deck(), false, Nil)
+     }
+     
      "be able to calculate index" in {
        val dummyState = GameState(Table(), 3, 1, Deck(), false, Nil)
        val indexToGive = "1"
