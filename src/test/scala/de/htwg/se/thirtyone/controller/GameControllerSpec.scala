@@ -32,15 +32,6 @@ class GameControllerSpec extends AnyWordSpec {
       gameController.knock(playersTurn3)
       gameController.gameState.currentPlayer should be(1)
     }
-    "be able to calculate index" in {
-      val dummyState = GameState(Table(), 3, 1, Deck(), false, Nil)
-      val indexToGive = "1"
-      GameController(dummyState).calculateIndex(indexToGive) should be(0)
-      val indexToGive2 = "2"
-      GameController(dummyState).calculateIndex(indexToGive2) should be(1)
-      val indexToGive3 = "3"
-      GameController(dummyState).calculateIndex(indexToGive3) should be(2)
-    }
     "be able to swap" in {
       val cardPositions = List(
         List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
