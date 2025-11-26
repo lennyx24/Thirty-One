@@ -1,62 +1,13 @@
 package de.htwg.se.thirtyone.model
 
+import scala.language.postfixOps
+
 case class Deck(size: Int = 10) {
-  def deck = Vector[Card]  (
-    //diamonds
-    Card('♦', "2", size),
-    Card('♦', "3", size),
-    Card('♦', "4", size),
-    Card('♦', "5", size),
-    Card('♦', "6", size),
-    Card('♦', "7", size),
-    Card('♦', "8", size),
-    Card('♦', "9", size),
-    Card('♦', "10", size),
-    Card('♦', "J", size),
-    Card('♦', "Q", size),
-    Card('♦', "K", size),
-    Card('♦', "A", size),
-    //spades
-    Card('♠', "2", size),
-    Card('♠', "3", size),
-    Card('♠', "4", size),
-    Card('♠', "5", size),
-    Card('♠', "6", size),
-    Card('♠', "7", size),
-    Card('♠', "8", size),
-    Card('♠', "9", size),
-    Card('♠', "10", size),
-    Card('♠', "J", size),
-    Card('♠', "Q", size),
-    Card('♠', "K", size),
-    Card('♠', "A", size),
-    //hearts
-    Card('♥', "2", size),
-    Card('♥', "3", size),
-    Card('♥', "4", size),
-    Card('♥', "5", size),
-    Card('♥', "6", size),
-    Card('♥', "7", size),
-    Card('♥', "8", size),
-    Card('♥', "9", size),
-    Card('♥', "10", size),
-    Card('♥', "J", size),
-    Card('♥', "Q", size),
-    Card('♥', "K", size),
-    Card('♥', "A", size),
-    //clubs
-    Card('♣', "2", size),
-    Card('♣', "3", size),
-    Card('♣', "4", size),
-    Card('♣', "5", size),
-    Card('♣', "6", size),
-    Card('♣', "7", size),
-    Card('♣', "8", size),
-    Card('♣', "9", size),
-    Card('♣', "10", size),
-    Card('♣', "J", size),
-    Card('♣', "Q", size),
-    Card('♣', "K", size),
-    Card('♣', "A", size)
-  )
+  
+  val symbols: List[Char] = '♦'::'♠'::'♥'::'♣'::Nil
+  val numbers: List[String] = "2"::"3"::"4"::"5"::"6"::"7"::"8"::"9"::"10"::"J"::"Q"::"K"::"A"::Nil
+  val deck: Vector[Card]  = (for {
+    s <- symbols 
+    n <- numbers
+  } yield Card(s,n,size)).toVector
 }
