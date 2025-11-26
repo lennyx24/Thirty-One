@@ -5,20 +5,29 @@ import scala.annotation.tailrec
 case class GameState(
     table: Table,
     playerCount: Int,
-    currentPlayer: Int,
+    players: List[Player],
+    currentPlayerIndex: Int,
     deck: Deck,
     gameRunning: Boolean,
     cardPositions: List[List[(Int, Int)]]
 ):
-    def nextPlayer(): Int = if currentPlayer >= playerCount then 1 else currentPlayer + 1
+    def currentPlayer(): Player = players(currentPlayerIndex)
 
-    def pass(playersTurn: Int): GameState = copy(currentPlayer = nextPlayer())
+    def nextPlayer(): GameState = 
+      if currentPlayer().hasKnocked then copy(gameRunning = false)
+      else if currentPlayerIndex == playerCount then copy(currentPlayerIndex = 1)
+      else copy(currentPlayerIndex = currentPlayerIndex + 1)
+
+    def pass(playersTurn: Int): GameState = nextPlayer()
     
-    def knock(playersTurn: Int): GameState = copy(currentPlayer = nextPlayer())
+    def knock(playersTurn: Int): GameState = 
+      val newPlayer = currentPlayer().copy(hasKnocked = true)
+      val newPlayers = players.updated(playersTurn - 1, newPlayer)
+      nextPlayer().copy(players= newPlayers)
     
     private def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameState =
         val gs = copy(table = table.swap(cardPositions(playersTurn)(idx1), cardPositions(0)(idx2)))
-        if swapFinished then gs.copy(currentPlayer = nextPlayer()) else gs
+        if swapFinished then gs.nextPlayer() else gs
 
     def calculateIndex(indexToGive: String): Int = indexToGive.toInt - 1
 
@@ -55,10 +64,13 @@ object GameState:
         val indexes = Table().indexes(cardDeck)
         val gameTable = Table().createGameTable(playerCount, indexes, positions, cardDeck)
 
+        val playersList = (1 to playerCount).map(i => Player(playersNumber = i )).toList
+
         GameState(
         table = gameTable,
         playerCount = playerCount,
-        currentPlayer = 1,
+        players = playersList,
+        currentPlayerIndex = 1,
         deck = cardDeck,
         gameRunning = true,
         cardPositions = positions

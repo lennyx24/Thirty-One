@@ -30,7 +30,7 @@ case class ConsoleView(controller: GameController) extends Observer:
             println("Spiel beendet, danke fürs spielen!")
             return
         
-        val currentPlayer = controller.gameState.currentPlayer
+        val currentPlayer = controller.gameState.currentPlayerIndex
         println(s"Spieler $currentPlayer ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
         val choice = readLine()
 

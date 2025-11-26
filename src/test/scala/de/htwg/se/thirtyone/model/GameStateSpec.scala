@@ -4,7 +4,7 @@ import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 
 class GameStateSpec extends AnyWordSpec {
-  "GameState" should {
+  "GameState" should { //when für einfache dummyState verarbeitung
     "be able to switch to nextPlayer" in {
       val dummyState = GameState(Table(), 3, 1, Deck(), false, Nil)
       val nextPlayer = dummyState.nextPlayer()
