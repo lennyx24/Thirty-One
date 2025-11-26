@@ -4,8 +4,8 @@ import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 
 class newGameSpec extends AnyWordSpec {
-  "GameState" should {
-    "be able to start a apply" in {
+  "GameState.apply" should {
+    "be able to start an apply" in {
       val seed = 42L
       scala.util.Random.setSeed(seed)
 
