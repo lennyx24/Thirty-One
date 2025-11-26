@@ -16,7 +16,7 @@ class GameController(var gameState: GameState) extends Observable:
     gameState = gameState.swap(gameState, playersTurn, indexGiveString, indexReceiveString)
     notifyObservers(PlayerSwapped(playersTurn))
 
-  //def gameFinished() =
-
+  def gameFinished(playersTurn: Int): Unit =
+    notifyObservers(GameEnded(playersTurn))
         
   def initializeGame(playerCount: Int): Unit = gameState = GameState(playerCount)

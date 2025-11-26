@@ -28,7 +28,7 @@ class newGameSpec extends AnyWordSpec {
 
       gameState.table should be(expectedTable)
       gameState.playerCount should be(playerCount)
-      gameState.currentPlayer should be(1)
+      gameState.currentPlayerIndex should be(0)
       gameState.gameRunning should be(true)
     }
   }

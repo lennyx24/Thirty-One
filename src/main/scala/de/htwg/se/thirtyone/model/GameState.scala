@@ -13,10 +13,14 @@ case class GameState(
 ):
     def currentPlayer(): Player = players(currentPlayerIndex)
 
-    def nextPlayer(): GameState = 
-      if currentPlayer().hasKnocked then copy(gameRunning = false)
-      else if currentPlayerIndex == playerCount then copy(currentPlayerIndex = 1)
-      else copy(currentPlayerIndex = currentPlayerIndex + 1)
+    def nextPlayer(): GameState = {
+      val nextGameState =
+        if currentPlayerIndex + 1 == playerCount then copy(currentPlayerIndex = 0)
+        else copy(currentPlayerIndex = currentPlayerIndex + 1)
+
+      if nextGameState.currentPlayer().hasKnocked then copy(gameRunning = false)
+      else nextGameState
+    }
 
     def pass(playersTurn: Int): GameState = nextPlayer()
     
@@ -64,13 +68,13 @@ object GameState:
         val indexes = Table().indexes(cardDeck)
         val gameTable = Table().createGameTable(playerCount, indexes, positions, cardDeck)
 
-        val playersList = (1 to playerCount).map(i => Player(playersNumber = i )).toList
+        val playersList = (1 to playerCount).map(i => Player()).toList
 
         GameState(
         table = gameTable,
         playerCount = playerCount,
         players = playersList,
-        currentPlayerIndex = 1,
+        currentPlayerIndex = 0,
         deck = cardDeck,
         gameRunning = true,
         cardPositions = positions

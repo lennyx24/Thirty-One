@@ -23,50 +23,55 @@ case class ConsoleView(controller: GameController) extends Observer:
         case PlayerSwapped(player) =>
             println(s"Spieler $player tauscht diese Runde.")
             printNewRound(controller.gameState.table)
+
+        case GameEnded(player) =>
+          println(s"Spieler $player hat gewonnen. Glückwunsch!")
             
 
     def gameLoop(): Unit =
-        if !controller.gameState.gameRunning then
-            println("Spiel beendet, danke fürs spielen!")
-            return
+      val currentPlayer = controller.gameState.currentPlayerIndex + 1
+      
+      if !controller.gameState.gameRunning then
+          controller.gameFinished(currentPlayer)
+          return
         
-        val currentPlayer = controller.gameState.currentPlayerIndex
-        println(s"Spieler $currentPlayer ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
-        val choice = readLine()
+        
+      println(s"Spieler $currentPlayer ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
+      val choice = readLine()
 
-        choice.toLowerCase() match
-            case "passen" =>
-                controller.pass(currentPlayer)
-                gameLoop()
-            
-            case "klopfen" =>
-                controller.knock(currentPlayer)
-                gameLoop()
-            
-            case "tauschen" =>
-                println(s"Spieler $currentPlayer, welche Karte willst du abgeben? (1, 2, 3 oder alle):")
-                val indexGive = readLine()
-                indexGive match
-                    case "1" | "2" | "3" =>
-                        println(s"Welche Karte willst du dafür erhalten? (1, 2 oder 3):")
-                        val indexReceive = readLine()
-                        indexReceive match
-                          case "1" | "2" | "3" =>
-                            controller.swap(currentPlayer, indexGive, indexReceive)
-                            gameLoop()
-                          case _ =>
-                            println(InvalidMove(currentPlayer))
-                            gameLoop()
-                    case "alle" =>
-                        controller.swap(currentPlayer, indexGive, "1")
-                        gameLoop()
-                    case _ =>
-                        println(InvalidMove(currentPlayer))
-                        gameLoop()
-            
-            case _ =>
-                println(InvalidMove(currentPlayer))
-                gameLoop()
+      choice.toLowerCase() match
+          case "passen" =>
+              controller.pass(currentPlayer)
+              gameLoop()
+          
+          case "klopfen" =>
+              controller.knock(currentPlayer)
+              gameLoop()
+          
+          case "tauschen" =>
+              println(s"Spieler $currentPlayer, welche Karte willst du abgeben? (1, 2, 3 oder alle):")
+              val indexGive = readLine()
+              indexGive match
+                  case "1" | "2" | "3" =>
+                      println(s"Welche Karte willst du dafür erhalten? (1, 2 oder 3):")
+                      val indexReceive = readLine()
+                      indexReceive match
+                        case "1" | "2" | "3" =>
+                          controller.swap(currentPlayer, indexGive, indexReceive)
+                          gameLoop()
+                        case _ =>
+                          println(InvalidMove(currentPlayer))
+                          gameLoop()
+                  case "alle" =>
+                      controller.swap(currentPlayer, indexGive, "1")
+                      gameLoop()
+                  case _ =>
+                      println(InvalidMove(currentPlayer))
+                      gameLoop()
+          
+          case _ =>
+              println(InvalidMove(currentPlayer))
+              gameLoop()
                  
         
     def printNewRound(gameTable: Table): Unit = 

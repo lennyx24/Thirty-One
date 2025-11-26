@@ -3,71 +3,93 @@ package de.htwg.se.thirtyone.controller
 import de.htwg.se.thirtyone.model.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.BeforeAndAfterEach
 
-class GameControllerSpec extends AnyWordSpec {
+class GameControllerSpec extends AnyWordSpec with BeforeAndAfterEach {
+  var gameController: GameController = _
+  val playerCount = 4
+
+  override def beforeEach(): Unit = {
+    gameController = GameController(GameState(playerCount))
+  }
+
   "GameController" should {
     "be able to pass" in {
-      val playersTurn = 1
-      val dummyState = GameState(Table(), 3, playersTurn, Deck(), false, Nil)
-      val gameController = GameController(dummyState)
-      gameController.pass(playersTurn)
-      gameController.gameState.currentPlayer should be(2)
-      val playersTurn2 = 2
-      gameController.pass(playersTurn2)
-      gameController.gameState.currentPlayer should be(3)
-      val playersTurn3 = 3
-      gameController.pass(playersTurn3)
-      gameController.gameState.currentPlayer should be(1)
+      // Initial ist Spieler 1 (Index 0) dran
+      val p1 = 1
+      gameController.pass(p1)
+      gameController.gameState.currentPlayerIndex should be(1)
+
+      val p2 = 2
+      gameController.pass(p2)
+      gameController.gameState.currentPlayerIndex should be(2)
+
+      val p3 = 3
+      gameController.pass(p3)
+      gameController.gameState.currentPlayerIndex should be(3)
+
+      val p4 = 4
+      gameController.pass(p4)
+      gameController.gameState.currentPlayerIndex should be(0)
     }
+
     "be able to knock" in {
-      val playersTurn = 1
-      val dummyState = GameState(Table(), 3, playersTurn, Deck(), false, Nil)
-      val gameController = GameController(dummyState)
-      gameController.knock(playersTurn)
-      gameController.gameState.currentPlayer should be(2)
-      val playersTurn2 = 2
-      gameController.knock(playersTurn2)
-      gameController.gameState.currentPlayer should be(3)
-      val playersTurn3 = 3
-      gameController.knock(playersTurn3)
-      gameController.gameState.currentPlayer should be(1)
+      val p1 = 1
+      gameController.knock(p1)
+      gameController.gameState.currentPlayerIndex should be(1)
+
+      val p2 = 2
+      gameController.knock(p2)
+      gameController.gameState.currentPlayerIndex should be(2)
+
+      val p3 = 3
+      gameController.knock(p3)
+      gameController.gameState.currentPlayerIndex should be(3)
+
+      val p4 = 4
+      gameController.knock(p4)
+      gameController.gameState.currentPlayerIndex should be(0)
     }
+
     "be able to swap" in {
-      val cardPositions = List(
-        List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
-        List((0, 1), (0, 2), (0, 3)), //Position Player 1
-        List((0, 5), (0, 6), (0, 7)), //Position Player 2
-        List((2, 5), (2, 6), (2, 7)), //Position Player 3
-        List((2, 1), (2, 2), (2, 3)), //Position Player 4
-      )
-      val playersTurn = 1
-      val deck = Deck()
-      val indexes = deck.deck.indices.toVector
-      val table = Table().createGameTable(4, indexes, cardPositions, deck)
-      val dummyState = GameState(table, 4, playersTurn, deck, true, cardPositions)
-      val gameController = GameController(dummyState)
+      // Speichern des initialen Tisches zum Vergleich
+      val initialTable = gameController.gameState.table
+      val p1 = 1
 
-      gameController.swap(playersTurn, "1", "1")
-      gameController.gameState.table should not be table //table geändert
-      gameController.pass(gameController.gameState.currentPlayer) //3x passen, dass wieder spieler 1 ist
-      gameController.pass(gameController.gameState.currentPlayer)
-      gameController.pass(gameController.gameState.currentPlayer)
-      gameController.swap(gameController.gameState.currentPlayer, "1", "1")
-      gameController.gameState.table should be(table) //table wieder wie am Anfang
+      // 1. Swap durchführen ("1" gegen "1")
+      gameController.swap(p1, "1", "1")
+      gameController.gameState.table should not be initialTable
+      gameController.gameState.currentPlayerIndex should be(1)
 
-      gameController.swap(gameController.gameState.currentPlayer, "alle", "1")
-      gameController.gameState.table should not be table //table geändert
-      gameController.pass(gameController.gameState.currentPlayer) //3x passen, dass wieder spieler 1 ist
-      gameController.pass(gameController.gameState.currentPlayer)
-      gameController.pass(gameController.gameState.currentPlayer)
-      gameController.swap(gameController.gameState.currentPlayer, "alle", "1")
-      gameController.gameState.table should be(table) //table wieder wie am Anfang
+      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P2 -> P3
+      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P3 -> P4
+      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P4 -> P1
+      gameController.gameState.currentPlayerIndex should be(0)
+
+      // Zurück tauschen ("1" mit "1")
+      gameController.swap(p1, "1", "1")
+      gameController.gameState.table should be(initialTable)
+
+      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P2 -> P3
+      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P3 -> P4
+      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P4 -> P1
+      gameController.gameState.currentPlayerIndex should be(0)
+
+      // "alle" tauschen
+      gameController.swap(p1, "alle", "1")
+      gameController.gameState.table should not be initialTable
+
+      gameController.pass(gameController.gameState.currentPlayerIndex + 1)
+      gameController.pass(gameController.gameState.currentPlayerIndex + 1)
+      gameController.pass(gameController.gameState.currentPlayerIndex + 1)
+      gameController.gameState.currentPlayerIndex should be(0)
+
+      gameController.swap(p1, "alle", "1")
+      gameController.gameState.table should be(initialTable)
     }
+
     "be able to initialize a game" in {
-      val playersCount = 4
-      val dummyState = GameState(Table(), playersCount, 1, Deck(), false, Nil)
-      val gameController = GameController(dummyState)
-      gameController.initializeGame(playersCount)
+      gameController.initializeGame(playerCount)
       gameController.gameState.table should not be Nil
     }
   }
