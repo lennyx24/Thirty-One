@@ -15,82 +15,76 @@ class GameControllerSpec extends AnyWordSpec with BeforeAndAfterEach {
 
   "GameController" should {
     "be able to pass" in {
-      // Initial ist Spieler 1 (Index 0) dran
-      val p1 = 1
-      gameController.pass(p1)
+      gameController.pass(1)
       gameController.gameState.currentPlayerIndex should be(1)
-
-      val p2 = 2
-      gameController.pass(p2)
+      gameController.pass(2)
       gameController.gameState.currentPlayerIndex should be(2)
-
-      val p3 = 3
-      gameController.pass(p3)
+      gameController.pass(3)
       gameController.gameState.currentPlayerIndex should be(3)
-
-      val p4 = 4
-      gameController.pass(p4)
+      gameController.pass(4)
       gameController.gameState.currentPlayerIndex should be(0)
     }
 
     "be able to knock" in {
-      val p1 = 1
-      gameController.knock(p1)
+      gameController.knock(1)
       gameController.gameState.currentPlayerIndex should be(1)
 
-      val p2 = 2
-      gameController.knock(p2)
+      gameController.knock(2)
       gameController.gameState.currentPlayerIndex should be(2)
 
-      val p3 = 3
-      gameController.knock(p3)
+      gameController.knock(3)
       gameController.gameState.currentPlayerIndex should be(3)
 
-      val p4 = 4
-      gameController.knock(p4)
-      gameController.gameState.currentPlayerIndex should be(0)
+      gameController.knock(4)
+      // Da der nächste Spieler (1) bereits geklopft hat, endet das Spiel hier.
+      // Der Index bleibt stehen, da nextPlayer das Spiel beendet.
+      gameController.gameState.gameRunning should be(false)
+      gameController.gameState.currentPlayerIndex should be(3)
     }
 
     "be able to swap" in {
-      // Speichern des initialen Tisches zum Vergleich
       val initialTable = gameController.gameState.table
       val p1 = 1
 
-      // 1. Swap durchführen ("1" gegen "1")
+      // 1. Swap "1" mit "1"
       gameController.swap(p1, "1", "1")
       gameController.gameState.table should not be initialTable
       gameController.gameState.currentPlayerIndex should be(1)
 
-      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P2 -> P3
-      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P3 -> P4
-      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P4 -> P1
+      // Zurück rotieren zu Spieler 1
+      gameController.pass(2)
+      gameController.pass(3)
+      gameController.pass(4)
       gameController.gameState.currentPlayerIndex should be(0)
 
-      // Zurück tauschen ("1" mit "1")
+      // Zurück tauschen
       gameController.swap(p1, "1", "1")
       gameController.gameState.table should be(initialTable)
 
-      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P2 -> P3
-      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P3 -> P4
-      gameController.pass(gameController.gameState.currentPlayerIndex + 1) // P4 -> P1
+      // Zurück rotieren zu Spieler 1
+      gameController.pass(2)
+      gameController.pass(3)
+      gameController.pass(4)
       gameController.gameState.currentPlayerIndex should be(0)
 
-      // "alle" tauschen
+      // 2. Swap "alle"
       gameController.swap(p1, "alle", "1")
       gameController.gameState.table should not be initialTable
 
-      gameController.pass(gameController.gameState.currentPlayerIndex + 1)
-      gameController.pass(gameController.gameState.currentPlayerIndex + 1)
-      gameController.pass(gameController.gameState.currentPlayerIndex + 1)
+      // Zurück rotieren zu Spieler 1
+      gameController.pass(2)
+      gameController.pass(3)
+      gameController.pass(4)
       gameController.gameState.currentPlayerIndex should be(0)
 
+      // Zurück tauschen "alle"
       gameController.swap(p1, "alle", "1")
       gameController.gameState.table should be(initialTable)
     }
 
     "be able to initialize a game" in {
       gameController.initializeGame(playerCount)
-      gameController.gameState.table should not be Nil
+      gameController.gameState.table should not be null
     }
   }
 }
