@@ -87,6 +87,12 @@ class GameControllerSpec extends AnyWordSpec with BeforeAndAfterEach {
       gameController.swap(p1, "alle", "1")
       gameController.gameState.table should be(initialTable)
     }
+    "be able to gameFinished" in {
+      val playersTurn = 1
+      val beforeIndex = gameController.gameState.currentPlayerIndex
+      gameController.gameFinished(playersTurn)
+      gameController.gameState.currentPlayerIndex should be(beforeIndex)
+    }
 
     "be able to initialize a game" in {
       gameController.initializeGame(playerCount)
