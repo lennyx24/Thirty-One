@@ -34,6 +34,12 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
       controller.state = newState
       controller.state should be(newState)
     }
+    "be able to gameFinished" in {
+      val playersTurn = 1
+      val beforeIndex = gameController.gameState.currentPlayerIndex
+      gameController.gameFinished(playersTurn)
+      gameController.gameState.currentPlayerIndex should be(beforeIndex)
+    }
 
     "allow changing the game data" in {
       val newGameData = GameData(4)
