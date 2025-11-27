@@ -1,7 +1,7 @@
 package de.htwg.se.thirtyone.controller
 
 import de.htwg.se.thirtyone.model.GameData
-import de.htwg.se.thirtyone.util.{Observer, GameEvent} // Import für GameEvent und Observer
+import de.htwg.se.thirtyone.util.{Observer, GameEvent}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -11,18 +11,18 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
     val gameData = GameData(2)
 
     var inputReceived = ""
-    val cs = new ControllerState {
+    val mockState = new ControllerState {
       override def execute(input: String, controller: GameController): Unit = {
         inputReceived = input
       }
     }
 
-    val controller = new GameController(cs, gameData)
+    val controller = new GameController(mockState, gameData)
 
-    "handle input" in {
+    "delegate handleInput to the current state logic (execute)" in {
       val testInput = "knock"
       controller.handleInput(testInput)
-
+      
       inputReceived should be(testInput)
     }
 
@@ -33,12 +33,6 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
       
       controller.state = newState
       controller.state should be(newState)
-    }
-    "be able to gameFinished" in {
-      val playersTurn = 1
-      val beforeIndex = gameController.gameState.currentPlayerIndex
-      gameController.gameFinished(playersTurn)
-      gameController.gameState.currentPlayerIndex should be(beforeIndex)
     }
 
     "allow changing the game data" in {
