@@ -3,7 +3,8 @@ package de.htwg.se.thirtyone.controller
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import de.htwg.se.thirtyone.model.GameEvent
+import de.htwg.se.thirtyone.model._
+import de.htwg.se.thirtyone.util._
 
 class ObservableSpec extends AnyWordSpec with Matchers {
 

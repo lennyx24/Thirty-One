@@ -1,6 +1,5 @@
-package de.htwg.se.thirtyone.controller
+package de.htwg.se.thirtyone.util
 
-import de.htwg.se.thirtyone.model.GameEvent
 
 class Observable {
     var subscribers: Vector[Observer] = Vector()

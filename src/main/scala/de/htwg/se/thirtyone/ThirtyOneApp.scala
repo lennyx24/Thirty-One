@@ -3,11 +3,12 @@ package de.htwg.se.thirtyone
 import de.htwg.se.thirtyone.aview._
 import de.htwg.se.thirtyone.controller._
 import de.htwg.se.thirtyone.model._
+import de.htwg.se.thirtyone.util._
 
 object ThirtyOneApp:
     def main(args: Array[String]): Unit =
-        val dummyState = GameState(Table(), 0, Nil, 0, Deck(), false, Nil)
-        val controller = GameController(dummyState)
+        val dummyState = GameData(Table(), 0, Nil, 0, Deck(), false, Nil)
+        val controller = GameController(SetupState, dummyState)
         val view = ConsoleView(controller)
 
         controller.add(view)

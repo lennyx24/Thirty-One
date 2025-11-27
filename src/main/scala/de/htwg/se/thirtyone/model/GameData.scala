@@ -2,7 +2,7 @@ package de.htwg.se.thirtyone.model
 
 import scala.annotation.tailrec
 
-case class GameState(
+case class GameData(
     table: Table,
     playerCount: Int,
     players: List[Player],
@@ -13,7 +13,7 @@ case class GameState(
 ):
     def currentPlayer(): Player = players(currentPlayerIndex)
 
-    def nextPlayer(): GameState = {
+    def nextPlayer(): GameData = {
       val nextGameState =
         if currentPlayerIndex + 1 == playerCount then copy(currentPlayerIndex = 0)
         else copy(currentPlayerIndex = currentPlayerIndex + 1)
@@ -22,22 +22,22 @@ case class GameState(
       else nextGameState
     }
 
-    def pass(playersTurn: Int): GameState = nextPlayer()
+    def pass(): GameData = nextPlayer()
     
-    def knock(playersTurn: Int): GameState = 
+    def knock(): GameData = 
       val newPlayer = currentPlayer().copy(hasKnocked = true)
-      val newPlayers = players.updated(playersTurn - 1, newPlayer)
-      nextPlayer().copy(players= newPlayers)
+      val newPlayers = players.updated(currentPlayerIndex, newPlayer)
+      copy(players = newPlayers).nextPlayer()
     
-    private def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameState =
+    private def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameData =
         val gs = copy(table = table.swap(cardPositions(playersTurn)(idx1), cardPositions(0)(idx2)))
         if swapFinished then gs.nextPlayer() else gs
 
     def calculateIndex(indexToGive: String): Int = indexToGive.toInt - 1
 
-    def swap(currentGS: GameState, playersTurn: Int, indexGiveString: String, indexReceiveString: String): GameState =
+    def swap(currentGS: GameData, playersTurn: Int, indexGiveString: String, indexReceiveString: String): GameData =
       @tailrec
-      def swapRec(currentGS: GameState, iGiveStr: String, iReceiveStr: String): GameState =
+      def swapRec(currentGS: GameData, iGiveStr: String, iReceiveStr: String): GameData =
         val indexReceive = calculateIndex(iReceiveStr)
         if indexReceive > 2 then currentGS
         else
@@ -55,8 +55,8 @@ case class GameState(
 
       swapRec(currentGS, indexGiveString, indexReceiveString)
 
-object GameState:
-    def apply(playerCount: Int): GameState =
+object GameData:
+    def apply(playerCount: Int): GameData =
         val positions = List(
             List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
             List((0, 1), (0, 2), (0, 3)), //Position Player 1
@@ -70,7 +70,7 @@ object GameState:
 
         val playersList = (1 to playerCount).map(i => Player()).toList
 
-        GameState(
+        GameData(
         table = gameTable,
         playerCount = playerCount,
         players = playersList,

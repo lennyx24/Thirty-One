@@ -10,7 +10,7 @@ class newGameSpec extends AnyWordSpec {
       scala.util.Random.setSeed(seed)
 
       val playerCount = 4
-      val gameState = GameState(playerCount)
+      val gameState = GameData(playerCount)
 
       // Dieselbe Seed-Position wiederherstellen, dann die gleichen Indizes mit dem tatsächlich verwendeten Deck erzeugen
       scala.util.Random.setSeed(seed)
