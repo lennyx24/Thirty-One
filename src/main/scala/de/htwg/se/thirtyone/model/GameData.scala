@@ -56,26 +56,6 @@ case class GameData(
       swapRec(currentGS, indexGiveString, indexReceiveString)
 
 object GameData:
-    def apply(playerCount: Int): GameData =
-        val positions = List(
-            List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
-            List((0, 1), (0, 2), (0, 3)), //Position Player 1
-            List((0, 5), (0, 6), (0, 7)), //Position Player 2
-            List((2, 5), (2, 6), (2, 7)), //Position Player 3
-            List((2, 1), (2, 2), (2, 3)), //Position Player 4
-        )
-        val cardDeck = Deck()
-        val indexes = Table().indexes(cardDeck)
-        val gameTable = Table().createGameTable(playerCount, indexes, positions, cardDeck)
-
-        val playersList = (1 to playerCount).map(i => Player()).toList
-
-        GameData(
-        table = gameTable,
-        playerCount = playerCount,
-        players = playersList,
-        currentPlayerIndex = 0,
-        deck = cardDeck,
-        gameRunning = true,
-        cardPositions = positions
-    )
+    def apply(playerAmount: Int, gameMode: GameFactory = StandardGameFactory): GameData =
+      gameMode.createGame(playerAmount)
+        

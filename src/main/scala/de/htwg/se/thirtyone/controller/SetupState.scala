@@ -14,5 +14,4 @@ object SetupState extends ControllerState:
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(RunningGame(currentPlayer))
             case _ =>
-                c.notifyObservers(InvalidInput)
-        
+                c.notifyObservers(InvalidInput)          
