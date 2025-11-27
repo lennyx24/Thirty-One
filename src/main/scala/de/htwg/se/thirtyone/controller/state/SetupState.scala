@@ -1,7 +1,8 @@
-package de.htwg.se.thirtyone.controller
+package de.htwg.se.thirtyone.controller.state
 
 import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util._
+import de.htwg.se.thirtyone.controller.GameController
 
 object SetupState extends ControllerState:
     override def execute(input: String, c: GameController): Unit =
@@ -15,4 +16,3 @@ object SetupState extends ControllerState:
                 c.notifyObservers(RunningGame(currentPlayer))
             case _ =>
                 c.notifyObservers(InvalidInput)
-        

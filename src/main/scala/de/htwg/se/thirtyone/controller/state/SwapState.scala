@@ -1,7 +1,8 @@
-package de.htwg.se.thirtyone.controller
+package de.htwg.se.thirtyone.controller.state
 
 import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util._
+import de.htwg.se.thirtyone.controller.GameController
 
 class SwapState extends ControllerState:
     var give: String = ""
