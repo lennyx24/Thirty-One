@@ -1,7 +1,7 @@
-package de.htwg.se.thirtyone.controller
+package de.htwg.se.thirtyone.controller.state
 
-import de.htwg.se.thirtyone.util.GameStarted
-import de.htwg.se.thirtyone.util.InvalidInput
+import de.htwg.se.thirtyone.util._
+import de.htwg.se.thirtyone.controller.GameController
 
 object GameEndedState extends ControllerState:
     override def execute(input: String, c: GameController): Unit =

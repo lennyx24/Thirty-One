@@ -4,6 +4,7 @@ import de.htwg.se.thirtyone.model.GameData
 import de.htwg.se.thirtyone.util.{Observer, GameEvent}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import de.htwg.se.thirtyone.controller.state._
 
 class GameControllerSpec extends AnyWordSpec with Matchers {
 

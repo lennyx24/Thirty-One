@@ -1,4 +1,6 @@
-package de.htwg.se.thirtyone.model
+package de.htwg.se.thirtyone.model.factory
+
+import de.htwg.se.thirtyone.model._
 
 object StandardGameFactory extends GameFactory:
     override def createGame(playerAmount: Int): GameData =

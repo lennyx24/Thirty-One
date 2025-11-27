@@ -1,6 +1,7 @@
 package de.htwg.se.thirtyone.model
 
 import scala.annotation.tailrec
+import de.htwg.se.thirtyone.model.factory._
 
 case class GameData(
     table: Table,
