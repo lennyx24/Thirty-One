@@ -6,6 +6,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.model.GameData
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
+import de.htwg.se.thirtyone.controller.state._
 
 class PlayingStateSpec extends AnyWordSpec with Matchers {
   "PlayingState" should {
@@ -25,10 +26,11 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
           knockTo.map(i => stubGameData(i, None, None)).getOrElse(this)
       }
 
-    def makeController(gd: GameData): GameController =
-      new GameController(PlayingState, gd) {
-        override def notifyObservers(event: GameEvent): Unit = events += event.toString
-      }
+    def makeController(gd: GameData): GameController = {
+      val c = new GameController(PlayingState, gd)
+      c.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
+      c
+    }
 
     "execute passen" in {
       events.clear()

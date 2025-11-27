@@ -5,14 +5,16 @@ import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.model.GameData
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
+import de.htwg.se.thirtyone.controller.state._
 
 class SwapStateSpec extends AnyWordSpec with Matchers {
   "SwapState" should {
     val events = ArrayBuffer.empty[String]
-    def makeController(state: SwapState = new SwapState): GameController =
-      new GameController(state, GameData(2)) {
-        override def notifyObservers(event: GameEvent): Unit = events += event.toString
-      }
+    def makeController(state: SwapState = new SwapState): GameController = {
+      val c = new GameController(state, GameData(2))
+      c.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
+      c
+    }
 
     "handle give then take swap" in {
       events.clear()

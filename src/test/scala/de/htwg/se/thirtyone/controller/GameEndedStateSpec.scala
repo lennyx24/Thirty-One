@@ -4,6 +4,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.model.GameData
 import de.htwg.se.thirtyone.util._
+import de.htwg.se.thirtyone.controller.state._
 import scala.collection.mutable.ArrayBuffer
 
 class GameEndedStateSpec extends AnyWordSpec with Matchers {

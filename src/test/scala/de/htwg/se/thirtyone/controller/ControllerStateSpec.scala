@@ -5,6 +5,7 @@ import org.scalatest.matchers.should.Matchers
 import de.htwg.se.thirtyone.model.GameData
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
+import de.htwg.se.thirtyone.controller.state._
 
 class ControllerStateSpec extends AnyWordSpec with Matchers {
   "ControllerState.checkIfGameEnded" should {

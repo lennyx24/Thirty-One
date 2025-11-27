@@ -5,15 +5,17 @@ import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.model.GameData
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
+import de.htwg.se.thirtyone.controller.state._
 
 class SetupStateSpec extends AnyWordSpec with Matchers {
   "SetupState" should {
 
     val events = ArrayBuffer.empty[String]
-    def makeController(): GameController =
-      new GameController(SetupState, GameData(2)) {
-        override def notifyObservers(event: GameEvent): Unit = events += event.toString
-      }
+    def makeController(): GameController = {
+      val c = new GameController(SetupState, GameData(2))
+      c.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
+      c
+    }
 
     "initialize on valid player count" in {
       events.clear()
