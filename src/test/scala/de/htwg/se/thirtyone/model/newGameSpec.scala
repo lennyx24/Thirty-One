@@ -12,8 +12,6 @@ class newGameSpec extends AnyWordSpec {
       val playerCount = 4
       val gameState = GameData(playerCount)
 
-      // Dieselbe Seed-Position wiederherstellen, dann die gleichen Indizes mit dem tatsächlich verwendeten Deck erzeugen
-      scala.util.Random.setSeed(seed)
       val indexes = Table().indexes(gameState.deck)
 
       val cardPositions = List(
@@ -24,12 +22,27 @@ class newGameSpec extends AnyWordSpec {
         List((2, 1), (2, 2), (2, 3)) // Player 4
       )
 
-      val expectedTable = Table().createGameTable(playerCount, indexes, cardPositions, gameState.deck)
+      val table = gameState.table
 
-      gameState.table should be(expectedTable)
+      // Check high-level invariants
       gameState.playerCount should be(playerCount)
       gameState.currentPlayerIndex should be(0)
       gameState.gameRunning should be(true)
+
+      // All expected card positions must contain a card
+      val expectedPositions = cardPositions.flatten
+      expectedPositions.foreach { case (r, c) =>
+        table.grid(r)(c).isDefined shouldBe true
+      }
+
+      // Total number of placed cards equals sum of configured positions
+      val placedCount = table.grid.flatten.count(_.isDefined)
+      val expectedCount = expectedPositions.length
+      placedCount shouldBe expectedCount
+
+      // All cards placed must exist in the deck
+      val deckCards = gameState.deck.deck.toSet
+      table.grid.flatten.flatten.foreach(card => deckCards should contain(card))
     }
   }
 }

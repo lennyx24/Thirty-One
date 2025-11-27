@@ -5,12 +5,12 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class TableSpec extends AnyWordSpec {
   "Table" should {
-    "be able to set its value" in {
-      val tab: Table = Table()
-      val h10: Card = Card('♥', "10")
-      val d4: Card = Card('♦', "4")
-      val s7: Card = Card('♠', "7")
+    val tab: Table = Table()
+    val h10: Card = Card('♥', "10")
+    val d4: Card = Card('♦', "4")
+    val s7: Card = Card('♠', "7")
 
+    "be able to set its value" in {
       val newTab1 = tab.set((0, 1), h10)
       val s1 = newTab1.toString
       s1 should include("10♥")
@@ -34,42 +34,24 @@ class TableSpec extends AnyWordSpec {
     }
 
     "be able to get its value" in {
-      val tab: Table = Table()
-      val h10: Card = Card('♥', "10")
-      val d4: Card = Card('♦', "4")
-      val s7: Card = Card('♠', "7")
-      val newTab = tab.set((0, 0), h10)
-      val newTab2 = newTab.set((1, 1), d4)
-      val newTab3 = newTab2.set((2, 0), s7)
+      val newTab = tab.set((0, 0), h10).set((1, 1), d4).set((2, 0), s7)
 
-      val c1 = newTab3.get((0, 0))
-      c1 should be(Card('♥', "10", 10))
-      val c2 = newTab3.get((1, 1))
-      c2 should be(Card('♦', "4", 10))
+      newTab.get((0, 0)) should be(Card('♥', "10", 10))
+      newTab.get((1, 1)) should be(Card('♦', "4", 10))
 
-      an[NoSuchElementException] should be thrownBy (newTab3.get((2, 1)))
+      an[NoSuchElementException] should be thrownBy (newTab.get((2, 1)))
     }
 
     "be able to swap cards" in {
-      val tab: Table = Table()
-      val h10: Card = Card('♥', "10")
-      val d4: Card = Card('♦', "4")
-      val s7: Card = Card('♠', "7")
-      val newTab = tab.set((0, 0), h10)
-      val newTab2 = newTab.set((1, 1), d4)
-      val newTab3 = newTab2.set((2, 0), s7)
+      val newTab = tab.set((0, 0), h10).set((1, 1), d4).set((2, 0), s7)
 
-      val newTab4 = newTab3.swap((0, 0), (2, 0))
-      newTab4 should not be newTab3
+      val newTab4 = newTab.swap((0, 0), (2, 0))
+      newTab4 should not be newTab
       val newTab5 = newTab4.swap((0, 0), (2, 0))
-      newTab5 should be(newTab3)
+      newTab5 should be(newTab)
     }
 
     "be able to setAll cards" in {
-      val tab: Table = Table()
-      val h10: Card = Card('♥', "10")
-      val d4: Card = Card('♦', "4")
-      val s7: Card = Card('♠', "7")
 
       val newTab = tab.setAll(List((0, 0), (0, 1), (1, 2)), List(h10, d4, s7))
       val s = newTab.toString
