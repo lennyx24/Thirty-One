@@ -1,5 +1,7 @@
 package de.htwg.se.thirtyone.model
 
+import de.htwg.se.thirtyone.model.factory.StandardGameFactory
+
 import scala.util.Random
 
 case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])):
@@ -12,6 +14,15 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
       case Some(c) => c
       case None => throw new NoSuchElementException("No card at position " + pos)
     }
+    
+  def getAll(player: Int): List[Card] =
+    val cardPositions = StandardGameFactory.createGame(4).cardPositions
+    List(
+      this.get(cardPositions(player)(0)),
+      this.get(cardPositions(player)(1)),
+      this.get(cardPositions(player)(2))
+    )
+  
 
   def set(pos: (Int, Int), card: Card): Table = 
     val changedRow = grid(pos._1).updated(pos._2, Some(card))

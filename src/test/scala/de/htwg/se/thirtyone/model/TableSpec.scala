@@ -42,6 +42,18 @@ class TableSpec extends AnyWordSpec {
       an[NoSuchElementException] should be thrownBy (newTab.get((2, 1)))
     }
 
+    "be able to get all values of a player" in {
+      val newTab = tab.set((0, 1), h10).set((0, 2), d4).set((0, 3), s7)
+      val all = newTab.getAll(1)
+
+      all.size should be(3)
+      all should be(List(
+        newTab.get(((0),(1))),
+        newTab.get(((0),(2))),
+        newTab.get(((0),(3)))
+      ))
+    }
+
     "be able to swap cards" in {
       val newTab = tab.set((0, 0), h10).set((1, 1), d4).set((2, 0), s7)
 
