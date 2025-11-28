@@ -20,6 +20,10 @@ case class ConsoleView(controller: GameController) extends Observer:
         case PrintTable =>
             printNewRound(controller.gameData.table)
 
+        case PlayerScore(player) =>
+            val points = controller.gameData.getPlayerPoints(player)
+            println(s"Spieler $player hat $points Punkte.")
+
         case RunningGame(player) =>
             println(s"Spieler $player ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
             makeInput()

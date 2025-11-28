@@ -14,14 +14,26 @@ case class GameData(
 ):
     def currentPlayer(): Player = players(currentPlayerIndex)
 
-    def nextPlayer(): GameData = {
+    def nextPlayer(): GameData =
       val nextGameState =
         if currentPlayerIndex + 1 == playerCount then copy(currentPlayerIndex = 0)
         else copy(currentPlayerIndex = currentPlayerIndex + 1)
 
       if nextGameState.currentPlayer().hasKnocked then copy(gameRunning = false)
       else nextGameState
-    }
+
+    def changePlayerPoints(player: Int): GameData = 
+      val cards = table.getAll(player).toList
+      val p = GameScoringStrategy.strategy(cards)
+      val newPlayer = currentPlayer().copy(points = p)
+      val newPlayers = players.updated(player, newPlayer)
+      copy(players = newPlayers)
+
+    def getPlayerPoints(player: Int): Double =
+      players(player - 1).points
+
+    def getBestPlayer(): Player =
+      players.maxBy(_.points)
 
     def pass(): GameData = nextPlayer()
     

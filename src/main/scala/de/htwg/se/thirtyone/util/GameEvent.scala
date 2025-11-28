@@ -10,6 +10,8 @@ case object PrintTable extends GameEvent
 
 case class RunningGame(player: Int) extends GameEvent
 
+case class PlayerScore(player: Int) extends GameEvent
+
 case class PlayerSwapGive(player: Int) extends GameEvent
 
 case class PlayerSwapTake(player: Int) extends GameEvent

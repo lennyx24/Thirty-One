@@ -13,10 +13,10 @@ trait ControllerState {
                 execute(input, c)
 
     def execute(input: String, c: GameController): Unit
-        
 
     def checkIfGameEnded(c: GameController, currentPlayer: Int): Unit =
-        if !c.gameData.gameRunning then 
+        if !c.gameData.gameRunning || c.gameData.getPlayerPoints(currentPlayer) == 31 then 
             c.state = GameEndedState
+            // val winner = c.gameData.getBestPlayer()
             c.notifyObservers(GameEnded(currentPlayer))
 }

@@ -17,9 +17,11 @@ class SwapState extends ControllerState:
                 else if input != "alle" then
                     val take = input
                     c.gameData = c.gameData.swap(c.gameData, currentPlayer, give, take)
+                    c.gameData.changePlayerPoints(currentPlayer)
                     checkIfGameEnded(c, currentPlayer)
                     c.state = PlayingState
                     c.notifyObservers(PrintTable)
+                    c.notifyObservers(PlayerScore(currentPlayer))
                     c.notifyObservers(PlayerSwapped(currentPlayer))
                     c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
                 else
