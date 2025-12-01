@@ -3,11 +3,11 @@ package de.htwg.se.thirtyone.controller
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model.GameData
-import de.htwg.se.thirtyone.util._
+import de.htwg.se.thirtyone.model._
+import de.htwg.se.thirtyone.util.*
+
 import scala.collection.mutable.ArrayBuffer
-import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.model.GameScoringStrategy
+import de.htwg.se.thirtyone.controller.state.*
 
 class PlayingStateSpec extends AnyWordSpec with Matchers {
   "PlayingState" should {
@@ -20,7 +20,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
                       passTo: Option[Int] = None,
                       knockTo: Option[Int] = None
                     ): GameData =
-      new GameData(null, GameScoringStrategy.simpleScoringStrategy, 3, List.empty, index, null, true, List.empty) {
+      new GameData(null, GameScoringStrategy.simpleScoringStrategy, 3, List(Player(false, 15.0, 3), Player(false, 10.0, 2), Player(false, 25.0, 1)), index, null, true, List.empty) {
         override def pass(): GameData =
           passTo.map(i => stubGameData(i, None, None)).getOrElse(this)
         override def knock(): GameData =

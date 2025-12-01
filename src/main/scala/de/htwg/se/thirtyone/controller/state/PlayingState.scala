@@ -9,21 +9,21 @@ object PlayingState extends ControllerState:
         val currentPlayer = c.gameData.currentPlayerIndex + 1
         
         input.toLowerCase() match
-            case "passen" => 
+            case "passen" | "pass" =>
                 c.gameData = c.gameData.pass()
                 checkIfGameEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(PlayerPassed(currentPlayer))
                 c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
 
-            case "klopfen" =>
+            case "klopfen" | "knock" =>
                 c.gameData = c.gameData.knock()
                 checkIfGameEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(PlayerKnocked(currentPlayer))
                 c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
 
-            case "tauschen" =>
+            case "tauschen" | "swap" =>
                 c.state = new SwapState
                 c.notifyObservers(PlayerSwapGive(currentPlayer))
 
