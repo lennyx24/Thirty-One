@@ -1,7 +1,7 @@
 package de.htwg.se.thirtyone.model
 
 object GameScoringStrategy:
-    var strategy = normalScoringStrategy
+    type Strategy = List[Card] => Double
 
     private def cardPoints(card: Card): Double =
         card.value match
@@ -9,10 +9,10 @@ object GameScoringStrategy:
             case "K" | "Q" | "J" => 10
             case _ => card.value.toDouble
         
-    def simpleScoringStrategy(cards: List[Card]): Double =
+    val simpleScoringStrategy: Strategy = (cards: List[Card]) =>
         cards.map(cardPoints).sum
 
-    def normalScoringStrategy(cards: List[Card]): Double =
+    val normalScoringStrategy: Strategy = (cards: List[Card]) =>
         val bySymbol = cards.groupBy(_.symbol)
         val pointsPerSymbol = bySymbol.map {
             case (_, symbolCards) => symbolCards.map(cardPoints).sum

@@ -52,7 +52,7 @@ case class ConsoleView(controller: GameController) extends Observer:
             
     def makeInput(): Unit =
         val input = readLine()
-        controller.handleInput(input)       
+        controller.handleInput(input)
         
     def printNewRound(gameTable: Table): Unit = 
         (1 until 20).foreach(x => println)

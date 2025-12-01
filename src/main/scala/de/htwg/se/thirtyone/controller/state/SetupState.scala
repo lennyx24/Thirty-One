@@ -12,7 +12,9 @@ object SetupState extends ControllerState:
                 c.gameData = GameData(playerAmount)
                 c.state = PlayingState
                 val currentPlayer = c.gameData.currentPlayerIndex + 1
-                for (i <- 1 to c.gameData.playerCount) c.notifyObservers(PlayerScore(i))
+                for (i <- 1 to c.gameData.playerCount) do
+                    c.gameData = c.gameData.calculatePlayerPoints(i)
+                    c.notifyObservers(PlayerScore(i))
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(RunningGame(currentPlayer))
             case _ =>

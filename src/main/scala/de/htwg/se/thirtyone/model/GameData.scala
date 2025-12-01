@@ -2,9 +2,11 @@ package de.htwg.se.thirtyone.model
 
 import scala.annotation.tailrec
 import de.htwg.se.thirtyone.model.factory._
+import de.htwg.se.thirtyone.model.GameScoringStrategy.Strategy
 
 case class GameData(
     table: Table,
+    scoringStrategy: Strategy,
     playerCount: Int,
     players: List[Player],
     currentPlayerIndex: Int,
@@ -22,11 +24,14 @@ case class GameData(
       if nextGameState.currentPlayer().hasKnocked then copy(gameRunning = false)
       else nextGameState
 
-    def changePlayerPoints(player: Int): GameData = 
+    def calculatePlayerPoints(player: Int): GameData = 
       val cards = table.getAll(player).toList
-      val p = GameScoringStrategy.strategy(cards)
-      val newPlayer = currentPlayer().copy(points = p)
-      val newPlayers = players.updated(player, newPlayer)
+      val p = scoringStrategy(cards)
+
+      val playerIndex = player - 1
+      val playerToUpdate = players(playerIndex)
+      val newPlayer = playerToUpdate.copy(points = p)
+      val newPlayers = players.updated(playerIndex, newPlayer)
       copy(players = newPlayers)
 
     def getPlayerPoints(player: Int): Double =

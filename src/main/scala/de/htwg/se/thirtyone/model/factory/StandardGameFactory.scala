@@ -20,6 +20,7 @@ object StandardGameFactory extends GameFactory:
 
         GameData(
         table = gameTable,
+        scoringStrategy = GameScoringStrategy.normalScoringStrategy,
         playerCount = playerAmount,
         players = playersList,
         currentPlayerIndex = 0,

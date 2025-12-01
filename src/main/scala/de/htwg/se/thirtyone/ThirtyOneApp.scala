@@ -8,7 +8,7 @@ import de.htwg.se.thirtyone.controller.state._
 
 object ThirtyOneApp:
     def main(args: Array[String]): Unit =
-        val dummyState = GameData(Table(), 0, Nil, 0, Deck(), false, Nil)
+        val dummyState = GameData(Table(), GameScoringStrategy.simpleScoringStrategy,0, Nil, 0, Deck(), false, Nil)
         val controller = GameController(SetupState, dummyState)
         val view = ConsoleView(controller)
 
