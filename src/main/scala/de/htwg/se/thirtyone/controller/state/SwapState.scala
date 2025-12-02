@@ -18,7 +18,7 @@ class SwapState extends ControllerState:
                     val take = input
                     c.gameData = c.gameData.swap(c.gameData, currentPlayer, give, take)
                     c.gameData = c.gameData.calculatePlayerPoints(currentPlayer)
-                    checkIfGameEnded(c, currentPlayer)
+                    checkIfRoundEnded(c, currentPlayer)
                     c.state = PlayingState
                     
                     c.notifyObservers(PrintTable)

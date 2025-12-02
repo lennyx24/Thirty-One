@@ -24,7 +24,7 @@ case class GameData(
       if nextGameState.currentPlayer().hasKnocked then copy(gameRunning = false)
       else nextGameState
 
-    def calculatePlayerPoints(player: Int): GameData = 
+    def calculatePlayerPoints(player: Int): GameData =
       val cards = table.getAll(player).toList
       val p = scoringStrategy(cards)
 
@@ -33,12 +33,21 @@ case class GameData(
       val newPlayer = playerToUpdate.copy(points = p)
       val newPlayers = players.updated(playerIndex, newPlayer)
       copy(players = newPlayers)
+    
+    def doDamage(player: Player): GameData =
+      val playerIndex = players.indexOf(player)
+      val newPlayer = player.receiveDamage(1)
+      
+      val newPlayers = players.updated(playerIndex, newPlayer)
+      copy(players = newPlayers)
 
-    def getPlayerPoints(player: Int): Double =
-      players(player - 1).points
+    def getPlayerPoints(player: Int): Double = players(player - 1).points
 
-    def getBestPlayer(): Player =
-      players.maxBy(_.points)
+    def isGameEnded: Boolean = players.exists(!_.isAlive)
+
+    def getBestPlayerByPoints: Player = players.maxBy(_.points)
+    
+    def getWorstPlayerByPoints: Player = players.minBy(_.points)
 
     def pass(): GameData = nextPlayer()
     
@@ -72,6 +81,11 @@ case class GameData(
               swapRec(nextGS, iGiveStr, nextIndex)
 
       swapRec(currentGS, indexGiveString, indexReceiveString)
+
+    def resetNewRound: GameData =
+      val savedPlayers = players.map(_.copy(hasKnocked = false, points = 0))
+      val newGame = GameData(playerCount)
+      newGame.copy(players = savedPlayers)
 
 object GameData:
     def apply(playerAmount: Int, gameMode: GameFactory = StandardGameFactory): GameData =

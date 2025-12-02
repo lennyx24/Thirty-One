@@ -11,14 +11,14 @@ object PlayingState extends ControllerState:
         input.toLowerCase() match
             case "passen" => 
                 c.gameData = c.gameData.pass()
-                checkIfGameEnded(c, currentPlayer)
+                checkIfRoundEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(PlayerPassed(currentPlayer))
                 c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
 
             case "klopfen" =>
                 c.gameData = c.gameData.knock()
-                checkIfGameEnded(c, currentPlayer)
+                checkIfRoundEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(PlayerKnocked(currentPlayer))
                 c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
