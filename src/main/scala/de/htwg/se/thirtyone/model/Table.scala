@@ -58,9 +58,25 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     }
     table
 
-  override def toString: String = {
+  def printTable(players: List[Player]): String = {
     val invisibleCard: InvisibleCard= InvisibleCard()
-    grid.foldLeft("") { (output, row) =>
+    grid.zipWithIndex.foldLeft("") { case (output, (row, rowIndex)) =>
+      val playerHeader = rowIndex match {
+        case 0 =>
+          // Oben Links: Spieler 1 | Oben Rechts: Spieler 2
+          val p1 = if (players.nonEmpty) s"Spieler 1: ${players(0).playersHealth} Leben, ${players(0).points} Punkte" else ""
+          val p2 = if (players.length > 1) s"Spieler 2: ${players(1).playersHealth} Leben, ${players(1).points} Punkte" else ""
+          if (p1.nonEmpty || p2.nonEmpty) " " * 13 + f"$p1%-52s" + p2 + "\n" else ""
+
+        case 2 =>
+          // Unten Links: Spieler 4 | Unten Rechts: Spieler 3
+          val p4 = if (players.length > 3) s"Spieler 4: ${players(3).playersHealth} Leben, ${players(3).points} Punkte" else ""
+          val p3 = if (players.length > 2) s"Spieler 3: ${players(2).playersHealth} Leben, ${players(2).points} Punkte" else ""
+          if (p4.nonEmpty || p3.nonEmpty) " " * 13 + f"$p4%-52s" + p3 + "\n" else ""
+
+        case _ => ""
+      }
+      
       val (barString, topCellString, cellString, sizeCard) =
         row.foldLeft(("" ,"" ,"" , 0)) { case((bar, topCell, cell, size), idx)=>
           idx match 
@@ -77,6 +93,6 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
       val repeatCount = math.max(0, sizeCard / 2 - 1)
       val repeatCells = List.fill(repeatCount)(cellNL).mkString
       
-      output + barNL + topNL + repeatCells + barNL
+      output + playerHeader + barNL + topNL + repeatCells + barNL
     }
   }
