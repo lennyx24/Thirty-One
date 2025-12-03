@@ -10,9 +10,10 @@ object PlayingState extends ControllerState:
 
         input.toLowerCase() match
             case "passen" | "pass" =>
-                //c.gameData = c.gameData.pass()
-
-                UndoManager().doStep(SetCommand(c,input))
+                val command = new SetCommand(c, () => {
+                    c.gameData = c.gameData.pass()
+                })
+                c.undoManager.doStep(command)
 
                 checkIfGameEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
@@ -20,9 +21,10 @@ object PlayingState extends ControllerState:
                 c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
 
             case "klopfen" | "knock" =>
-                //c.gameData = c.gameData.knock()
-
-                UndoManager().doStep(SetCommand(c,input))
+                val command = new SetCommand(c, () => {
+                    c.gameData = c.gameData.knock()
+                })
+                c.undoManager.doStep(command)
 
                 checkIfGameEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
@@ -30,15 +32,22 @@ object PlayingState extends ControllerState:
                 c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
 
             case "tauschen" | "swap" =>
-                UndoManager().doStep(SetCommand(c,input))
-                //c.state = new SwapState
+                val command = new SetCommand(c, () => {
+                    c.state = new SwapState
+                })
+                c.undoManager.doStep(command)
+
                 c.notifyObservers(PlayerSwapGive(currentPlayer))
 
             case "undo" =>
-              UndoManager().undoStep()
+                c.undoManager.undoStep()
+                c.notifyObservers(PrintTable)
+                c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
 
             case "redo" =>
-              UndoManager().redoStep()
+                c.undoManager.redoStep()
+                c.notifyObservers(PrintTable)
+                c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
 
             case _ =>
                 c.notifyObservers(InvalidInput)
