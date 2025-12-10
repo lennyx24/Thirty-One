@@ -11,8 +11,8 @@ case class PresenceHandler(override val next: Option[SwapHandler] = None) extend
         val p2 = c.gameData.cardPositions(c.gameData.currentPlayerIndex + 1)(2)
         (p1, p2)
       case _ =>
-        val p1 = c.gameData.cardPositions(c.gameData.currentPlayerIndex + 1)(give.toInt)
-        val p2 = c.gameData.cardPositions(0)(receive.toInt)
+        val p1 = c.gameData.cardPositions(c.gameData.currentPlayerIndex + 1)(give.toInt - 1)
+        val p2 = c.gameData.cardPositions(0)(receive.toInt - 1)
         (p1, p2)
 
     val (r1, c1) = pos1
