@@ -14,8 +14,6 @@ trait ControllerState:
 
     def execute(input: String, c: GameController): Unit = c.notifyObservers(InvalidInput)
 
-    def initiateGame(playerAmount: Int, c: GameController): Unit = c.notifyObservers(InvalidInput)
-
     def pass(c: GameController): Unit = c.notifyObservers(InvalidInput)
     def knock(c: GameController): Unit = c.notifyObservers(InvalidInput)
     def swap(c: GameController): Unit = c.notifyObservers(InvalidInput)

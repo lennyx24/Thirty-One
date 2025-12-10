@@ -3,19 +3,15 @@ package de.htwg.se.thirtyone.aview
 import de.htwg.se.thirtyone.controller._
 import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util._
-import scala.io.StdIn.readLine
-
 
 case class ConsoleView(controller: GameController) extends Observer:    
     override def update(event: GameEvent): Unit = event match
         case GameStarted =>
             println("-- Willkommen zu Thirty One, auch bekannt als Schwimmen! --")
             println("Wie viele Spieler seit ihr (2-4):")
-            makeInput()
 
         case InvalidInput =>
             print(s"Das ist keine valide Option\n: ")
-            makeInput()
 
         case PrintTable =>
             printNewRound(controller.gameData.table)
@@ -26,15 +22,12 @@ case class ConsoleView(controller: GameController) extends Observer:
 
         case RunningGame(player) =>
             println(s"Spieler $player ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
-            makeInput()
 
         case PlayerSwapGive(player) =>
             println(s"Spieler $player, welche Karte willst du abgeben? (1, 2, 3 oder alle):")
-            makeInput()
 
         case PlayerSwapTake(player) =>
             println(s"Welche Karte willst du dafür erhalten? (1, 2 oder 3):")
-            makeInput()
 
         case PlayerPassed(player) =>
             println(s"Spieler $player setzt diese Runde aus.")
@@ -48,23 +41,6 @@ case class ConsoleView(controller: GameController) extends Observer:
         case GameEnded(player) =>
             println(s"Spieler $player hat gewonnen. Glückwunsch!")
             println("Wollt ihr noch eine Runde spielen? (j/n):")
-            makeInput()
-            
-    def makeInput(): Unit =
-        val input = readLine()
-        input match
-            case "passen" | "pass" | "p" => controller.pass()
-            case "klopfen" | "knock" | "k" => controller.knock()
-            case "tauschen" | "swap" | "s" => controller.swap()
-
-            case "1" | "2" | "3" => controller.selectCard(input)
-            case "alle" | "all" | "a" => controller.selectAll()
-
-            case "undo" | "u" => controller.undo()
-            case "redo" | "r" => controller.redo()
-            case "exit" | "quit" | "q" => System.exit(0)
-
-            case _ => controller.handleInput(input)
 
     def printNewRound(gameTable: Table): Unit = 
         (1 until 20).foreach(x => println)
