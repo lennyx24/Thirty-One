@@ -12,7 +12,16 @@ trait ControllerState {
             case _ =>
                 execute(input, c)
 
-    def execute(input: String, c: GameController): Unit
+    def execute(input: String, c: GameController): Unit = c.notifyObservers(InvalidInput)
+
+    def initiateGame(playerAmount: Int, c: GameController): Unit = c.notifyObservers(InvalidInput)
+
+    def pass(c: GameController): Unit = c.notifyObservers(InvalidInput)
+    def knock(c: GameController): Unit = c.notifyObservers(InvalidInput)
+    def swap(c: GameController): Unit = c.notifyObservers(InvalidInput)
+
+    def selectNumber(idx: String, c: GameController): Unit = c.notifyObservers(InvalidInput)
+    def selectAll(c: GameController): Unit = c.notifyObservers(InvalidInput)
 
     def checkIfGameEnded(c: GameController, currentPlayer: Int): Unit =
         if !c.gameData.gameRunning || c.gameData.getPlayerPoints(currentPlayer) == 31 then 

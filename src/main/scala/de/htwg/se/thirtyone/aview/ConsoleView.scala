@@ -52,8 +52,20 @@ case class ConsoleView(controller: GameController) extends Observer:
             
     def makeInput(): Unit =
         val input = readLine()
-        controller.handleInput(input)
-        
+        input match
+            case "passen" | "pass" | "p" => controller.pass()
+            case "klopfen" | "knock" | "k" => controller.knock()
+            case "tauschen" | "swap" | "s" => controller.swap()
+
+            case "1" | "2" | "3" => controller.selectCard(input)
+            case "alle" | "all" | "a" => controller.selectAll()
+
+            case "undo" | "u" => controller.undo()
+            case "redo" | "r" => controller.redo()
+            case "exit" | "quit" | "q" => System.exit(0)
+
+            case _ => controller.handleInput(input)
+
     def printNewRound(gameTable: Table): Unit = 
         (1 until 20).foreach(x => println)
         print(gameTable)
