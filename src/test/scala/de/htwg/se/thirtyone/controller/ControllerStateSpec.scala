@@ -20,7 +20,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
       }
 
       val player = 1
-      stub.checkIfGameEnded(controller, player)
+      stub.checkIfRoundEnded(controller, player)
 
       controller.state shouldBe GameEndedState
       events.exists(_.contains(s"GameEnded($player)")) shouldBe true

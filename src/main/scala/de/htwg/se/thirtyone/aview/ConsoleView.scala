@@ -68,5 +68,5 @@ case class ConsoleView(controller: GameController) extends Observer:
 
     def printNewRound(gameTable: Table): Unit = 
         (1 until 20).foreach(x => println)
-        print(gameTable)
+        print(gameTable.printTable(controller.gameData.players))
         (1 until 5).foreach(x => println)

@@ -11,7 +11,7 @@ object PlayingState extends ControllerState:
                     c.gameData = c.gameData.pass()
                 })
                 c.undoManager.doStep(command)
-                checkIfGameEnded(c, currentPlayer)
+                checkIfRoundEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(PlayerPassed(currentPlayer))
                 c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
@@ -23,7 +23,7 @@ object PlayingState extends ControllerState:
                 })
                 c.undoManager.doStep(command)
 
-                checkIfGameEnded(c, currentPlayer)
+                checkIfRoundEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(PlayerKnocked(currentPlayer))
                 c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
