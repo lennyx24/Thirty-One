@@ -10,7 +10,7 @@ case class GameData(
     playerCount: Int,
     players: List[Player],
     currentPlayerIndex: Int,
-    deck: Deck,
+    deck: Vector[Card],
     gameRunning: Boolean,
     cardPositions: List[List[(Int, Int)]]
 ):

@@ -47,13 +47,13 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     val newTab2 = newTab1.set((pos2._1, pos2._2), c1)
     newTab2
 
-  def indexes(cardDeck: Deck): Vector[Int] = Random.shuffle(cardDeck.deck.indices).toVector
+  def indexes(cardDeck: Vector[Card]): Vector[Int] = Random.shuffle(cardDeck.indices).toVector
   
-  def createGameTable(playerCount: Int, indexes: Vector[Int], cardPositions: List[List[(Int, Int)]], cardDeck: Deck): Table =
+  def createGameTable(playerCount: Int, indexes: Vector[Int], cardPositions: List[List[(Int, Int)]], cardDeck: Vector[Card]): Table =
     val (table, _) = (0 to playerCount).foldLeft(Table(), indexes) { case((t, idxs), i) =>
       val takeCount = cardPositions(i).length
       val (taken, rest) = idxs.splitAt(takeCount)
-      val cards: List[Card] = taken.map(cardDeck.deck).toList
+      val cards: List[Card] = taken.map(cardDeck).toList
       (t.setAll(cardPositions(i), cards), rest)
     }
     table

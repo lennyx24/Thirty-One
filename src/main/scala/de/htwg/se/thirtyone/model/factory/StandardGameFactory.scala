@@ -12,19 +12,24 @@ object StandardGameFactory extends GameFactory:
             List((2, 1), (2, 2), (2, 3)), //Position Player 4
         )
         // Create normal deck with 52 Cards
-        val cardDeck = Deck()
+        val cardDeck = Deck().deck
         val indexes = Table().indexes(cardDeck)
         val gameTable = Table().createGameTable(playerAmount, indexes, positions, cardDeck)
+
+        // Create small deck with 32 Card
+        val smallCardDeck = Deck().smallDeck
+        val indexesSmall = Table().indexes(smallCardDeck)
+        val gameTableSmall = Table().createGameTable(playerAmount, indexesSmall, positions, smallCardDeck)
 
         val playersList = (1 to playerAmount).map(i => Player()).toList
 
         GameData(
-        table = gameTable,
+        table = gameTableSmall,
         scoringStrategy = GameScoringStrategy.normalScoringStrategy,
         playerCount = playerAmount,
         players = playersList,
         currentPlayerIndex = 0,
-        deck = cardDeck,
+        deck = smallCardDeck,
         gameRunning = true,
         cardPositions = positions
         )
