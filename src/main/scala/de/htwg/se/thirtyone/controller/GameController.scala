@@ -14,7 +14,7 @@ class GameController(var state: ControllerState, var gameData: GameData) extends
   def knock(): Unit = state.knock(this)
   def swap(): Unit = state.swap(this)
 
-  def selectCard(idx: String): Unit = state.selectNumber(idx, this)
+  def selectNumber(idx: String): Unit = state.selectNumber(idx, this)
   def selectAll(): Unit = state.selectAll(this)
 
   def undo(): Unit = 

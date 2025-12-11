@@ -15,6 +15,7 @@ object ThirtyOneApp:
         val gui = GUI(controller)
 
         controller.add(view)
+        controller.add(gui)
         controller.notifyObservers(GameStarted)
         
         while (true) do
@@ -24,7 +25,7 @@ object ThirtyOneApp:
                 case "klopfen" | "knock" | "k" => controller.knock()
                 case "tauschen" | "swap" | "s" => controller.swap()
 
-                case "1" | "2" | "3" => controller.selectCard(input)
+                case "1" | "2" | "3" => controller.selectNumber(input)
                 case "alle" | "all" | "a" => controller.selectAll()
 
                 case "undo" | "u" => controller.undo()

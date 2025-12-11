@@ -1,7 +1,5 @@
 package de.htwg.se.thirtyone.model
 
-// import scala.language.postfixOps
-
 case class Deck(size: Int = 10) {
   
   val symbols: List[Char] = '♦'::'♠'::'♥'::'♣'::Nil
