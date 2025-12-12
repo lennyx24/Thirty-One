@@ -14,26 +14,86 @@ class GUI(controller: GameController) extends Frame with Observer{
     var swapMode: String = "none"
 
     val setupPanel = new BoxPanel(Orientation.Vertical) {
-        contents += new GridPanel(2, 1) {
-            contents += new Label("Willkommen zu Schwimmen!")
-            contents += new Label("Wie viele Spieler seit ihr Heute?")
-        }
+
+      contents += new GridPanel(6,2) {
+        contents += new Label("")
+        contents += new Label("Willkommen zu Schwimmen!")
+
+        contents += new Label("Wie viele Spieler seit ihr Heute?")
+
         val playerCount = new TextField("2")
         listenTo(playerCount)
         reactions += {
           case EditDone(playerCount) =>
-            if(playerCount.text.toInt < 2) playerCount.text = "2"
-            else if(playerCount.text.toInt > 4) playerCount.text = "4"
+            if (playerCount.text.toInt < 2) playerCount.text = "2"
+            else if (playerCount.text.toInt > 4) playerCount.text = "4"
+            playerCount.text match {
+              case "2" =>
+                nameP3.visible = false
+                nameP4.visible = false
+              case "3" =>
+                nameP3.visible = true
+                nameP4.visible = false
+              case "4" =>
+                nameP3.visible = true
+                nameP4.visible = true
+            }
         }
         val buttonAdd = new Button("^")
         val buttonSub = new Button("ˇ")
-        contents += new GridPanel(1,3){
+        contents += new GridPanel(1, 3) {
           contents += playerCount
-          contents += new GridPanel(2,1){
+          contents += new GridPanel(2, 1) {
             contents += buttonAdd
             contents += buttonSub
           }
         }
+        listenTo(buttonAdd, buttonSub)
+        reactions += {
+          case ButtonClicked(`buttonAdd`) =>
+            if (playerCount.text.toInt < 4) playerCount.text = (playerCount.text.toInt + 1).toString
+            playerCount.text match {
+              case "2" =>
+                nameP3.visible = false
+                nameP4.visible = false
+              case "3" =>
+                nameP3.visible = true
+                nameP4.visible = false
+              case "4" =>
+                nameP3.visible = true
+                nameP4.visible = true
+            }
+          case ButtonClicked(`buttonSub`) =>
+            if (playerCount.text.toInt > 2) playerCount.text = (playerCount.text.toInt - 1).toString
+            playerCount.text match {
+              case "2" =>
+                nameP3.visible = false
+                nameP4.visible = false
+              case "3" =>
+                nameP3.visible = true
+                nameP4.visible = false
+              case "4" =>
+                nameP3.visible = true
+                nameP4.visible = true
+            }
+        }
+
+        val nameP1 = new TextField("Player 1:")
+        val nameP2 = new TextField("Player 2:")
+        val nameP3 = new TextField("Player 3:")
+        val nameP4 = new TextField("Player 4:")
+
+        contents += new Label("Namen der Spieler: ")
+
+        contents += new GridPanel(playerCount.text.toInt,2){
+          contents += nameP1
+          contents += nameP2
+          contents += nameP3
+          contents += nameP4
+        }
+        nameP3.visible = false
+        nameP4.visible = false
+
         val modes = List("simple scoring Mode", "normal scoring Mode")
         val playingMode = new ComboBox[String](modes)
         contents += new Label("Welchen Spielmodus möchtest du spielen?")
@@ -41,15 +101,8 @@ class GUI(controller: GameController) extends Frame with Observer{
         val lives = new TextField("3")
         contents += new Label("Mit wie vielen Leben möchtet ihr spielen?")
         contents += lives
-        
-        listenTo(buttonAdd, buttonSub)
-        reactions += {
-          case ButtonClicked(`buttonAdd`) =>
-            if(playerCount.text.toInt < 4) playerCount.text = (playerCount.text.toInt + 1).toString
-          case ButtonClicked(`buttonSub`) =>
-            if(playerCount.text.toInt > 2) playerCount.text = (playerCount.text.toInt - 1).toString
-        }
 
+        contents += new Label("")
         val start = new Button("Spiel starten")
         contents += start
 
@@ -57,6 +110,7 @@ class GUI(controller: GameController) extends Frame with Observer{
         reactions += {
           case ButtonClicked(`start`) => controller.selectNumber(playerCount.text)
         }
+      }
     }
 
     val infoLabel = new Label("Spiel beginnt...") { xLayoutAlignment = 0.5 }
