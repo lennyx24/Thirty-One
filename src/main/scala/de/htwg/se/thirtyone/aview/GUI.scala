@@ -18,18 +18,44 @@ class GUI(controller: GameController) extends Frame with Observer{
             contents += new Label("Willkommen zu Schwimmen!")
             contents += new Label("Wie viele Spieler seit ihr Heute?")
         }
-        val b2 = new Button("2")
-        val b3 = new Button("3")
-        val b4 = new Button("4")
-        contents += new FlowPanel {
-            contents += b2
-            contents += b3
-            contents += b4      
+        val playerCount = new TextField("2")
+        listenTo(playerCount)
+        reactions += {
+          case EditDone(playerCount) =>
+            if(playerCount.text.toInt < 2) playerCount.text = "2"
+            else if(playerCount.text.toInt > 4) playerCount.text = "4"
+        }
+        val buttonAdd = new Button("^")
+        val buttonSub = new Button("ˇ")
+        contents += new GridPanel(1,3){
+          contents += playerCount
+          contents += new GridPanel(2,1){
+            contents += buttonAdd
+            contents += buttonSub
+          }
+        }
+        val modes = List("simple scoring Mode", "normal scoring Mode")
+        val playingMode = new ComboBox[String](modes)
+        contents += new Label("Welchen Spielmodus möchtest du spielen?")
+        contents += playingMode
+        val lives = new TextField("3")
+        contents += new Label("Mit wie vielen Leben möchtet ihr spielen?")
+        contents += lives
+        
+        listenTo(buttonAdd, buttonSub)
+        reactions += {
+          case ButtonClicked(`buttonAdd`) =>
+            if(playerCount.text.toInt < 4) playerCount.text = (playerCount.text.toInt + 1).toString
+          case ButtonClicked(`buttonSub`) =>
+            if(playerCount.text.toInt > 2) playerCount.text = (playerCount.text.toInt - 1).toString
         }
 
-        listenTo(b2, b3, b4)
+        val start = new Button("Spiel starten")
+        contents += start
+
+        listenTo(start)
         reactions += {
-            case ButtonClicked(b) => controller.selectNumber(b.text)
+          case ButtonClicked(`start`) => controller.selectNumber(playerCount.text)
         }
     }
 

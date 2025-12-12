@@ -2,20 +2,6 @@
 <project version="4">
   <component name="ScalaCompilerConfiguration">
     <option name="separateProdTestSources" value="true" />
-    <profile name="sbt 1" modules="Thirty-One" />
-    <profile name="sbt 2" modules="Thirty-One.test">
-      <parameters>
-        <parameter value="-Xsemanticdb" />
-        <parameter value="-semanticdb-target" />
-        <parameter value="$PROJECT_DIR$/target/scala-3.3.7/test-meta" />
-      </parameters>
-    </profile>
-    <profile name="sbt 3" modules="Thirty-One.main">
-      <parameters>
-        <parameter value="-Xsemanticdb" />
-        <parameter value="-semanticdb-target" />
-        <parameter value="$PROJECT_DIR$/target/scala-3.3.7/meta" />
-      </parameters>
-    </profile>
+    <profile name="sbt 1" modules="Thirty-One,Thirty-One.main,Thirty-One.test" />
   </component>
 </project>

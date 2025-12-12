@@ -79,8 +79,8 @@ class TableSpec extends AnyWordSpec {
 
     "should be able to createGameTable" in {
       val playercount = 2
-      val deck = Deck()
-      val indexes = (0 until deck.deck.size).toVector
+      val deck = Deck().deck
+      val indexes = (0 until deck.size).toVector
 
       val cardPositions = List(
         List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
@@ -91,12 +91,12 @@ class TableSpec extends AnyWordSpec {
       )
 
       val table = Table().createGameTable(playercount, indexes, cardPositions, deck)
-      table.get(cardPositions(0)(0)) should be(deck.deck(0))
-      table.get(cardPositions(0)(1)) should be(deck.deck(1))
-      table.get(cardPositions(0)(2)) should be(deck.deck(2))
-      table.get(cardPositions(1)(0)) should be(deck.deck(3))
-      table.get(cardPositions(1)(1)) should be(deck.deck(4))
-      table.get(cardPositions(1)(2)) should be(deck.deck(5))
+      table.get(cardPositions(0)(0)) should be(deck(0))
+      table.get(cardPositions(0)(1)) should be(deck(1))
+      table.get(cardPositions(0)(2)) should be(deck(2))
+      table.get(cardPositions(1)(0)) should be(deck(3))
+      table.get(cardPositions(1)(1)) should be(deck(4))
+      table.get(cardPositions(1)(2)) should be(deck(5))
     }
   }
 }
