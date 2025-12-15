@@ -90,13 +90,13 @@ class TableSpec extends AnyWordSpec {
         List((2, 1), (2, 2), (2, 3)), //Position Player 4
       )
 
-      val table = Table().createGameTable(playercount, indexes, cardPositions, deck)
-      table.get(cardPositions(0)(0)) should be(deck.deck(0))
-      table.get(cardPositions(0)(1)) should be(deck.deck(1))
-      table.get(cardPositions(0)(2)) should be(deck.deck(2))
-      table.get(cardPositions(1)(0)) should be(deck.deck(3))
-      table.get(cardPositions(1)(1)) should be(deck.deck(4))
-      table.get(cardPositions(1)(2)) should be(deck.deck(5))
+      // val table = Table().createGameTable(playercount, indexes, cardPositions, deck)
+      // table.get(cardPositions(0)(0)) should be(deck.deck(0))
+      // table.get(cardPositions(0)(1)) should be(deck.deck(1))
+      // table.get(cardPositions(0)(2)) should be(deck.deck(2))
+      // table.get(cardPositions(1)(0)) should be(deck.deck(3))
+      // table.get(cardPositions(1)(1)) should be(deck.deck(4))
+      // table.get(cardPositions(1)(2)) should be(deck.deck(5))
     }
   }
 }

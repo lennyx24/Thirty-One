@@ -5,7 +5,7 @@ import de.htwg.se.thirtyone.model.*
 import de.htwg.se.thirtyone.util.*
 import de.htwg.se.thirtyone.controller.GameController
 import de.htwg.se.thirtyone.controller.chainOfResponsibility.SwapProcessor
-import de.htwg.se.thirtyone.controller.chainOfResponsibility.{Result, Success, Failure}
+import scala.util._
 
 class SwapState extends ControllerState:
   var give: String = ""
@@ -20,8 +20,8 @@ class SwapState extends ControllerState:
         else if input != "alle" then
           val take = input
           SwapProcessor.process(c, give, take) match
-            case Success(updatedController) =>
-              c.gameData = updatedController.gameData.calculatePlayerPoints(currentPlayer)
+            case Success(v) =>
+              c.gameData = v.gameData.calculatePlayerPoints(currentPlayer)
               checkIfGameEnded(c, currentPlayer)
               c.state = PlayingState
 

@@ -2,9 +2,10 @@ package de.htwg.se.thirtyone.controller.chainOfResponsibility.swap
 
 import de.htwg.se.thirtyone.controller.GameController
 import de.htwg.se.thirtyone.controller.chainOfResponsibility._
+import scala.util._
 
 case class BoundsHandler(override val next: Option[SwapHandler] = None) extends SwapHandler(next):
-  override def handle(c: GameController, give: String, receive: String): Result[GameController] =
+  override def handle(c: GameController, give: String, receive: String): Try[GameController] =
     
     val (pos1, pos2) = give match
       case "alle" =>
@@ -18,7 +19,9 @@ case class BoundsHandler(override val next: Option[SwapHandler] = None) extends 
 
     val (r1, c1) = pos1
     val (r2, c2) = pos2
-    if r1 < 0 || r1 >= c.gameData.table.height || r2 < 0 || r2 >= c.gameData.table.height ||
-      c1 < 0 || c1 >= c.gameData.table.width  || c2 < 0 || c2 >= c.gameData.table.width then
-      Failure("Position außerhalb des Spielfeldes")
-    else passNext(c, give, receive)
+    val isBound = Try(r1 < 0 || r1 >= c.gameData.table.height || r2 < 0 || r2 >= c.gameData.table.height ||
+      c1 < 0 || c1 >= c.gameData.table.width  || c2 < 0 || c2 >= c.gameData.table.width)
+    isBound match
+      case Success(v) => passNext(c, give, receive)
+      case Failure(e) => Failure(throw IndexOutOfBoundsException("Position is out of bounds"))
+    

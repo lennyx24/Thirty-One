@@ -2,6 +2,7 @@ package de.htwg.se.thirtyone.model
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import scala.util.{Success, Failure}
 
 class GameDataSpec extends AnyWordSpec with Matchers {
 
@@ -46,16 +47,18 @@ class GameDataSpec extends AnyWordSpec with Matchers {
     }
 
     "calculate correct indexes from strings" in {
-      game.calculateIndex("1") should be(0)
-      game.calculateIndex("3") should be(2)
+      game.calculateIndex("1") should be(Success(0))
+      game.calculateIndex("3") should be(Success(2))
     }
 
     "handle card swaps correctly" in {
       val singleSwap = game.swap(game, 1, "1", "1")
-      singleSwap.currentPlayerIndex should be(1) 
+      singleSwap.isSuccess should be(true)
+      singleSwap.get.currentPlayerIndex should be(1) 
 
       val allSwap = game.swap(game, 1, "alle", "1")
-      allSwap.currentPlayerIndex should be(1)
+      allSwap.isSuccess should be(true)
+      allSwap.get.currentPlayerIndex should be(1)
     }
   }
 }
