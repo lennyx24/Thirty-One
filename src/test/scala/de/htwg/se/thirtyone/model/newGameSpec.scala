@@ -41,7 +41,7 @@ class newGameSpec extends AnyWordSpec {
       placedCount shouldBe expectedCount
 
       // All cards placed must exist in the deck
-      val deckCards = gameState.deck.toSet
+      val deckCards = gameState.deck.deck.toSet
       table.grid.flatten.flatten.foreach(card => deckCards should contain(card))
     }
   }

@@ -38,7 +38,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       val controller = makeController(stubGameData())
       val current = controller.gameData.currentPlayerIndex + 1
 
-      PlayingState.execute("passen", controller)
+      PlayingState.pass(controller)
 
       events.exists(_.contains("PrintTable")) shouldBe true
       events.exists(_.contains(s"PlayerPassed($current)")) shouldBe true
@@ -50,7 +50,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       val controller = makeController(stubGameData())
       val current = controller.gameData.currentPlayerIndex + 1
 
-      PlayingState.execute("klopfen", controller)
+      PlayingState.knock(controller)
 
       events.exists(_.contains("PrintTable")) shouldBe true
       events.exists(_.contains(s"PlayerKnocked($current)")) shouldBe true
@@ -62,7 +62,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       val controller = makeController(stubGameData())
       val current = controller.gameData.currentPlayerIndex + 1
 
-      PlayingState.execute("tauschen", controller)
+      PlayingState.swap(controller)
 
       controller.state should not be PlayingState
       events.exists(_.contains(s"PlayerSwapGive($current)")) shouldBe true

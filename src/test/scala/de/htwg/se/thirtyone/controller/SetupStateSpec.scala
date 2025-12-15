@@ -21,7 +21,7 @@ class SetupStateSpec extends AnyWordSpec with Matchers {
       events.clear()
       val controller = makeController()
 
-      SetupState.execute("3", controller)
+      SetupState.selectNumber("3", controller)
       events.exists(_.contains("PrintTable")) shouldBe true
       events.exists(_.contains("RunningGame(")) shouldBe true
       controller.state shouldBe PlayingState

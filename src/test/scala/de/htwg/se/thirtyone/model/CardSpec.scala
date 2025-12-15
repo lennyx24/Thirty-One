@@ -32,5 +32,15 @@ class CardSpec extends AnyWordSpec {
       Card('♦', "9", 8).cardSize should be("+--------+ \n| 9♦     | \n|        | \n|        | \n|        | \n+--------+ \n")
       Card('♦', "9").cardSize should be("+----------+ \n| 9♦       | \n|          | \n|          | \n|          | \n|          | \n+----------+ \n")
     }
+
+    "have a cardString equal to cardSize" in {
+      val c = Card('♦', "K", 5)
+      c.cardString should be(c.cardSize)
+    }
+
+    "require size > 3" in {
+      an [IllegalArgumentException] should be thrownBy Card('♦', "K", 3)
+      noException should be thrownBy Card('♦', "K", 4)
+    }
   }
 }

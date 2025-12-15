@@ -13,5 +13,10 @@ class DeckSpec extends AnyWordSpec{
       d15.deck.head shouldBe Card('♦', "2", 15)
       d15.deck.last shouldBe Card('♣', "A", 15)
     }
+
+    "have unique cards" in {
+      val d = Deck()
+      d.deck.toSet.size should be(52)
+    }
   }
 }

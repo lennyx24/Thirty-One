@@ -39,8 +39,8 @@ class GUI(controller: GameController) extends Frame with Observer{
                 nameP4.visible = true
             }
         }
-        val buttonAdd = new Button("^")
-        val buttonSub = new Button("ˇ")
+        val buttonAdd = new Button("▲")
+        val buttonSub = new Button("▼")
         contents += new GridPanel(1, 3) {
           contents += playerCount
           contents += new GridPanel(2, 1) {
@@ -85,7 +85,7 @@ class GUI(controller: GameController) extends Frame with Observer{
 
         contents += new Label("Namen der Spieler: ")
 
-        contents += new GridPanel(playerCount.text.toInt,2){
+        contents += new GridPanel(playerCount.text.toInt, 2) {
           contents += nameP1
           contents += nameP2
           contents += nameP3
