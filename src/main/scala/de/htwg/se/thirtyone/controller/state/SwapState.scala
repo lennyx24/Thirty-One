@@ -21,7 +21,7 @@ class SwapState extends ControllerState:
           SwapProcessor.process(c, give, take) match
             case Success(v) =>
               c.gameData = v.gameData.calculatePlayerPoints(currentPlayer)
-              checkIfGameEnded(c, currentPlayer)
+              checkIfRoundEnded(c, currentPlayer)
               c.state = PlayingState
 
               c.notifyObservers(PrintTable)
@@ -37,3 +37,11 @@ class SwapState extends ControllerState:
           c.notifyObservers(InvalidInput)
       case _ =>
         c.notifyObservers(InvalidInput)
+
+  override def selectNumber(idx: String, c: GameController): Unit =
+    // GUI calls this method directly when a card button is clicked; forward to execute so SwapState handles it consistently
+    execute(idx, c)
+
+  override def selectAll(c: GameController): Unit =
+    // Forward to execute with "alle" so behavior equals console "alle"
+    execute("alle", c)

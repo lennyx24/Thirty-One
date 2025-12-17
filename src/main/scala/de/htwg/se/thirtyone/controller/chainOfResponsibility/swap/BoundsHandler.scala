@@ -23,5 +23,4 @@ case class BoundsHandler(override val next: Option[SwapHandler] = None) extends 
       c1 < 0 || c1 >= c.gameData.table.width  || c2 < 0 || c2 >= c.gameData.table.width)
     isBound match
       case Success(v) => passNext(c, give, receive)
-      case Failure(e) => Failure(throw IndexOutOfBoundsException("Position is out of bounds"))
-    
+      case Failure(e) => Failure(new IndexOutOfBoundsException("Position is out of bounds"))

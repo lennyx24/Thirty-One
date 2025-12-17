@@ -22,4 +22,4 @@ case class PresenceHandler(override val next: Option[SwapHandler] = None) extend
     val cell2 = c.gameData.table.grid(r2)(c2)
     (cell1, cell2) match
       case (Some(_), Some(_)) => passNext(c, give, receive)
-      case _ => Failure(throw IndexOutOfBoundsException("Eine oder beide Zellen sind leer"))
+      case _ => Failure(new IndexOutOfBoundsException("Eine oder beide Zellen sind leer"))

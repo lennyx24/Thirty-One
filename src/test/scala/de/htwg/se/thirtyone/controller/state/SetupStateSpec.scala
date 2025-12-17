@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.controller
+package de.htwg.se.thirtyone.controller.state
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -6,6 +6,7 @@ import de.htwg.se.thirtyone.model.GameData
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
 import de.htwg.se.thirtyone.controller.state._
+import de.htwg.se.thirtyone.controller.GameController
 
 class SetupStateSpec extends AnyWordSpec with Matchers {
   "SetupState" should {
@@ -35,3 +36,4 @@ class SetupStateSpec extends AnyWordSpec with Matchers {
     }
   }
 }
+

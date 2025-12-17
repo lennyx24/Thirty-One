@@ -33,4 +33,3 @@ object ThirtyOneApp:
                 case "exit" | "quit" | "q" => System.exit(0)
 
                 case _ => controller.handleInput(input)
-    
