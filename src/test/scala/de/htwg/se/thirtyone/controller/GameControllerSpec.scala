@@ -52,9 +52,6 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
     }
 
     "support undo and redo" in {
-      // We need a command to be executed first.
-      // PlayingState.pass uses SetCommand which supports undo.
-      // But we need to be in PlayingState.
       val gd = GameData(2)
       val c = new GameController(PlayingState, gd)
       

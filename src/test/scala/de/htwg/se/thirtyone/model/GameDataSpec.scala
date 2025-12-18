@@ -59,15 +59,8 @@ class GameDataSpec extends AnyWordSpec with Matchers {
     }
 
     "calculate player points" in {
-      // Assuming simple scoring strategy where points are calculated
-      // We need to mock or setup table with cards for a player
-      // But GameData uses scoringStrategy passed in constructor.
-      // The default GameData(playerCount) uses StandardGameFactory which sets up a game.
-      // We can check if points are updated.
       val g = GameData(2)
       val gWithPoints = g.calculatePlayerPoints(1)
-      // Points might be 0 or something depending on cards.
-      // Just check it doesn't crash and updates the player.
       gWithPoints.players(0).points should be >= 0.0
     }
 
@@ -88,7 +81,6 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       val g = GameData(2)
       g.isGameEnded should be(false)
       
-      // Kill a player
       val deadPlayer = g.players(0).copy(playersHealth = 0, isAlive = false)
       val gEnded = g.copy(players = g.players.updated(0, deadPlayer))
       gEnded.isGameEnded should be(true)

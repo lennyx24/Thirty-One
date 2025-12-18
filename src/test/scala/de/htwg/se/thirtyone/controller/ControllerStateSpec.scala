@@ -11,7 +11,6 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
   "ControllerState.checkIfGameEnded" should {
     "set state to GameEndedState and notify GameEnded when gameRunning is false" in {
       val events = ArrayBuffer.empty[String]
-      // Player needs to die after damage. Health 1 -> 0.
       val p1 = Player(playersHealth = 1)
       val p2 = Player(playersHealth = 1)
       val gd = GameData(2).copy(gameRunning = false, players = List(p1, p2))
@@ -32,9 +31,6 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
 
   "ControllerState.handleInput" should {
     "handle quit/exit" in {
-      // System.exit cannot be easily tested without security manager or interception.
-      // We can skip this or assume it works.
-      // Or we can test that it calls execute for other inputs.
       val controller = new GameController(PlayingState, GameData(2))
       var executed = false
       val stub = new ControllerState {

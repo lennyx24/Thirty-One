@@ -19,7 +19,7 @@ class GUI(controller: GameController) extends Frame with Observer{
         contents += new Label("")
         contents += new Label("Willkommen zu Schwimmen!")
 
-        contents += new Label("Wie viele Spieler seit ihr Heute?")
+        contents += new Label("Wie viele Spieler seid ihr Heute?")
 
         val playerCount = new TextField("2")
         listenTo(playerCount)
@@ -78,10 +78,10 @@ class GUI(controller: GameController) extends Frame with Observer{
             }
         }
 
-        val nameP1 = new TextField("Player 1:")
-        val nameP2 = new TextField("Player 2:")
-        val nameP3 = new TextField("Player 3:")
-        val nameP4 = new TextField("Player 4:")
+        val nameP1 = new TextField("Player 1")
+        val nameP2 = new TextField("Player 2")
+        val nameP3 = new TextField("Player 3")
+        val nameP4 = new TextField("Player 4")
 
         contents += new Label("Namen der Spieler: ")
 
@@ -94,12 +94,12 @@ class GUI(controller: GameController) extends Frame with Observer{
         nameP3.visible = false
         nameP4.visible = false
 
-        val modes = List("simple scoring Mode", "normal scoring Mode")
+        val modes = List("Simple Mode", "Normal Mode")
         val playingMode = new ComboBox[String](modes)
-        contents += new Label("Welchen Spielmodus möchtest du spielen?")
+        contents += new Label("Welchen Spielmodus?")
         contents += playingMode
         val lives = new TextField("3")
-        contents += new Label("Mit wie vielen Leben möchtet ihr spielen?")
+        contents += new Label("Wie viele Leben?")
         contents += lives
 
         contents += new Label("")
