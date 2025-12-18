@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities
 class GUISpec extends AnyWordSpec with Matchers {
   "GUI" should {
     "update RunningGame and PlayerScore and swap modes" in {
+      if (java.awt.GraphicsEnvironment.isHeadless) cancel("Skipping GUI test in headless mode")
       // create controller and gui
       val controller = new GameController(de.htwg.se.thirtyone.controller.state.PlayingState, GameData(2))
       val gui = new GUI(controller)

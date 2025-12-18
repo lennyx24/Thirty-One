@@ -16,6 +16,7 @@ class GUIClickSpec extends AnyWordSpec with Matchers {
     }
 
     "call controller.selectNumber when clicking own card in give mode" in {
+      if (java.awt.GraphicsEnvironment.isHeadless) cancel("Skipping GUI test in headless mode")
       var selected: String = ""
       class TestController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: GameData) extends GameController(state, gd) {
         override def selectNumber(idx: String): Unit = selected = idx
@@ -52,6 +53,7 @@ class GUIClickSpec extends AnyWordSpec with Matchers {
     }
 
     "show infoLabel when clicking unrelated card in none mode" in {
+      if (java.awt.GraphicsEnvironment.isHeadless) cancel("Skipping GUI test in headless mode")
       class TestController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: GameData) extends GameController(state, gd) {
         override def selectNumber(idx: String): Unit = ()
       }
