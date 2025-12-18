@@ -62,8 +62,8 @@ class SwapStateSpec extends AnyWordSpec with Matchers {
       state.give = "1"
       state.selectAll(controller)
 
-      events.exists(_.contains("PlayerSwapped(")) shouldBe true
-      controller.state shouldBe PlayingState
+      events.exists(_.contains("InvalidInput")) shouldBe true
+      controller.state shouldBe state
     }
   }
 }

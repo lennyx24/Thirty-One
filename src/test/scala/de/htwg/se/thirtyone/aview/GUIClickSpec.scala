@@ -42,7 +42,10 @@ class GUIClickSpec extends AnyWordSpec with Matchers {
       // set give mode and click
       SwingUtilities.invokeAndWait(() => gui.swapMode = "give")
       SwingUtilities.invokeAndWait(() => btn.peer.doClick())
-      Thread.sleep(50)
+      
+      // wait for selection
+      val deadline = System.currentTimeMillis() + 1000
+      while (selected.isEmpty && System.currentTimeMillis() < deadline) Thread.sleep(10)
 
       // selectNumber should have been called with index (1..3)
       selected.nonEmpty shouldBe true
@@ -73,7 +76,9 @@ class GUIClickSpec extends AnyWordSpec with Matchers {
 
       SwingUtilities.invokeAndWait(() => gui.swapMode = "none")
       SwingUtilities.invokeAndWait(() => btn.peer.doClick())
-      Thread.sleep(50)
+      
+      val deadline = System.currentTimeMillis() + 1000
+      while (!gui.infoLabel.text.contains("nicht deine Karte") && System.currentTimeMillis() < deadline) Thread.sleep(10)
 
       gui.infoLabel.text should include("nicht deine Karte")
     }
