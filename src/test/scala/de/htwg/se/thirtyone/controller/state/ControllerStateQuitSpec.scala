@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.controller
+package de.htwg.se.thirtyone.controller.state
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
@@ -10,3 +10,4 @@ class ControllerStateQuitSpec extends AnyWordSpec with Matchers {
     }
   }
 }
+

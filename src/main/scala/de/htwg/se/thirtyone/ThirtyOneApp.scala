@@ -9,7 +9,7 @@ import scala.io.StdIn.readLine
 
 object ThirtyOneApp:
     def main(args: Array[String]): Unit =
-        val dummyState = GameData(Table(), GameScoringStrategy.simpleScoringStrategy,0, Nil, 0, Deck(), false, Nil)
+        val dummyState = GameData(Table(), GameScoringStrategy.simpleScoringStrategy,0, Nil, 0, Deck().smallDeck, false, Nil)
         val controller = GameController(SetupState, dummyState)
         val view = ConsoleView(controller)
         val gui = GUI(controller)
@@ -33,4 +33,3 @@ object ThirtyOneApp:
                 case "exit" | "quit" | "q" => System.exit(0)
 
                 case _ => controller.handleInput(input)
-    

@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.controller
+package de.htwg.se.thirtyone.controller.state
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
@@ -6,6 +6,7 @@ import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
 import de.htwg.se.thirtyone.controller.state._
+import de.htwg.se.thirtyone.controller.GameController
 
 class ControllerStateSpec extends AnyWordSpec with Matchers {
   "ControllerState.checkIfGameEnded" should {
@@ -44,3 +45,4 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
     }
   }
 }
+

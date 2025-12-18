@@ -139,7 +139,7 @@ class GUI(controller: GameController) extends Frame with Observer{
         val swapButton = new Button("Tauschen")
         
         contents += new GridPanel(1, 5) {
-            contents += new Label("Spieler 1")
+            contents += new Label("Spieler 1" + controller.gameData.players(0).playersHealth.toString)
             contents += pointsPlayer1
             contents += new Label("")
             contents += new Label("Spieler 2")
