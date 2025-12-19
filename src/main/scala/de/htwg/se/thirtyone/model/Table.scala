@@ -11,8 +11,7 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
   def get(pos: (Int, Int)): Card =
     grid(pos._1)(pos._2).get
     
-  def getAll(player: Int): List[Card] =
-    val cardPositions = StandardGameFactory.createGame(4).cardPositions
+  def getAll(player: Int, cardPositions: List[List[(Int,Int)]]): List[Card] =
     List(
       this.get(cardPositions(player)(0)),
       this.get(cardPositions(player)(1)),
@@ -44,14 +43,22 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
 
   def indexes(cardDeck: Vector[Card]): Vector[Int] = Random.shuffle(cardDeck.indices).toVector
   
-  def createGameTable(playerCount: Int, indexes: Vector[Int], cardPositions: List[List[(Int, Int)]], cardDeck: Vector[Card]): Table =
-    val (table, _) = (0 to playerCount).foldLeft(Table(), indexes) { case((t, idxs), i) =>
+  def createGameTable(playerCount: Int, indexes: Vector[Int], cardPositions: List[List[(Int, Int)]], cardDeck: Vector[Card]): (Table,Int) =
+    val (table, remaining) = (0 to playerCount).foldLeft(Table(), indexes) { case((t, idxs), i) =>
       val takeCount = cardPositions(i).length
       val (taken, rest) = idxs.splitAt(takeCount)
       val cards: List[Card] = taken.map(cardDeck).toList
       (t.setAll(cardPositions(i), cards), rest)
     }
-    table
+    (table, indexes.length - remaining.length)
+    
+  def newMiddleCards(indexes: Vector[Int],cardPositions: List[(Int,Int)] , cardDeck: Vector[Card], drawIndex: Int): (Table,Int) =
+    val available = indexes.drop(drawIndex)
+    if(available.length < 3) return (this, drawIndex)
+    val newTab = (0 until 3).foldLeft(this) {(tab,i) =>
+      tab.set(cardPositions(i), cardDeck(available(i)))
+    }
+    (newTab, drawIndex + 3)
 
   def printTable(players: List[Player]): String = {
     val invisibleCard: InvisibleCard= InvisibleCard()
