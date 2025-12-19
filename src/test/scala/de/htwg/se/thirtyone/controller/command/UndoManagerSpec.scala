@@ -15,15 +15,10 @@ class UndoManagerSpec extends AnyWordSpec with Matchers {
         override def undoStep(): Unit = { didUndo = true }
         override def redoStep(): Unit = { didRedo = true }
       }
-      // do
       um.doStep(cmd)
       didDo shouldBe true
-      // undo
       um.undoStep()
-      // undo may or may not call undo depending on internal stack, but should not throw
-      // redo
       um.redoStep()
-      // likewise, ensure no exceptions
       succeed
     }
   }

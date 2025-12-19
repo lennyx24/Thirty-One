@@ -21,11 +21,9 @@ class SwapStateSpec extends AnyWordSpec with Matchers {
       val state = new SwapState
       val controller = makeController(state)
 
-      // first: give
       state.selectNumber("1", controller)
       events.exists(_.contains("PlayerSwapTake(1)")) shouldBe true
 
-      // second: take -> completes swap
       events.clear()
       state.selectNumber("1", controller)
 

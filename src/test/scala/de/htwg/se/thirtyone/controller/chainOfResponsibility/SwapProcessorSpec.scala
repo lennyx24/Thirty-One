@@ -22,7 +22,6 @@ class SwapProcessorSpec extends AnyWordSpec with Matchers {
       val res = SwapProcessor.process(controller, "1", "1")
       res match
         case Success(c) =>
-          // After a successful swap the cards should be exchanged
           c.gameData.table.get(posGive) shouldBe beforeReceive
           c.gameData.table.get(posReceive) shouldBe beforeGive
         case Failure(e) => fail(s"Expected Success but got Failure: $e")
@@ -30,7 +29,6 @@ class SwapProcessorSpec extends AnyWordSpec with Matchers {
 
     "fail when one of the cells is empty (PresenceHandler)" in {
       val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2))
-      // make table empty so presence check fails
       controller.gameData = controller.gameData.copy(table = Table())
 
       val res = SwapProcessor.process(controller, "1", "1")

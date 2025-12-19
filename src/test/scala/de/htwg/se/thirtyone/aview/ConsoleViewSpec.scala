@@ -18,13 +18,11 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
       }
       val out = baos.toString
       out should not be empty
-      // expect at least the prompt about number of players or similar
       (out.contains("Spieler") || out.toLowerCase.contains("wie viele") || out.toLowerCase.contains("willkommen")) shouldBe true
     }
 
     "print player score when PlayerScore notification is received" in {
       val controller = new GameController(de.htwg.se.thirtyone.controller.state.PlayingState, GameData(2))
-      // ensure known points for player 1
       controller.gameData = controller.gameData.calculatePlayerPoints(1)
       val view = new ConsoleView(controller)
       val baos = new java.io.ByteArrayOutputStream()
@@ -40,7 +38,6 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
     "print table when printNewRound is called" in {
       val controller = new GameController(de.htwg.se.thirtyone.controller.state.PlayingState, GameData(2))
       val view = new ConsoleView(controller)
-      // create a small table and capture output
       val table = Table()
       val baos = new java.io.ByteArrayOutputStream()
       val ps = new java.io.PrintStream(baos)

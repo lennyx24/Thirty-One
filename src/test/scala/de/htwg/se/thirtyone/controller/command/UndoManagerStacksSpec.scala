@@ -20,23 +20,18 @@ class UndoManagerStacksSpec extends AnyWordSpec with Matchers {
 
       m.doStep(c1)
       m.doStep(c2)
-      // calls should include c1-do, c2-do
       calls should contain inOrderOnly ("c1-do", "c2-do")
 
       m.undoStep()
-      // undo called on c2
       calls.last shouldBe "c2-undo"
 
       m.undoStep()
-      // undo called on c1
       calls.last shouldBe "c1-undo"
 
       m.redoStep()
-      // redo called on c1
       calls.last shouldBe "c1-redo"
 
       m.redoStep()
-      // redo called on c2
       calls.last shouldBe "c2-redo"
     }
   }

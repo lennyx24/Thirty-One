@@ -25,30 +25,25 @@ class GUIClickSpec extends AnyWordSpec with Matchers {
       val controller = new TestController(de.htwg.se.thirtyone.controller.state.PlayingState, GameData(2))
       val gui = new GUI(controller)
 
-      // ensure table is drawn
       SwingUtilities.invokeAndWait(() => gui.update(PrintTable))
       waitForGrid(gui)
 
-      // find a card that is in player's hand
       val playerHand = controller.gameData.table.getAll(controller.gameData.currentPlayerIndex + 1)
       playerHand.nonEmpty shouldBe true
       val card = playerHand.head
       val btnText = card.value + card.symbol
 
-      // find matching button in grid
       val btnOpt = gui.cardGrid.contents.collect { case b: scala.swing.Button => b }.find(_.text == btnText)
       btnOpt.nonEmpty shouldBe true
       val btn = btnOpt.get
 
-      // set give mode and click
       SwingUtilities.invokeAndWait(() => gui.swapMode = "give")
       SwingUtilities.invokeAndWait(() => btn.peer.doClick())
       
-      // wait for selection
       val deadline = System.currentTimeMillis() + 1000
       while (selected.isEmpty && System.currentTimeMillis() < deadline) Thread.sleep(10)
 
-      // selectNumber should have been called with index (1..3)
+
       selected.nonEmpty shouldBe true
     }
 
@@ -64,10 +59,9 @@ class GUIClickSpec extends AnyWordSpec with Matchers {
       SwingUtilities.invokeAndWait(() => gui.update(PrintTable))
       waitForGrid(gui)
 
-      // pick a button for a card that is on the table but not in player's hand
       val playerHand = controller.gameData.table.getAll(controller.gameData.currentPlayerIndex + 1)
       val tableCards = controller.gameData.table.getAll(0)
-      // find a table card not in hand
+
       val otherOpt = tableCards.find(c => !playerHand.contains(c))
       val otherCard = otherOpt.getOrElse(tableCards.head)
       val btnText = otherCard.value + otherCard.symbol

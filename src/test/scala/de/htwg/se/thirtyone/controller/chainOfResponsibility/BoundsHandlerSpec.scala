@@ -18,7 +18,6 @@ class BoundsHandlerSpec extends AnyWordSpec with Matchers {
     "throw IndexOutOfBoundsException for out-of-bounds" in {
       val handler = BoundsHandler(None)
       val controller = new de.htwg.se.thirtyone.controller.GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2))
-      // tamper with cardPositions to have out-of-bounds indexes
       val badPositions = controller.gameData.cardPositions.map(_.map { case (r, c) => (100, 100) })
       controller.gameData = controller.gameData.copy(cardPositions = badPositions)
 

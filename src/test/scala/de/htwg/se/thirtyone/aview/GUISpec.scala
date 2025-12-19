@@ -11,27 +11,21 @@ class GUISpec extends AnyWordSpec with Matchers {
   "GUI" should {
     "update RunningGame and PlayerScore and swap modes" in {
       if (java.awt.GraphicsEnvironment.isHeadless) cancel("Skipping GUI test in headless mode")
-      // create controller and gui
       val controller = new GameController(de.htwg.se.thirtyone.controller.state.PlayingState, GameData(2))
       val gui = new GUI(controller)
 
-      // RunningGame
       SwingUtilities.invokeAndWait(() => gui.update(RunningGame(1)))
       gui.swapMode shouldBe "none"
       gui.infoLabel.text should include("Spieler 1")
 
-      // PlayerScore
-      // ensure a known points value
       controller.gameData = controller.gameData.calculatePlayerPoints(1)
       SwingUtilities.invokeAndWait(() => gui.update(PlayerScore(1)))
       gui.scoreLabels(0).text should include("Punkte")
 
-      // PlayerSwapGive
       SwingUtilities.invokeAndWait(() => gui.update(PlayerSwapGive(1)))
       gui.swapMode shouldBe "give"
       gui.swapAllButton.visible shouldBe true
 
-      // PlayerSwapTake
       SwingUtilities.invokeAndWait(() => gui.update(PlayerSwapTake(1)))
       gui.swapMode shouldBe "take"
     }

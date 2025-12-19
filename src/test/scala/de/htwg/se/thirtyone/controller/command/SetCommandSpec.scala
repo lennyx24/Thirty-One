@@ -14,7 +14,6 @@ class SetCommandSpec extends AnyWordSpec with Matchers {
       val initialGameData = controller.gameData
 
       def action(): Unit =
-        // mutate controller to simulate a game action
         controller.state = PlayingState
         controller.gameData = controller.gameData.pass()
 
