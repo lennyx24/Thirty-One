@@ -9,7 +9,7 @@ import scala.io.StdIn.readLine
 
 object ThirtyOneApp:
     def main(args: Array[String]): Unit =
-        val dummyState = GameData(Table(), GameScoringStrategy.simpleScoringStrategy,0, Nil, 0, Deck().smallDeck, Table().indexes(Deck().smallDeck),0, false, Nil)
+        val dummyState = GameData(Table(), GameScoringStrategy.normalScoringStrategy,0, Nil, 0, Deck().smallDeck, Table().indexes(Deck().smallDeck),0, false, Nil)
         val controller = GameController(SetupState, dummyState)
         val view = ConsoleView(controller)
         val gui = GUI(controller)

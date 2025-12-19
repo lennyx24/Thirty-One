@@ -34,7 +34,7 @@ case class GameData(
       else nextGameState
 
     def calculatePlayerPoints(player: Int): GameData =
-      val cards = table.getAll(player - 1, cardPositions).toList
+      val cards = table.getAll(player, cardPositions).toList
       val p = scoringStrategy(cards)
 
       val playerIndex = player - 1
@@ -58,14 +58,14 @@ case class GameData(
     
     def getWorstPlayerByPoints: Player = players.minBy(_.points)
 
-    def pass(): GameData = { 
+    def pass(): GameData = {
       val idx = currentPlayerIndex
       val updatedPlayer = players(idx).copy(hasPassed = true)
       val newPlayers = players.updated(idx, updatedPlayer)
       copy(players = newPlayers).nextPlayer()
     }
 
-    def knock(): GameData = 
+    def knock(): GameData =
       val newPlayer = currentPlayer().copy(hasKnocked = true)
       val newPlayers = players.updated(currentPlayerIndex, newPlayer)
       copy(players = newPlayers).resetPasses().nextPlayer()
@@ -73,7 +73,7 @@ case class GameData(
 
     def resetPasses(): GameData =
       copy(players = players.map(_.copy(hasPassed = false)))
-    
+
     private def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameData =
         val gs = copy(table = table.swap(cardPositions(playersTurn)(idx1), cardPositions(0)(idx2)))
         if swapFinished then gs.resetPasses().nextPlayer() else gs
