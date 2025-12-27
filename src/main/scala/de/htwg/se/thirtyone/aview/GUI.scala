@@ -7,7 +7,7 @@ import java.awt.Color
 import scala.swing.*
 import scala.swing.event.*
 
-class GUI(controller: GameController) extends Frame with Observer {
+class GUI(controller: ControllerInterface) extends Frame with Observer {
   title = "Thirty-One"
   peer.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE)
 
@@ -121,7 +121,6 @@ class GUI(controller: GameController) extends Frame with Observer {
   val pointsPlayer3 = new Label("Punkte: ")
   val pointsPlayer4 = new Label("Punkte: ")
 
-  // Spielername-Labels (dort werden Leben angehängt, z.B. "Spieler 1 (Leben: 3)")
   val playerName1 = new Label("Spieler 1")
   val playerName2 = new Label("Spieler 2")
   val playerName3 = new Label("Spieler 3")
@@ -130,7 +129,6 @@ class GUI(controller: GameController) extends Frame with Observer {
   val scoreLabels = Vector(pointsPlayer1, pointsPlayer2, pointsPlayer3, pointsPlayer4)
   val playerNameLabels = Vector(playerName1, playerName2, playerName3, playerName4)
 
-  // Keine Abfrage mehr: initialisiere Namen immer beim Umschalten ins Spielpanel
 
   val swapAllButton = new Button("Alles tauschen") {
     visible = false
@@ -151,7 +149,6 @@ class GUI(controller: GameController) extends Frame with Observer {
     val knockButton = new Button("Klopfen")
     val swapButton = new Button("Tauschen")
 
-    // Spieler 1 und 2 Zeile: Name (mit Leben), Punkte, Spacer, Name (mit Leben), Punkte
     contents += new GridPanel(1, 5) {
       contents += playerNameLabels(0)
       contents += scoreLabels(0)
@@ -162,7 +159,6 @@ class GUI(controller: GameController) extends Frame with Observer {
 
     contents += cardGrid
 
-    // Spieler 4 und 3 Zeile: Name (mit Leben), Punkte, Spacer, Name (mit Leben), Punkte
     contents += new GridPanel(2, 5) {
       contents += playerNameLabels(3)
       contents += scoreLabels(3)
@@ -188,11 +184,10 @@ class GUI(controller: GameController) extends Frame with Observer {
 
   def drawTable(): Unit =
     cardGrid.contents.clear()
-    val gridData = controller.gameData.table.grid
-    val currentPlayer = controller.gameData.currentPlayerIndex
+    val gridData = controller.getTableGrid()
 
-    val playerHand = controller.gameData.table.getAll(currentPlayer + 1)
-    val tableCards = controller.gameData.table.getAll(0)
+    val playerHand = controller.getPlayersHand()
+    val tableCards = controller.getTableCard()
 
     for (row <- 0 until 3) {
       for (col <- 0 until 9) {
@@ -244,19 +239,16 @@ class GUI(controller: GameController) extends Frame with Observer {
           contents = playingPanel
           pack()
           centerOnScreen()
-          // Initialisiere Spielername-Labels beim Umschalten zum Spielpanel (überschreibe stets)
-          for i <- 0 until controller.gameData.players.length do
+          for i <- 0 until controller.getPlayersLength() do
             if i < playerNameLabels.length then
-              playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.gameData.players(i).playersHealth})"
-              // initiale Punkte ebenfalls setzen
-              if i < scoreLabels.length then scoreLabels(i).text = s"Punkte: ${controller.gameData.getPlayerPoints(i + 1)}"
+              playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.getPlayersHealth(i)})"
+              if i < scoreLabels.length then scoreLabels(i).text = s"Punkte: ${controller.getPlayerScore(i + 1)}"
         drawTable()
         repaint()
 
-        // Bei jeder Table-Aktualisierung auch Leben aktualisieren (für den Fall von Rundenende o.ä.)
-        for i <- 0 until controller.gameData.players.length do
+        for i <- 0 until controller.getPlayersLength() do
           if i < playerNameLabels.length then
-            playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.gameData.players(i).playersHealth})"
+            playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.getPlayersHealth(i)})"
       })
 
     case RunningGame(player) =>
@@ -265,13 +257,12 @@ class GUI(controller: GameController) extends Frame with Observer {
       swapMode = "none"
 
     case PlayerScore(player) =>
-      val points = controller.gameData.getPlayerPoints(player)
+      val points = controller.getPlayerScore(player)
       javax.swing.SwingUtilities.invokeLater(() => {
         if player >= 0 then
           scoreLabels(player - 1).text = s"Punkte: $points"
-          // update Leben-Anzeige hinter dem Namen für diesen Spieler (falls sich Leben geändert haben)
-          if (player - 1) < controller.gameData.players.length then
-            playerNameLabels(player - 1).text = s"Spieler ${player} (Leben: ${controller.gameData.players(player - 1).playersHealth})"
+          if (player - 1) < controller.getPlayersLength() then
+            playerNameLabels(player - 1).text = s"Spieler ${player} (Leben: ${controller.getPlayersHealth(player - 1)})"
       })
 
     case PlayerSwapGive(player) =>

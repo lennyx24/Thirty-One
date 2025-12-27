@@ -22,11 +22,9 @@ class SwapStateSpec extends AnyWordSpec with Matchers {
       val state = new de.htwg.se.thirtyone.controller.state.SwapState
       val controller = makeController(state)
 
-      // first: give (call execute which SwapState implements)
       state.execute("1", controller)
       events.exists(_.contains("PlayerSwapTake(1)")) shouldBe true
 
-      // second: take -> completes swap
       events.clear()
       state.execute("1", controller)
 
@@ -63,7 +61,6 @@ class SwapStateSpec extends AnyWordSpec with Matchers {
       state.give = "1"
       state.execute("alle", controller)
 
-      // It should now be InvalidInput according to SwapState logic
       events.exists(_.contains("InvalidInput")) shouldBe true
       controller.state shouldBe a[de.htwg.se.thirtyone.controller.state.ControllerState]
     }

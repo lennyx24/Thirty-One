@@ -4,7 +4,7 @@ import de.htwg.se.thirtyone.controller._
 import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util._
 
-case class ConsoleView(controller: GameController) extends Observer:    
+case class ConsoleView(controller: ControllerInterface) extends Observer:    
     override def update(event: GameEvent): Unit = event match
         case GameStarted =>
             println("-- Willkommen zu Thirty One, auch bekannt als Schwimmen! --")
@@ -14,10 +14,10 @@ case class ConsoleView(controller: GameController) extends Observer:
             print(s"Das ist keine valide Option\n: ")
 
         case PrintTable =>
-            printNewRound(controller.gameData.table)
+            printNewRound(controller.getTableString())
 
         case PlayerScore(player) =>
-            val points = controller.gameData.getPlayerPoints(player)
+            val points = controller.getPlayerScore(player)
             println(s"Spieler $player hat $points Punkte.")
 
         case RunningGame(player) =>
@@ -42,7 +42,7 @@ case class ConsoleView(controller: GameController) extends Observer:
             println(s"Spieler $player hat gewonnen. Glückwunsch!")
             println("Wollt ihr noch eine Runde spielen? (j/n):")
 
-    def printNewRound(gameTable: Table): Unit = 
+    def printNewRound(gameTable: String): Unit = 
         (1 until 20).foreach(x => println)
-        print(gameTable.printTable(controller.gameData.players))
+        print(gameTable)
         (1 until 5).foreach(x => println)

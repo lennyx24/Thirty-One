@@ -12,7 +12,6 @@ import de.htwg.se.thirtyone.controller.GameController
 class PlayingStateSpec extends AnyWordSpec with Matchers {
   "PlayingState" should {
 
-    // shared helpers and fixtures
     val events = ArrayBuffer.empty[String]
 
     def stubGameData(
