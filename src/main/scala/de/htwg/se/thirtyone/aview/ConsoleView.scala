@@ -14,14 +14,15 @@ case class ConsoleView(controller: ControllerInterface) extends Observer:
             print(s"Das ist keine valide Option\n: ")
 
         case PrintTable =>
-            printNewRound(controller.getTableString())
+            printNewRound(controller.gameData.table.printTable(controller.gameData.players))
 
         case PlayerScore(player) =>
-            val points = controller.getPlayerScore(player)
+            val points = controller.gameData.getPlayerPoints(player)
             println(s"Spieler $player hat $points Punkte.")
 
         case RunningGame(player) =>
-            println(s"Spieler $player ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
+            val playerName = player.name
+            println(s"Spieler $playerName ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
 
         case PlayerSwapGive(player) =>
             println(s"Spieler $player, welche Karte willst du abgeben? (1, 2, 3 oder alle):")

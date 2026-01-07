@@ -1,10 +1,10 @@
 package de.htwg.se.thirtyone.controller.state
 
 import de.htwg.se.thirtyone.util._
-import de.htwg.se.thirtyone.controller.GameController
+import de.htwg.se.thirtyone.controller._
 
 trait ControllerState:
-    final def handleInput(input: String, c: GameController): Unit =
+    final def handleInput(input: String, c: ControllerInterface): Unit =
         input.trim.toLowerCase match
             case "quit" | "exit" =>
                 println("Spiel wird beendet...")
@@ -12,16 +12,16 @@ trait ControllerState:
             case _ =>
                 execute(input, c)
 
-    def execute(input: String, c: GameController): Unit = c.notifyObservers(InvalidInput)
+    def execute(input: String, c: ControllerInterface): Unit = c.notifyObservers(InvalidInput)
 
-    def pass(c: GameController): Unit = c.notifyObservers(InvalidInput)
-    def knock(c: GameController): Unit = c.notifyObservers(InvalidInput)
-    def swap(c: GameController): Unit = c.notifyObservers(InvalidInput)
+    def pass(c: ControllerInterface): Unit = c.notifyObservers(InvalidInput)
+    def knock(c: ControllerInterface): Unit = c.notifyObservers(InvalidInput)
+    def swap(c: ControllerInterface): Unit = c.notifyObservers(InvalidInput)
 
-    def selectNumber(idx: String, c: GameController): Unit = c.notifyObservers(InvalidInput)
-    def selectAll(c: GameController): Unit = c.notifyObservers(InvalidInput)
+    def selectNumber(idx: String, c: ControllerInterface): Unit = c.notifyObservers(InvalidInput)
+    def selectAll(c: ControllerInterface): Unit = c.notifyObservers(InvalidInput)
 
-    def checkIfRoundEnded(c: GameController, currentPlayer: Int): Unit =
+    def checkIfRoundEnded(c: ControllerInterface, currentPlayer: Int): Unit =
         if !c.gameData.gameRunning || c.gameData.getPlayerPoints(currentPlayer) == 31 then
             val worstPlayer = c.gameData.getWorstPlayerByPoints
             c.gameData = c.gameData.doDamage(worstPlayer)
@@ -31,11 +31,11 @@ trait ControllerState:
                 c.state = GameEndedState
                 c.notifyObservers(GameEnded(playerNumber))
             else
-                c.gameData = c.gameData.resetNewRound
+                c.gameData = c.gameData.resetNewRound()
                 c.state = PlayingState
                 for (i <- 1 to c.gameData.playerCount) do
                   c.gameData = c.gameData.calculatePlayerPoints(i)
                   c.notifyObservers(PlayerScore(i))
 
                 c.notifyObservers(PrintTable)
-                c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
+                c.notifyObservers(RunningGame(c.gameData.currentPlayer))

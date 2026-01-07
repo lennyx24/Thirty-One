@@ -14,46 +14,54 @@ case class GameData(
     deck: Vector[Card],
     gameRunning: Boolean,
     cardPositions: List[List[(Int, Int)]]
-):
-    def currentPlayer(): Player = players(currentPlayerIndex)
+) extends GameInterface:
+    override def currentPlayer: Player = players(currentPlayerIndex)
 
-    def nextPlayer(): GameData =
+    override def nextPlayer(): GameData =
       val nextGameState =
         if currentPlayerIndex + 1 == playerCount then copy(currentPlayerIndex = 0)
         else copy(currentPlayerIndex = currentPlayerIndex + 1)
 
-      if nextGameState.currentPlayer().hasKnocked then copy(gameRunning = false)
+      if nextGameState.currentPlayer.hasKnocked then copy(gameRunning = false)
       else nextGameState
 
-    def calculatePlayerPoints(player: Int): GameData =
-      val cards = table.getAll(player).toList
+    override def calculatePlayerPoints(playerNumber: Int): GameData =
+      val cards = table.getAll(playerNumber).toList
       val p = scoringStrategy(cards)
 
-      val playerIndex = player - 1
+      val playerIndex = playerNumber - 1
       val playerToUpdate = players(playerIndex)
       val newPlayer = playerToUpdate.copy(points = p)
       val newPlayers = players.updated(playerIndex, newPlayer)
       copy(players = newPlayers)
     
-    def doDamage(player: Player): GameData =
+    override def getPlayersHand(): List[Card] = table.getAll(currentPlayerIndex + 1)
+
+    override def getPlayersHealth(player: Int): Int = players(player).playersHealth
+
+    override def getPlayerScore(player: Int): Double = getPlayerPoints(player)
+
+    override def getTableCard(): List[Card] = table.getAll(0)
+    
+    override def doDamage(player: Player): GameData =
       val playerIndex = players.indexOf(player)
       val newPlayer = player.receiveDamage(1)
       
       val newPlayers = players.updated(playerIndex, newPlayer)
       copy(players = newPlayers)
 
-    def getPlayerPoints(player: Int): Double = players(player - 1).points
+    override def getPlayerPoints(playerNumber: Int): Double = players(playerNumber - 1).points
 
-    def isGameEnded: Boolean = players.exists(!_.isAlive)
+    override def isGameEnded: Boolean = players.exists(!_.isAlive)
 
-    def getBestPlayerByPoints: Player = players.maxBy(_.points)
+    override def getBestPlayerByPoints: Player = players.maxBy(_.points)
     
-    def getWorstPlayerByPoints: Player = players.minBy(_.points)
+    override def getWorstPlayerByPoints: Player = players.minBy(_.points)
 
-    def pass(): GameData = nextPlayer()
+    override def pass(): GameData = nextPlayer()
     
-    def knock(): GameData = 
-      val newPlayer = currentPlayer().copy(hasKnocked = true)
+    override def knock(): GameData = 
+      val newPlayer = currentPlayer.copy(hasKnocked = true)
       val newPlayers = players.updated(currentPlayerIndex, newPlayer)
       copy(players = newPlayers).nextPlayer()
     
@@ -61,9 +69,9 @@ case class GameData(
         val gs = copy(table = table.swap(cardPositions(playersTurn)(idx1), cardPositions(0)(idx2)))
         if swapFinished then gs.nextPlayer() else gs
 
-    def calculateIndex(indexToGive: String): Try[Int] = Try(indexToGive.toInt - 1)
+    private def calculateIndex(indexToGive: String): Try[Int] = Try(indexToGive.toInt - 1)
 
-    def swap(currentGS: GameData, playersTurn: Int, indexGiveString: String, indexReceiveString: String): Try[GameData] =
+    override def swap(playersTurn: Int, idxGiveString: String, idxReceiveString: String): Try[GameData] = 
       @tailrec
       def swapRec(currentGS: GameData, iGiveStr: String, iReceiveStr: String): Try[GameData] =
         calculateIndex(iReceiveStr) match
@@ -86,9 +94,9 @@ case class GameData(
                   swapRec(nextGS, iGiveStr, nextIndex)
                 case _ => Failure(new Exception("Invalid give string"))
 
-      swapRec(currentGS, indexGiveString, indexReceiveString)
+      swapRec(this, idxGiveString, idxReceiveString)
 
-    def resetNewRound: GameData =
+    override def resetNewRound(): GameData =
       val savedPlayers = players.map(_.copy(hasKnocked = false, points = 0))
       val newGame = GameData(playerCount)
       newGame.copy(players = savedPlayers)

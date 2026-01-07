@@ -1,8 +1,15 @@
 package de.htwg.se.thirtyone.controller
 
 import de.htwg.se.thirtyone.model._
+import de.htwg.se.thirtyone.util.Observable
+import de.htwg.se.thirtyone.controller.state.ControllerState
+import de.htwg.se.thirtyone.controller.command.UndoManager
 
-trait ControllerInterface {
+trait ControllerInterface extends Observable {
+    def gameData: GameInterface
+    def state: ControllerState
+    def undoManager: UndoManager
+
     def handleInput(input: String): Unit
 
     def pass(): Unit
@@ -14,13 +21,4 @@ trait ControllerInterface {
 
     def undo(): Unit
     def redo(): Unit
-
-    def getPlayersLength(): Int
-    def getPlayerScore(player: Int): Double
-    def getPlayersHealth(player: Int): Int
-    def getPlayersHand(): List[Card]
-
-    def getTableCard(): List[Card]
-    def getTableString(): String
-    def getTableGrid(): Vector[Vector[Option[Card]]]
 }

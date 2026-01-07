@@ -184,10 +184,10 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
 
   def drawTable(): Unit =
     cardGrid.contents.clear()
-    val gridData = controller.getTableGrid()
+    val gridData = controller.gameData.table.grid
 
-    val playerHand = controller.getPlayersHand()
-    val tableCards = controller.getTableCard()
+    val playerHand = controller.gameData.getPlayersHand()
+    val tableCards = controller.gameData.getTableCard()
 
     for (row <- 0 until 3) {
       for (col <- 0 until 9) {
@@ -239,16 +239,16 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
           contents = playingPanel
           pack()
           centerOnScreen()
-          for i <- 0 until controller.getPlayersLength() do
+          for i <- 0 until controller.gameData.players.length do
             if i < playerNameLabels.length then
-              playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.getPlayersHealth(i)})"
-              if i < scoreLabels.length then scoreLabels(i).text = s"Punkte: ${controller.getPlayerScore(i + 1)}"
+              playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.gameData.getPlayersHealth(i)})"
+              if i < scoreLabels.length then scoreLabels(i).text = s"Punkte: ${controller.gameData.getPlayerScore(i + 1)}"
         drawTable()
         repaint()
 
-        for i <- 0 until controller.getPlayersLength() do
+        for i <- 0 until controller.gameData.players.length do
           if i < playerNameLabels.length then
-            playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.getPlayersHealth(i)})"
+            playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.gameData.getPlayersHealth(i)})"
       })
 
     case RunningGame(player) =>
@@ -257,12 +257,12 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       swapMode = "none"
 
     case PlayerScore(player) =>
-      val points = controller.getPlayerScore(player)
+      val points = controller.gameData.getPlayerScore(player)
       javax.swing.SwingUtilities.invokeLater(() => {
         if player >= 0 then
           scoreLabels(player - 1).text = s"Punkte: $points"
-          if (player - 1) < controller.getPlayersLength() then
-            playerNameLabels(player - 1).text = s"Spieler ${player} (Leben: ${controller.getPlayersHealth(player - 1)})"
+          if (player - 1) < controller.gameData.players.length then
+            playerNameLabels(player - 1).text = s"Spieler ${player} (Leben: ${controller.gameData.getPlayersHealth(player - 1)})"
       })
 
     case PlayerSwapGive(player) =>

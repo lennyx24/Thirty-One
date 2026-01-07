@@ -1,11 +1,11 @@
 package de.htwg.se.thirtyone.controller.state
 
 import de.htwg.se.thirtyone.util.*
-import de.htwg.se.thirtyone.controller.GameController
+import de.htwg.se.thirtyone.controller.ControllerInterface
 import de.htwg.se.thirtyone.controller.command.*
 
 object PlayingState extends ControllerState:
-    override def pass(c: GameController): Unit = 
+    override def pass(c: ControllerInterface): Unit = 
         val currentPlayer = c.gameData.currentPlayerIndex + 1
         val command = new SetCommand(c, () => {
                     c.gameData = c.gameData.pass()
@@ -14,9 +14,9 @@ object PlayingState extends ControllerState:
                 checkIfRoundEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(PlayerPassed(currentPlayer))
-                c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
+                c.notifyObservers(RunningGame(c.gameData.currentPlayer))
 
-    override def knock(c: GameController): Unit = 
+    override def knock(c: ControllerInterface): Unit = 
         val currentPlayer = c.gameData.currentPlayerIndex + 1
         val command = new SetCommand(c, () => {
                     c.gameData = c.gameData.knock()
@@ -26,9 +26,9 @@ object PlayingState extends ControllerState:
                 checkIfRoundEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(PlayerKnocked(currentPlayer))
-                c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
+                c.notifyObservers(RunningGame(c.gameData.currentPlayer))
             
-    override def swap(c: GameController): Unit = 
+    override def swap(c: ControllerInterface): Unit = 
         val currentPlayer = c.gameData.currentPlayerIndex + 1
         val command = new SetCommand(c, () => {
                     c.state = new SwapState

@@ -4,8 +4,8 @@ import de.htwg.se.thirtyone.controller.*
 import de.htwg.se.thirtyone.controller.state._
 import de.htwg.se.thirtyone.model._
 
-class SetCommand(controller: GameController, action: () => Unit) extends Command {
-  var oGameData: Option[GameData] = None
+class SetCommand(controller: ControllerInterface, action: () => Unit) extends Command {
+  var oGameData: Option[GameInterface] = None
   var oState: Option[ControllerState] = None
   
   override def doStep(): Unit =

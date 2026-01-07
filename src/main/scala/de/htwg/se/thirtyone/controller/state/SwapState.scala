@@ -2,13 +2,13 @@ package de.htwg.se.thirtyone.controller.state
 
 import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util._
-import de.htwg.se.thirtyone.controller.GameController
+import de.htwg.se.thirtyone.controller._
 import de.htwg.se.thirtyone.controller.chainOfResponsibility.SwapProcessor
 import scala.util._
 
 class SwapState extends ControllerState:
   var give: String = ""
-  override def execute(input: String, c: GameController): Unit =
+  override def execute(input: String, c: ControllerInterface): Unit =
     input match
       case "1" | "2" | "3" | "alle" =>
         val currentPlayer = c.gameData.currentPlayerIndex + 1
@@ -27,7 +27,7 @@ class SwapState extends ControllerState:
               c.notifyObservers(PrintTable)
               c.notifyObservers(PlayerScore(currentPlayer))
               c.notifyObservers(PlayerSwapped(currentPlayer))
-              c.notifyObservers(RunningGame(c.gameData.currentPlayerIndex + 1))
+              c.notifyObservers(RunningGame(c.gameData.currentPlayer))
 
               give = ""
             case Failure(_) =>
@@ -38,10 +38,10 @@ class SwapState extends ControllerState:
       case _ =>
         c.notifyObservers(InvalidInput)
 
-  override def selectNumber(idx: String, c: GameController): Unit =
+  override def selectNumber(idx: String, c: ControllerInterface): Unit =
     // GUI calls this method directly when a card button is clicked; forward to execute so SwapState handles it consistently
     execute(idx, c)
 
-  override def selectAll(c: GameController): Unit =
+  override def selectAll(c: ControllerInterface): Unit =
     // Forward to execute with "alle" so behavior equals console "alle"
     execute("alle", c)

@@ -42,7 +42,7 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
       val baos = new java.io.ByteArrayOutputStream()
       val ps = new java.io.PrintStream(baos)
       scala.Console.withOut(ps) {
-        view.printNewRound(table)
+        view.printNewRound(table.printTable(controller.gameData.players))
       }
       val out = baos.toString
       out should not be empty
