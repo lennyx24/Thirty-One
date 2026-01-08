@@ -16,6 +16,10 @@ class GameController(var state: ControllerState, var gameData: GameInterface) ex
 
   override def swap(): Unit = state.swap(this)
 
+  override def initialGame(idx: String, playerNames: List[String]): Unit =
+    selectNumber(idx)
+    gameData = gameData.changePlayersNames(playerNames)
+
   override def selectNumber(idx: String): Unit = state.selectNumber(idx, this)
 
   override def selectAll(): Unit = state.selectAll(this)

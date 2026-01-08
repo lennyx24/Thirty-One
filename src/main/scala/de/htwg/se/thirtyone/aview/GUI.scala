@@ -77,11 +77,12 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
               nameP4.visible = true
           }
       }
+      val nameP1 = new TextField("Player 1")
+      val nameP2 = new TextField("Player 2")
+      val nameP3 = new TextField("Player 3")
+      val nameP4 = new TextField("Player 4")
 
-      val nameP1 = new TextField("Player 1:")
-      val nameP2 = new TextField("Player 2:")
-      val nameP3 = new TextField("Player 3:")
-      val nameP4 = new TextField("Player 4:")
+      val nameFields = List(nameP1, nameP2, nameP3, nameP4)
 
       contents += new Label("Namen der Spieler: ")
 
@@ -108,7 +109,9 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
 
       listenTo(start)
       reactions += {
-        case ButtonClicked(`start`) => controller.selectNumber(playerCount.text)
+        case ButtonClicked(`start`) => 
+          val currentNames = nameFields.take(playerCount.text.toInt).map(_.text)
+          controller.initialGame(playerCount.text, currentNames)
       }
     }
   }
