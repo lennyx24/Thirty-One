@@ -1,8 +1,6 @@
 package de.htwg.se.thirtyone.model
 
-import de.htwg.se.thirtyone.model.factory.StandardGameFactory
-
-import scala.util._
+import scala.util.*
 
 case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])):
   val height: Int = 3
@@ -10,15 +8,15 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
 
   def get(pos: (Int, Int)): Card =
     grid(pos._1)(pos._2).get
-    
-  def getAll(player: Int, cardPositions: List[List[(Int,Int)]]): List[Card] =
+
+  def getAll(player: Int, cardPositions: List[List[(Int, Int)]]): List[Card] =
     List(
       this.get(cardPositions(player)(0)),
       this.get(cardPositions(player)(1)),
       this.get(cardPositions(player)(2))
     )
 
-  def set(pos: (Int, Int), card: Card): Table = 
+  def set(pos: (Int, Int), card: Card): Table =
     val changedRow = grid(pos._1).updated(pos._2, Some(card))
     val newGrid = grid.updated(pos._1, changedRow)
     copy(grid = newGrid)
@@ -29,7 +27,7 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
       pos.foldLeft(grid) { case (g, (h, w)) =>
         val row = g(h)
         val changedRow = row.updated(w, Some(cards(i)))
-        i+=1
+        i += 1
         g.updated(h, changedRow)
       }
     copy(grid = newGrid)
@@ -42,26 +40,26 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     newTab2
 
   def indexes(cardDeck: Vector[Card]): Vector[Int] = Random.shuffle(cardDeck.indices).toVector
-  
-  def createGameTable(playerCount: Int, indexes: Vector[Int], cardPositions: List[List[(Int, Int)]], cardDeck: Vector[Card]): (Table,Int) =
-    val (table, remaining) = (0 to playerCount).foldLeft(Table(), indexes) { case((t, idxs), i) =>
+
+  def createGameTable(playerCount: Int, indexes: Vector[Int], cardPositions: List[List[(Int, Int)]], cardDeck: Vector[Card]): (Table, Int) =
+    val (table, remaining) = (0 to playerCount).foldLeft(Table(), indexes) { case ((t, idxs), i) =>
       val takeCount = cardPositions(i).length
       val (taken, rest) = idxs.splitAt(takeCount)
       val cards: List[Card] = taken.map(cardDeck).toList
       (t.setAll(cardPositions(i), cards), rest)
     }
     (table, indexes.length - remaining.length)
-    
-  def newMiddleCards(indexes: Vector[Int],cardPositions: List[(Int,Int)] , cardDeck: Vector[Card], drawIndex: Int): (Table,Int) =
+
+  def newMiddleCards(indexes: Vector[Int], cardPositions: List[(Int, Int)], cardDeck: Vector[Card], drawIndex: Int): (Table, Int) =
     val available = indexes.drop(drawIndex)
-    if(available.length < 3) return (this, drawIndex)
-    val newTab = (0 until 3).foldLeft(this) {(tab,i) =>
+    if (available.length < 3) return (this, drawIndex)
+    val newTab = (0 until 3).foldLeft(this) { (tab, i) =>
       tab.set(cardPositions(i), cardDeck(available(i)))
     }
     (newTab, drawIndex + 3)
 
   def printTable(players: List[Player]): String = {
-    val invisibleCard: InvisibleCard= InvisibleCard()
+    val invisibleCard: InvisibleCard = InvisibleCard()
     grid.zipWithIndex.foldLeft("") { case (output, (row, rowIndex)) =>
       val playerHeader = rowIndex match {
         case 0 =>
@@ -78,23 +76,23 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
 
         case _ => ""
       }
-      
+
       val (barString, topCellString, cellString, sizeCard) =
-        row.foldLeft(("" ,"" ,"" , 0)) { case((bar, topCell, cell, size), idx)=>
-          idx match 
+        row.foldLeft(("", "", "", 0)) { case ((bar, topCell, cell, size), idx) =>
+          idx match
             case Some(card) =>
               (bar + card.bar, topCell + card.topCell, cell + card.cells, card.size)
             case None =>
               (bar + invisibleCard.invCell, topCell + invisibleCard.invCell, cell + invisibleCard.invCell, size)
-          
+
         }
       val barNL = barString + "\n"
       val topNL = topCellString + "\n"
       val cellNL = cellString + "\n"
-      
+
       val repeatCount = math.max(0, sizeCard / 2 - 1)
       val repeatCells = List.fill(repeatCount)(cellNL).mkString
-      
+
       output + playerHeader + barNL + topNL + repeatCells + barNL
     }
   }

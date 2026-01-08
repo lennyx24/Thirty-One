@@ -1,13 +1,14 @@
 package de.htwg.se.thirtyone.controller.state
 
-import de.htwg.se.thirtyone.model._
-import de.htwg.se.thirtyone.util._
-import de.htwg.se.thirtyone.controller._
+import de.htwg.se.thirtyone.controller.*
 import de.htwg.se.thirtyone.controller.chainOfResponsibility.SwapProcessor
-import scala.util._
+import de.htwg.se.thirtyone.util.*
+
+import scala.util.*
 
 class SwapState extends ControllerState:
   var give: String = ""
+
   override def execute(input: String, c: ControllerInterface): Unit =
     input match
       case "1" | "2" | "3" | "alle" =>

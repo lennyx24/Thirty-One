@@ -1,4 +1,4 @@
-import de.htwg.se.thirtyone.model._
+import de.htwg.se.thirtyone.model.*
 
 def cardTUI(x: Int, n: Int): Unit = {
   val topBot = "+" + ("-" * x) + "+"
@@ -14,7 +14,6 @@ def cardTUI(x: Int, n: Int): Unit = {
   println(midRows)
   print(topRow)
 }
-
 
 
 var tab: Table = Table()

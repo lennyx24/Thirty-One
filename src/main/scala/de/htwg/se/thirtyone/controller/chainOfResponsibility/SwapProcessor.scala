@@ -1,8 +1,9 @@
 package de.htwg.se.thirtyone.controller.chainOfResponsibility
 
-import de.htwg.se.thirtyone.controller.chainOfResponsibility.swap.{BoundsHandler, PerformSwapHandler, PresenceHandler, SwapHandler}
-import scala.util._
 import de.htwg.se.thirtyone.controller.ControllerInterface
+import de.htwg.se.thirtyone.controller.chainOfResponsibility.swap.{BoundsHandler, PerformSwapHandler, PresenceHandler, SwapHandler}
+
+import scala.util.*
 
 object SwapProcessor:
   def swapChain: SwapHandler =
