@@ -39,9 +39,7 @@ class SwapState extends ControllerState:
         c.notifyObservers(InvalidInput)
 
   override def selectNumber(idx: String, c: ControllerInterface): Unit =
-    // GUI calls this method directly when a card button is clicked; forward to execute so SwapState handles it consistently
     execute(idx, c)
 
   override def selectAll(c: ControllerInterface): Unit =
-    // Forward to execute with "alle" so behavior equals console "alle"
     execute("alle", c)
