@@ -27,4 +27,7 @@ trait GameInterface {
     def knock(): GameInterface
     def swap(playersTurn: Int, idxGiveString: String, idxReceiveString: String): Try[GameInterface]
     def resetNewRound(): GameInterface
+    def resetPasses(): GameInterface
+    def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameInterface
+    def calculateIndex(indexToGive: String): Try[Int]
 }
