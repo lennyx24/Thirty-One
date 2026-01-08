@@ -17,6 +17,22 @@ class GameController(var state: ControllerState, var gameData: GameInterface) ex
   override def selectNumber(idx: String): Unit = state.selectNumber(idx, this)
   override def selectAll(): Unit = state.selectAll(this)
 
+  override def countPoints(c: ControllerInterface, currentPlayer: Int): Unit = gameData = c.gameData.calculatePlayerPoints(currentPlayer)
+
+  override def setState(controllerState: ControllerState): Unit = state = controllerState
+
+  override def gameDataSetup(idx: String): Unit = gameData = GameData(idx.toInt)
+
+  override def dealDamage(worstPlayer: Player): Unit = gameData = gameData.doDamage(worstPlayer)
+
+  override def resetGame(): Unit = gameData = gameData.resetNewRound()
+
+  override def setGameData(g: GameInterface): Unit = gameData = g
+
+  override def gamePass(): Unit = gameData = gameData.pass()
+
+  override def gameKnock(): Unit = gameData = gameData.knock()
+
   override def undo(): Unit = 
     undoManager.undoStep()
     notifyObservers(PrintTable)

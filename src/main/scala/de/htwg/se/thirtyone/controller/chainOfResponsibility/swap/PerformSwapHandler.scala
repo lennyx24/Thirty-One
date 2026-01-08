@@ -8,7 +8,7 @@ case class PerformSwapHandler(override val next: Option[SwapHandler] = None) ext
   override def handle(c: ControllerInterface, give: String, receive: String): Try[ControllerInterface] = {
     
     c.gameData.swap(c.gameData.currentPlayerIndex + 1, give, receive).map { newGameData =>
-      c.gameData = newGameData
+      c.setGameData(newGameData)
       c
     }
   }

@@ -24,17 +24,17 @@ trait ControllerState:
     def checkIfRoundEnded(c: ControllerInterface, currentPlayer: Int): Unit =
         if !c.gameData.gameRunning || c.gameData.getPlayerPoints(currentPlayer) == 31 then
             val worstPlayer = c.gameData.getWorstPlayerByPoints
-            c.gameData = c.gameData.doDamage(worstPlayer)
+            c.dealDamage(worstPlayer)
             if c.gameData.isGameEnded then
                 val bestPlayer = c.gameData.getBestPlayerByPoints
                 val playerNumber = c.gameData.players.indexOf(bestPlayer) + 1
-                c.state = GameEndedState
+                c.setState(GameEndedState)
                 c.notifyObservers(GameEnded(playerNumber))
             else
-                c.gameData = c.gameData.resetNewRound()
-                c.state = PlayingState
+                c.resetGame()
+                c.setState(PlayingState)
                 for (i <- 1 to c.gameData.playerCount) do
-                  c.gameData = c.gameData.calculatePlayerPoints(i)
+                  c.countPoints(c, i)
                   c.notifyObservers(PlayerScore(i))
 
                 c.notifyObservers(PrintTable)

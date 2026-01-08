@@ -8,7 +8,7 @@ object PlayingState extends ControllerState:
     override def pass(c: ControllerInterface): Unit = 
         val currentPlayer = c.gameData.currentPlayerIndex + 1
         val command = new SetCommand(c, () => {
-                    c.gameData = c.gameData.pass()
+                    c.gamePass()
                 })
                 c.undoManager.doStep(command)
                 checkIfRoundEnded(c, currentPlayer)
@@ -19,7 +19,7 @@ object PlayingState extends ControllerState:
     override def knock(c: ControllerInterface): Unit = 
         val currentPlayer = c.gameData.currentPlayerIndex + 1
         val command = new SetCommand(c, () => {
-                    c.gameData = c.gameData.knock()
+                    c.gameKnock()
                 })
                 c.undoManager.doStep(command)
 
@@ -31,7 +31,7 @@ object PlayingState extends ControllerState:
     override def swap(c: ControllerInterface): Unit = 
         val currentPlayer = c.gameData.currentPlayerIndex + 1
         val command = new SetCommand(c, () => {
-                    c.state = new SwapState
+                    c.setState(SwapState())
                 })
                 c.undoManager.doStep(command)
 

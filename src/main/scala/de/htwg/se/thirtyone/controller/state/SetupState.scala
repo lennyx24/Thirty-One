@@ -6,11 +6,11 @@ import de.htwg.se.thirtyone.controller.ControllerInterface
 
 object SetupState extends ControllerState:
     override def selectNumber(idx: String, c: ControllerInterface): Unit = 
-        c.gameData = GameData(idx.toInt)
-        c.state = PlayingState
+        c.gameDataSetup(idx)
+        c.setState(PlayingState)
         val currentPlayer = c.gameData.currentPlayerIndex + 1
         for (i <- 1 to c.gameData.playerCount) do
-            c.gameData = c.gameData.calculatePlayerPoints(i)
+            c.countPoints(c, i)
             c.notifyObservers(PlayerScore(i))
         c.notifyObservers(PrintTable)
         c.notifyObservers(RunningGame(c.gameData.currentPlayer))
