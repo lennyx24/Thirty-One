@@ -22,7 +22,6 @@ object PlayingState extends ControllerState:
                     c.gameData = c.gameData.knock()
                 })
                 c.undoManager.doStep(command)
-
                 checkIfRoundEnded(c, currentPlayer)
                 c.notifyObservers(PrintTable)
                 c.notifyObservers(PlayerKnocked(currentPlayer))
