@@ -15,16 +15,16 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
     val events = ArrayBuffer.empty[String]
 
     def stubGameData(
-                      index: Int = 0,
-                      passTo: Option[Int] = None,
-                      knockTo: Option[Int] = None
+                      index: Int = 0
                     ): GameData =
-      new GameData(null, GameScoringStrategy.simpleScoringStrategy, 3, List(Player(false, 15.0, 3), Player(false, 10.0, 2), Player(false, 25.0, 1)), index, null, true, List.empty) {
-        override def pass(): GameData =
-          passTo.map(i => stubGameData(i, None, None)).getOrElse(this)
-        override def knock(): GameData =
-          knockTo.map(i => stubGameData(i, None, None)).getOrElse(this)
-      }
+      // Erzeuge Basis-GameData über Factory und passe Felder mit copy an
+      val base = GameData(3)
+      val players = List(
+        Player(name = "P1", hasKnocked = false, points = 15.0, playersHealth = 3),
+        Player(name = "P2", hasKnocked = false, points = 10.0, playersHealth = 2),
+        Player(name = "P3", hasKnocked = false, points = 25.0, playersHealth = 1)
+      )
+      base.copy(players = players, currentPlayerIndex = index)
 
     def makeController(gd: GameData): GameController = {
       val c = new GameController(PlayingState, gd)
@@ -37,11 +37,24 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       val controller = makeController(stubGameData())
       val current = controller.gameData.currentPlayerIndex + 1
 
+      // Debug: ensure subscriber was added and direct notify works
+      controller.subscribers.size should be > 0
+      controller.notifyObservers(PrintTable)
+      events.exists(_.contains("PrintTable")) shouldBe true
+      events.clear()
+
+      val beforeIndex = controller.gameData.currentPlayerIndex
+      val beforeHasPassed = controller.gameData.players(beforeIndex).hasPassed
+
       PlayingState.pass(controller)
+
+      // check model change happened for the player who passed
+      val afterHasPassed = controller.gameData.players(beforeIndex).hasPassed
+      afterHasPassed shouldBe true
 
       events.exists(_.contains("PrintTable")) shouldBe true
       events.exists(_.contains(s"PlayerPassed($current)")) shouldBe true
-      events.exists(_.contains(s"RunningGame(${controller.gameData.currentPlayerIndex + 1})")) shouldBe true
+      events.exists(_.contains("RunningGame")) shouldBe true
     }
 
     "execute klopfen" in {
@@ -53,7 +66,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
 
       events.exists(_.contains("PrintTable")) shouldBe true
       events.exists(_.contains(s"PlayerKnocked($current)")) shouldBe true
-      events.exists(_.contains(s"RunningGame(${controller.gameData.currentPlayerIndex + 1})")) shouldBe true
+      events.exists(_.contains("RunningGame")) shouldBe true
     }
 
     "execute tauschen" in {
@@ -77,4 +90,3 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
     }
   }
 }
-

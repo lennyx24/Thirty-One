@@ -21,7 +21,8 @@ class PresenceHandlerSpec extends AnyWordSpec with Matchers {
     "throw IndexOutOfBoundsException when a cell is empty" in {
       val handler = PresenceHandler(None)
       val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2))
-      controller.gameData = controller.gameData.copy(table = Table())
+      // set empty table via setGameData
+      controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(table = Table()))
 
       val res = handler.handle(controller, "1", "1")
       res match

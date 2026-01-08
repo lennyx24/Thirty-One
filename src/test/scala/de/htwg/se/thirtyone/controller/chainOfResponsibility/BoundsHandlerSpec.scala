@@ -19,7 +19,8 @@ class BoundsHandlerSpec extends AnyWordSpec with Matchers {
       val handler = BoundsHandler(None)
       val controller = new de.htwg.se.thirtyone.controller.GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2))
       val badPositions = controller.gameData.cardPositions.map(_.map { case (r, c) => (100, 100) })
-      controller.gameData = controller.gameData.copy(cardPositions = badPositions)
+      // controller.gameData is typed as GameInterface; cast to GameData to access copy
+      controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(cardPositions = badPositions))
 
       val res = handler.handle(controller, "1", "1")
       res match

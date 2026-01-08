@@ -29,7 +29,7 @@ class SwapProcessorSpec extends AnyWordSpec with Matchers {
 
     "fail when one of the cells is empty (PresenceHandler)" in {
       val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2))
-      controller.gameData = controller.gameData.copy(table = Table())
+      controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(table = Table()))
 
       val res = SwapProcessor.process(controller, "1", "1")
       res match

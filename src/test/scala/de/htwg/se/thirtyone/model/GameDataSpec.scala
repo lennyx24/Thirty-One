@@ -15,7 +15,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       game.currentPlayerIndex should be(0)
       game.gameRunning should be(true)
       game.players should have size playerCount
-      game.currentPlayer() should be(game.players(0))
+      game.currentPlayer should be(game.players(0))
     }
 
     "handle player turns (nextPlayer)" in {
@@ -52,11 +52,11 @@ class GameDataSpec extends AnyWordSpec with Matchers {
     }
 
     "handle card swaps correctly" in {
-      val singleSwap = game.swap(game, 1, "1", "1")
+      val singleSwap = game.swap(1, "1", "1")
       singleSwap.isSuccess should be(true)
       singleSwap.get.currentPlayerIndex should be(1) 
 
-      val allSwap = game.swap(game, 1, "alle", "1")
+      val allSwap = game.swap(1, "alle", "1")
       allSwap.isSuccess should be(true)
       allSwap.get.currentPlayerIndex should be(1)
     }
@@ -90,8 +90,8 @@ class GameDataSpec extends AnyWordSpec with Matchers {
     }
 
     "get best and worst player by points" in {
-      val p1 = Player(hasKnocked = false, points = 10, playersHealth = 3)
-      val p2 = Player(hasKnocked = false, points = 20, playersHealth = 3)
+      val p1 = Player(name = "p1", hasKnocked = false, points = 10, playersHealth = 3)
+      val p2 = Player(name = "p2", hasKnocked = false, points = 20, playersHealth = 3)
       val g = GameData(2).copy(players = List(p1, p2))
       
       g.getBestPlayerByPoints should be(p2)
@@ -101,7 +101,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
     "reset for new round" in {
       val p1 = Player(hasKnocked = true, points = 30, playersHealth = 3) // Knocked and has points
       val g = GameData(2).copy(players = List(p1, Player()))
-      val gReset = g.resetNewRound
+      val gReset = g.resetNewRound()
       
       gReset.players(0).hasKnocked should be(false)
       gReset.players(0).points should be(0)

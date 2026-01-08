@@ -6,6 +6,7 @@ import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
 import de.htwg.se.thirtyone.controller.state._
+import de.htwg.se.thirtyone.controller._
 import de.htwg.se.thirtyone.controller.GameController
 
 class ControllerStateSpec extends AnyWordSpec with Matchers {
@@ -19,7 +20,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
       controller.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
 
       val stub = new ControllerState {
-        override def execute(input: String, c: GameController): Unit = ()
+        override def execute(input: String, c: ControllerInterface): Unit = ()
       }
 
       val player = 1
@@ -35,7 +36,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
       val controller = new GameController(PlayingState, GameData(2))
       var executed = false
       val stub = new ControllerState {
-        override def execute(input: String, c: GameController): Unit = {
+        override def execute(input: String, c: ControllerInterface): Unit = {
           executed = true
         }
       }
@@ -45,4 +46,3 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
     }
   }
 }
-

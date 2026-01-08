@@ -32,7 +32,12 @@ class TableSpec extends AnyWordSpec {
 
     "be able to get all values of a player" in {
       val newTab = tab.set((0, 1), h10).set((0, 2), d4).set((0, 3), s7)
-      val all = newTab.getAll(1) // Player 1 (index 1 in positions list)
+      val cardPositions = List(
+        List((1, 3), (1, 4), (1, 5)), // middle
+        List((0, 1), (0, 2), (0, 3)), // player1
+        List((0, 5), (0, 6), (0, 7))  // player2
+      )
+      val all = newTab.getAll(1, cardPositions) // Player 1 (index 1 in positions list)
 
       all.size should be(3)
       all should be(List(h10, d4, s7))
@@ -70,7 +75,7 @@ class TableSpec extends AnyWordSpec {
         List((2, 1), (2, 2), (2, 3)), //Position Player 4
       )
 
-      val table = Table().createGameTable(playercount, indexes, cardPositions, deck)
+      val (table, _) = Table().createGameTable(playercount, indexes, cardPositions, deck)
       table.get(cardPositions(0)(0)) should be(deck(0))
       table.get(cardPositions(0)(1)) should be(deck(1))
       table.get(cardPositions(0)(2)) should be(deck(2))

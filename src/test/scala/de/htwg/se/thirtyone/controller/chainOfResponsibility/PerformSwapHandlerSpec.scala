@@ -30,7 +30,8 @@ class PerformSwapHandlerSpec extends AnyWordSpec with Matchers {
     "throw NoSuchElementException when swap fails on empty table" in {
       val handler = PerformSwapHandler(None)
       val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2))
-      controller.gameData = controller.gameData.copy(table = Table())
+      // controller.gameData is GameInterface; set empty table via setGameData
+      controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(table = Table()))
 
       intercept[NoSuchElementException] {
         handler.handle(controller, "1", "1")

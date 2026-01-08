@@ -8,13 +8,13 @@ class GameDataSwapSpec extends AnyWordSpec with Matchers {
   "GameData.swap" should {
     "return Failure on invalid receive index string" in {
       val gd = GameData(2)
-      val res = gd.swap(gd, gd.currentPlayerIndex + 1, "1", "x")
+      val res = gd.swap(gd.currentPlayerIndex + 1, "1", "x")
       res.isFailure shouldBe true
     }
 
     "return Success when receive index > 2 (no-op)" in {
       val gd = GameData(2)
-      val res = gd.swap(gd, gd.currentPlayerIndex + 1, "1", "5")
+      val res = gd.swap(gd.currentPlayerIndex + 1, "1", "5")
       res.isSuccess shouldBe true
       res.get shouldBe gd
     }
@@ -27,10 +27,9 @@ class GameDataSwapSpec extends AnyWordSpec with Matchers {
     "resetNewRound resets players' hasKnocked and points" in {
       val gd = GameData(2)
       val mutated = gd.copy(players = List(Player(hasKnocked = true, points = 5), Player(hasKnocked = true, points = 3)))
-      val reset = mutated.resetNewRound
+      val reset = mutated.resetNewRound()
       reset.players.foreach(p => p.hasKnocked shouldBe false)
       reset.players.foreach(p => p.points shouldBe 0)
     }
   }
 }
-
