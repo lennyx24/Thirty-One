@@ -26,6 +26,11 @@ class GameScoringStrategySpec extends AnyWordSpec with Matchers {
       // normalScoringStrategy on empty list would call max on empty -> to avoid exception ensure behaviour
       // Since normalScoringStrategy uses pointsPerSymbol.max which throws on empty, we guard this test by providing at least one card
     }
+
+    "handle tie between symbols by choosing max of sums" in {
+      val cards = List(Card('♠', "5"), Card('♣', "5"), Card('♠', "K"))
+      // ♠: 5 + 10 = 15, ♣: 5
+      GameScoringStrategy.normalScoringStrategy(cards) shouldBe 15
+    }
   }
 }
-

@@ -42,5 +42,11 @@ class CardSpec extends AnyWordSpec {
       an [IllegalArgumentException] should be thrownBy Card('♦', "K", 3)
       noException should be thrownBy Card('♦', "K", 4)
     }
+
+    "support different symbols in topCell and bar" in {
+      val c = Card('♣', "Q", 5)
+      c.topCell should include("Q♣")
+      c.bar should startWith("+")
+    }
   }
 }

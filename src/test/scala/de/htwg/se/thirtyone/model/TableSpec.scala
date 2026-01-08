@@ -97,5 +97,21 @@ class TableSpec extends AnyWordSpec {
       s should include("+")
       s should include("|")
     }
+
+    "newMiddleCards should replace middle cards when enough cards available" in {
+      val deck = Deck().deck
+      val indexes = (0 until deck.size).toVector
+      val positions = List((1,3),(1,4),(1,5))
+      // provide positions for middle + player1 + player2 (createGameTable expects 0..playerCount inclusive)
+      val player1Pos = List((0,1),(0,2),(0,3))
+      val player2Pos = List((0,5),(0,6),(0,7))
+      val (tableWithCards, drawIndex) = Table().createGameTable(2, indexes, List(positions, player1Pos, player2Pos), deck)
+      // use a fresh table and ensure drawIndex < indexes.length - 3
+      val startDraw = 0
+      val (newTable, newDraw) = tableWithCards.newMiddleCards(indexes, positions, deck, startDraw)
+      // if enough cards, drawIndex should advance by 3 and the middle positions should have non-empty cards
+      newDraw shouldBe startDraw + 3
+      newTable.get(positions(0)) shouldBe deck(startDraw)
+    }
   }
 }
