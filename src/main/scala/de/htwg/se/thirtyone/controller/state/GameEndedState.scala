@@ -7,7 +7,7 @@ object GameEndedState extends ControllerState:
     override def execute(input: String, c: ControllerInterface): Unit =
         input.toLowerCase() match
             case "j" =>
-                c.state = SetupState
+                c.setState(SetupState)
                 c.notifyObservers(GameStarted)
             
             case "n" =>

@@ -22,4 +22,13 @@ trait ControllerInterface extends Observable {
 
     def undo(): Unit
     def redo(): Unit
+    
+    def countPoints(c: ControllerInterface, currentPlayer: Int): Unit
+    def setState(controllerState: ControllerState): Unit
+    def gameDataSetup(idx: String): Unit
+    def dealDamage(worstPlayer: Player): Unit
+    def resetGame(): Unit
+    def setGameData(g: GameInterface): Unit
+    def gameKnock(): Unit
+    def gamePass(): Unit
 }

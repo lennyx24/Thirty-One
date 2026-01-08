@@ -20,9 +20,9 @@ class SwapState extends ControllerState:
           val take = input
           SwapProcessor.process(c, give, take) match
             case Success(v) =>
-              c.gameData = v.gameData.calculatePlayerPoints(currentPlayer)
+              c.countPoints(c, currentPlayer)
               checkIfRoundEnded(c, currentPlayer)
-              c.state = PlayingState
+              c.setState(PlayingState)
 
               c.notifyObservers(PrintTable)
               c.notifyObservers(PlayerScore(currentPlayer))

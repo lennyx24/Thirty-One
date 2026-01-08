@@ -188,10 +188,9 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
   def drawTable(): Unit =
     cardGrid.contents.clear()
     val gridData = controller.gameData.table.grid
-    val currentPlayer = controller.gameData.currentPlayerIndex
-    val positions = controller.gameData.cardPositions
-    val playerHand = controller.gameData.table.getAll(currentPlayer + 1, positions)
-    val tableCards = controller.gameData.table.getAll(0, positions)
+
+    val playerHand = controller.gameData.getPlayersHand()
+    val tableCards = controller.gameData.getTableCard()
 
     for (row <- 0 until 3) {
       for (col <- 0 until 9) {

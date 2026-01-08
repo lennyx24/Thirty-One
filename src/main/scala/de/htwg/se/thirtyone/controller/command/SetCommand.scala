@@ -15,8 +15,8 @@ class SetCommand(controller: ControllerInterface, action: () => Unit) extends Co
     action()
 
   override def undoStep(): Unit =
-    oGameData.foreach(g => controller.gameData = g)
-    oState.foreach(s => controller.state = s)
+    oGameData.foreach(g => controller.setGameData(g))
+    oState.foreach(s => controller.setState(s))
 
   override def redoStep(): Unit =
     action()
