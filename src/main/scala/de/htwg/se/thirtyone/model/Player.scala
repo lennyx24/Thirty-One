@@ -9,3 +9,4 @@ case class Player(
     hasPassed:Boolean = false
 ):
     def receiveDamage(amount: Int): Player = if playersHealth > 1 then copy(playersHealth = playersHealth-1) else copy(isAlive = false)
+    def changeName(newName: String): Player = copy(name = newName)

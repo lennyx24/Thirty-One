@@ -16,6 +16,7 @@ trait ControllerInterface extends Observable {
     def knock(): Unit
     def swap(): Unit
 
+    def initialGame(idx: String, playerNames: List[String]): Unit
     def selectNumber(idx: String): Unit
     def selectAll(): Unit
 

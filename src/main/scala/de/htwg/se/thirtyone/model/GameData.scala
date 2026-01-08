@@ -20,7 +20,7 @@ case class GameData(
     override def currentPlayer: Player = players(currentPlayerIndex)
 
     override def nextPlayer(): GameData =
-      val nextGameState =
+      val next = {
         if currentPlayerIndex + 1 == playerCount then copy(currentPlayerIndex = 0)
         else copy(currentPlayerIndex = currentPlayerIndex + 1)
       }
@@ -34,7 +34,7 @@ case class GameData(
       else nextGameState
 
     override def calculatePlayerPoints(playerNumber: Int): GameData =
-      val cards = table.getAll(playerNumber).toList
+      val cards = table.getAll(playerNumber, cardPositions).toList
       val p = scoringStrategy(cards)
 
       val playerIndex = playerNumber - 1
@@ -43,13 +43,19 @@ case class GameData(
       val newPlayers = players.updated(playerIndex, newPlayer)
       copy(players = newPlayers)
     
-    override def getPlayersHand(): List[Card] = table.getAll(currentPlayerIndex + 1)
+    override def getPlayersHand(): List[Card] = table.getAll(currentPlayerIndex + 1, cardPositions)
 
     override def getPlayersHealth(player: Int): Int = players(player).playersHealth
 
     override def getPlayerScore(player: Int): Double = getPlayerPoints(player)
 
-    override def getTableCard(): List[Card] = table.getAll(0)
+    override def changePlayersNames(playersName: List[String]): GameInterface =
+      val newPlayers = players.zip(playersName).map { case (player, newName) =>
+        player.changeName(newName)
+      }
+      copy(players = newPlayers)
+
+    override def getTableCard(): List[Card] = table.getAll(0, cardPositions)
     
     override def doDamage(player: Player): GameData =
       val playerIndex = players.indexOf(player)
@@ -66,21 +72,20 @@ case class GameData(
     
     override def getWorstPlayerByPoints: Player = players.minBy(_.points)
 
-    def pass(): GameData = {
+    override def pass(): GameData = {
       val idx = currentPlayerIndex
       val updatedPlayer = players(idx).copy(hasPassed = true)
       val newPlayers = players.updated(idx, updatedPlayer)
       copy(players = newPlayers).nextPlayer()
     }
 
-    def knock(): GameData =
-      val newPlayer = currentPlayer().copy(hasKnocked = true)
+    override def knock(): GameData =
+      val newPlayer = currentPlayer.copy(hasKnocked = true)
       val newPlayers = players.updated(currentPlayerIndex, newPlayer)
       copy(players = newPlayers).resetPasses().nextPlayer()
 
 
-    def resetPasses(): GameData =
-      copy(players = players.map(_.copy(hasPassed = false)))
+    override def resetPasses(): GameData = copy(players = players.map(_.copy(hasPassed = false)))
 
     private def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameData =
         val gs = copy(table = table.swap(cardPositions(playersTurn)(idx1), cardPositions(0)(idx2)))

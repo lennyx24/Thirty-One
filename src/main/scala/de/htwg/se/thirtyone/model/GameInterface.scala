@@ -17,6 +17,7 @@ trait GameInterface {
     def getPlayersHand(): List[Card]
     def getPlayersHealth(player: Int): Int
     def getPlayerScore(player: Int): Double
+    def changePlayersNames(playersName: List[String]): GameInterface
     def getTableCard(): List[Card]
     def doDamage(player: Player): GameInterface
     def getPlayerPoints(playerNumber: Int): Double
@@ -25,6 +26,7 @@ trait GameInterface {
     def getWorstPlayerByPoints: Player
     def pass(): GameInterface
     def knock(): GameInterface
+    def resetPasses(): GameInterface
     def swap(playersTurn: Int, idxGiveString: String, idxReceiveString: String): Try[GameInterface]
     def resetNewRound(): GameInterface
 }
