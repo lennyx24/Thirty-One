@@ -9,13 +9,14 @@ import de.htwg.se.thirtyone.util.*
 import scala.io.StdIn.readLine
 
 object ThirtyOneApp:
+  val injector = ThirtyOneModule
+
   def main(args: Array[String]): Unit =
-    val dummyState = GameData(Table(), GameScoringStrategy.normalScoringStrategy, 0, Nil, 0, Deck().smallDeck, Table().indexes(Deck().smallDeck), 0, false, Nil)
-    val controller = GameController(SetupState, dummyState)
-    val view = ConsoleView(controller)
+    val controller = injector.controller
+    val tui = ConsoleView(controller)
     val gui = GUI(controller)
 
-    controller.add(view)
+    controller.add(tui)
     controller.add(gui)
     controller.notifyObservers(GameStarted)
 
