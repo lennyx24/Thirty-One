@@ -1,11 +1,11 @@
 package de.htwg.se.thirtyone.aview
 
-import de.htwg.se.thirtyone.controller.*
-import de.htwg.se.thirtyone.util.*
+import de.htwg.se.thirtyone.controller._
+import de.htwg.se.thirtyone.util._
 
 import java.awt.Color
-import scala.swing.*
-import scala.swing.event.*
+import scala.swing._
+import scala.swing.event._
 
 class GUI(controller: ControllerInterface) extends Frame with Observer {
   title = "Thirty-One"
@@ -19,7 +19,7 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       contents += new Label("")
       contents += new Label("Willkommen zu Schwimmen!")
 
-      contents += new Label("Wie viele Spieler seit ihr Heute?")
+      contents += new Label("Wie viele Spieler seit ihr?")
 
       val playerCount = new TextField("2")
       listenTo(playerCount)
@@ -94,14 +94,6 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       }
       nameP3.visible = false
       nameP4.visible = false
-
-      val modes = List("simple scoring Mode", "normal scoring Mode")
-      val playingMode = new ComboBox[String](modes)
-      contents += new Label("Welchen Spielmodus möchtest du spielen?")
-      contents += playingMode
-      val lives = new TextField("3")
-      contents += new Label("Mit wie vielen Leben möchtet ihr spielen?")
-      contents += lives
 
       contents += new Label("")
       val start = new Button("Spiel starten")

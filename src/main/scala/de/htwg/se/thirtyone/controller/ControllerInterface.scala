@@ -4,6 +4,7 @@ import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util.Observable
 import de.htwg.se.thirtyone.controller.state.ControllerState
 import de.htwg.se.thirtyone.controller.command.UndoManager
+import de.htwg.se.thirtyone.model.gameImplementation.Player
 
 trait ControllerInterface extends Observable {
     def gameData: GameInterface

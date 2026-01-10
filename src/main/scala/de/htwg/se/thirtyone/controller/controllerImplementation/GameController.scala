@@ -1,9 +1,12 @@
-package de.htwg.se.thirtyone.controller
+package de.htwg.se.thirtyone.controller.controllerImplementation
 
 import de.htwg.se.thirtyone.controller.command.UndoManager
-import de.htwg.se.thirtyone.controller.state.*
-import de.htwg.se.thirtyone.model.*
-import de.htwg.se.thirtyone.util.*
+import de.htwg.se.thirtyone.controller.state._
+import de.htwg.se.thirtyone.controller._
+import de.htwg.se.thirtyone.model._
+import de.htwg.se.thirtyone.util._
+import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.gameImplementation.Player
 
 class GameController(var state: ControllerState, var gameData: GameInterface, val undoManager: UndoManager) extends ControllerInterface:
   override def handleInput(input: String): Unit = state.handleInput(input, this)

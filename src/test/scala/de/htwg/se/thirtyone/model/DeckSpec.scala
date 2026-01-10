@@ -2,6 +2,8 @@ package de.htwg.se.thirtyone.model
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
+import de.htwg.se.thirtyone.model.gameImplementation.Card
+import de.htwg.se.thirtyone.model.gameImplementation.Deck
 
 class DeckSpec extends AnyWordSpec{
   "Deck" should {

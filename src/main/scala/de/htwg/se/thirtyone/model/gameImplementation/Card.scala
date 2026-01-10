@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.model
+package de.htwg.se.thirtyone.model.gameImplementation
 
 case class Card(symbol: Char, value: String, size: Int = 10) {
   require(size > 3)

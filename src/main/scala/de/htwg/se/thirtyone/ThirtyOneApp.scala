@@ -27,7 +27,7 @@ object ThirtyOneApp:
         case "klopfen" | "knock" | "k" => controller.knock()
         case "tauschen" | "swap" | "s" => controller.swap()
 
-        case "1" | "2" | "3" => controller.selectNumber(input)
+        case "2" | "3" | "4" => controller.selectNumber(input)
         case "alle" | "all" | "a" => controller.selectAll()
 
         case "undo" | "u" => controller.undo()

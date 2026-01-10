@@ -3,6 +3,7 @@ package de.htwg.se.thirtyone.controller
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.controller.state._
+import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 
 class GameControllerSpec extends AnyWordSpec with Matchers {
   "GameController" should {

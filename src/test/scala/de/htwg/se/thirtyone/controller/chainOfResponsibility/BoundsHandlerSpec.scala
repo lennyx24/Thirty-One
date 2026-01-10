@@ -5,6 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.controller.chainOfResponsibility.swap.BoundsHandler
 import scala.util._
+import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 
 class BoundsHandlerSpec extends AnyWordSpec with Matchers {
   "BoundsHandler" should {

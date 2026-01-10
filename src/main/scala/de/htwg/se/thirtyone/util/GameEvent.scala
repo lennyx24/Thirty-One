@@ -1,6 +1,6 @@
 package de.htwg.se.thirtyone.util
 
-import de.htwg.se.thirtyone.model.Player
+import de.htwg.se.thirtyone.model.gameImplementation.Player
 
 trait GameEvent
 

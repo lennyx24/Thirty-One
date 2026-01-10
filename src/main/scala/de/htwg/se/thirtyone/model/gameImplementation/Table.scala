@@ -1,6 +1,8 @@
-package de.htwg.se.thirtyone.model
+package de.htwg.se.thirtyone.model.gameImplementation
 
-import scala.util.*
+import scala.util._
+import de.htwg.se.thirtyone.model.gameImplementation.InvisibleCard
+import de.htwg.se.thirtyone.model.gameImplementation.Player
 
 case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])):
   val height: Int = 3
@@ -63,13 +65,11 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     grid.zipWithIndex.foldLeft("") { case (output, (row, rowIndex)) =>
       val playerHeader = rowIndex match {
         case 0 =>
-          // Oben Links: Spieler 1 | Oben Rechts: Spieler 2
           val p1 = if (players.nonEmpty) s"Spieler 1: ${players(0).playersHealth} Leben, ${players(0).points} Punkte" else ""
           val p2 = if (players.length > 1) s"Spieler 2: ${players(1).playersHealth} Leben, ${players(1).points} Punkte" else ""
           if (p1.nonEmpty || p2.nonEmpty) " " * 13 + f"$p1%-52s" + p2 + "\n" else ""
 
         case 2 =>
-          // Unten Links: Spieler 4 | Unten Rechts: Spieler 3
           val p4 = if (players.length > 3) s"Spieler 4: ${players(3).playersHealth} Leben, ${players(3).points} Punkte" else ""
           val p3 = if (players.length > 2) s"Spieler 3: ${players(2).playersHealth} Leben, ${players(2).points} Punkte" else ""
           if (p4.nonEmpty || p3.nonEmpty) " " * 13 + f"$p4%-52s" + p3 + "\n" else ""
@@ -84,7 +84,6 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
               (bar + card.bar, topCell + card.topCell, cell + card.cells, card.size)
             case None =>
               (bar + invisibleCard.invCell, topCell + invisibleCard.invCell, cell + invisibleCard.invCell, size)
-
         }
       val barNL = barString + "\n"
       val topNL = topCellString + "\n"

@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.model
+package de.htwg.se.thirtyone.model.gameImplementation
 
 case class Player(
     name: String = "Nameless Player",

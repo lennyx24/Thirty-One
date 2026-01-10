@@ -3,6 +3,11 @@ package de.htwg.se.thirtyone.model
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import scala.util.{Success, Failure}
+import de.htwg.se.thirtyone.model.gameImplementation.Card
+import de.htwg.se.thirtyone.model.gameImplementation.Deck
+import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.gameImplementation.GameScoringStrategy
+import de.htwg.se.thirtyone.model.gameImplementation.Player
 
 class GameDataSpec extends AnyWordSpec with Matchers {
 

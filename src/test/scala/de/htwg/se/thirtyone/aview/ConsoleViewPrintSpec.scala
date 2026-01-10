@@ -2,7 +2,7 @@ package de.htwg.se.thirtyone.aview
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import de.htwg.se.thirtyone.controller._
+import de.htwg.se.thirtyone.controller.controllerImplementation.*
 import de.htwg.se.thirtyone.controller.state._
 import de.htwg.se.thirtyone.model.GameData
 import de.htwg.se.thirtyone.util._

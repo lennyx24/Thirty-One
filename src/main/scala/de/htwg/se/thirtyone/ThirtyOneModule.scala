@@ -2,9 +2,11 @@ package de.htwg.se.thirtyone
 
 import de.htwg.se.thirtyone.model.GameInterface
 import de.htwg.se.thirtyone.controller._
+import de.htwg.se.thirtyone.controller.controllerImplementation._
 import de.htwg.se.thirtyone.model.factory.StandardGameFactory
 import de.htwg.se.thirtyone.controller.state.SetupState
 import de.htwg.se.thirtyone.controller.command.UndoManager
+import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 
 object ThirtyOneModule {
     val game: GameInterface = StandardGameFactory.createGame(0)

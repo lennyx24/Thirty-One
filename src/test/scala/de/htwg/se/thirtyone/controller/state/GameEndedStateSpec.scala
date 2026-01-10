@@ -6,7 +6,7 @@ import de.htwg.se.thirtyone.model.GameData
 import de.htwg.se.thirtyone.util._
 import de.htwg.se.thirtyone.controller.state._
 import scala.collection.mutable.ArrayBuffer
-import de.htwg.se.thirtyone.controller.GameController
+import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 
 class GameEndedStateSpec extends AnyWordSpec with Matchers {
   "GameEndedState" should {

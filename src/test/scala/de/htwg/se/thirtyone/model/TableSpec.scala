@@ -2,6 +2,9 @@ package de.htwg.se.thirtyone.model
 
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
+import de.htwg.se.thirtyone.model.gameImplementation.Card
+import de.htwg.se.thirtyone.model.gameImplementation.Deck
+import de.htwg.se.thirtyone.model.gameImplementation.Table
 
 class TableSpec extends AnyWordSpec {
   "Table" should {

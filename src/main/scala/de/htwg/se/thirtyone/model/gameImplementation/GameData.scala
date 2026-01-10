@@ -1,9 +1,10 @@
-package de.htwg.se.thirtyone.model
+package de.htwg.se.thirtyone.model.gameImplementation
 
 import scala.annotation.tailrec
 import scala.util.{Try, Success, Failure}
 import de.htwg.se.thirtyone.model.factory._
-import de.htwg.se.thirtyone.model.GameScoringStrategy.Strategy
+import GameScoringStrategy.Strategy
+import de.htwg.se.thirtyone.model._
 
 case class GameData(
     table: Table,

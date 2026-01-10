@@ -1,6 +1,11 @@
 package de.htwg.se.thirtyone.model.factory
 
 import de.htwg.se.thirtyone.model.*
+import de.htwg.se.thirtyone.model.gameImplementation.Deck
+import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.gameImplementation.GameScoringStrategy
+import de.htwg.se.thirtyone.model.gameImplementation.Player
+import de.htwg.se.thirtyone.model.gameImplementation.Table
 
 object StandardGameFactory extends GameFactory:
   override def createGame(playerAmount: Int): GameData =

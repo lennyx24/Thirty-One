@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.model
+package de.htwg.se.thirtyone.model.gameImplementation
 
 object GameScoringStrategy:
   type Strategy = List[Card] => Double

@@ -2,7 +2,7 @@ package de.htwg.se.thirtyone.controller.chainOfResponsibility
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.controller.GameController
+import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.controller.chainOfResponsibility.swap.PerformSwapHandler
 import scala.util._

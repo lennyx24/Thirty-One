@@ -3,6 +3,8 @@ package de.htwg.se.thirtyone.model
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import scala.util._
+import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.gameImplementation.Player
 
 class GameDataSwapSpec extends AnyWordSpec with Matchers {
   "GameData.swap" should {

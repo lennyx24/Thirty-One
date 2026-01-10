@@ -1,7 +1,10 @@
 package de.htwg.se.thirtyone.model
 
-import de.htwg.se.thirtyone.model.GameScoringStrategy._
 import scala.util.Try
+import de.htwg.se.thirtyone.model.gameImplementation.GameScoringStrategy
+import de.htwg.se.thirtyone.model.gameImplementation.Player
+import de.htwg.se.thirtyone.model.gameImplementation.Table
+import de.htwg.se.thirtyone.model.gameImplementation.Card
 
 trait GameInterface {
     def table: Table

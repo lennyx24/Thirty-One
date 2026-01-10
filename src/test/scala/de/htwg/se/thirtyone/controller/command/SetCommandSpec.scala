@@ -5,6 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.controller.command.SetCommand
 import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.controller.state._
+import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 
 class SetCommandSpec extends AnyWordSpec with Matchers {
   "SetCommand" should {
