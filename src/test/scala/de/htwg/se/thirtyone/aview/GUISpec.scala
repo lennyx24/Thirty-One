@@ -9,6 +9,9 @@ import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 
 class GUISpec extends AnyWordSpec with Matchers {
+  // detect CI environments (GitHub Actions, generic CI)
+  private val isCI: Boolean = sys.env.get("GITHUB_ACTIONS").isDefined || sys.env.get("CI").isDefined
+
   // lokale Helfer (zuvor in TestHelpers)
   private def captureOut(f: => Unit): String = {
     val baos = new java.io.ByteArrayOutputStream()
@@ -36,6 +39,7 @@ class GUISpec extends AnyWordSpec with Matchers {
 
   "GUI" should {
     "drawTable and update paths should behave without errors" in {
+      if (isCI) cancel("Skipping GUI tests in CI (no display)")
       val controller = new GameController(PlayingState, GameData(2), new UndoManager())
       val gui = new de.htwg.se.thirtyone.aview.GUI(controller)
 
@@ -60,6 +64,7 @@ class GUISpec extends AnyWordSpec with Matchers {
     }
 
     "setup panel interactions (add/sub/start) and playing buttons call controller" in {
+      if (isCI) cancel("Skipping GUI tests in CI (no display)")
       import scala.collection.mutable.ArrayBuffer
       class SpyController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: de.htwg.se.thirtyone.model.gameImplementation.GameData) extends de.htwg.se.thirtyone.controller.controllerImplementation.GameController(state, gd, new de.htwg.se.thirtyone.controller.command.UndoManager()) {
         val calls = ArrayBuffer.empty[String]
@@ -113,6 +118,7 @@ class GUISpec extends AnyWordSpec with Matchers {
     }
 
     "drawTable colors and take/give click behavior" in {
+      if (isCI) cancel("Skipping GUI tests in CI (no display)")
       val controller = new GameController(PlayingState, GameData(2), new UndoManager())
       val heart = de.htwg.se.thirtyone.model.gameImplementation.Card('♥', "A")
       val spade = de.htwg.se.thirtyone.model.gameImplementation.Card('♠', "K")
@@ -149,6 +155,7 @@ class GUISpec extends AnyWordSpec with Matchers {
     }
 
     "setup EditDone clamps and name field visibility" in {
+      if (isCI) cancel("Skipping GUI tests in CI (no display)")
       val controller = new GameController(SetupState, GameData(4), new UndoManager())
       val gui = new de.htwg.se.thirtyone.aview.GUI(controller)
       gui.update(GameStarted)
