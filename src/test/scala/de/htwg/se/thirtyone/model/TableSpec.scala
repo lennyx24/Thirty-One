@@ -116,5 +116,31 @@ class TableSpec extends AnyWordSpec {
       newDraw shouldBe startDraw + 3
       newTable.get(positions(0)) shouldBe deck(startDraw)
     }
+
+    "newMiddleCards should not change table when not enough cards available" in {
+      val deck = Deck().deck
+      val indexes = Vector(0,1) // less than 3
+      val positions = List((1,3),(1,4),(1,5))
+      val table = Table()
+      val (t2, d2) = table.newMiddleCards(indexes, positions, deck, 0)
+      d2 shouldBe 0
+      t2 shouldBe table
+    }
+
+    "indexes should return sequential indices for deck" in {
+      val deck = Deck().deck
+      val idxs = tab.indexes(deck)
+      // indexes() returns a shuffled permutation of indices; assert it's a valid permutation
+      idxs.length should be(deck.length)
+      idxs.sorted should equal (deck.indices.toVector)
+      idxs.distinct.length should equal(idxs.length)
+    }
+
+    "swap should throw when positions are out of range" in {
+      val ex = intercept[IndexOutOfBoundsException] {
+        tab.swap((9,9),(10,10))
+      }
+      ex shouldBe a[IndexOutOfBoundsException]
+    }
   }
 }

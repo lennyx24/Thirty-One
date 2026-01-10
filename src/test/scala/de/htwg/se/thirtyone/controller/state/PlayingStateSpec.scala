@@ -2,12 +2,13 @@ package de.htwg.se.thirtyone.controller.state
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model._
+import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Player}
 import de.htwg.se.thirtyone.util._
 
 import scala.collection.mutable.ArrayBuffer
 import de.htwg.se.thirtyone.controller.state._
 import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
+import de.htwg.se.thirtyone.controller.command.UndoManager
 
 class PlayingStateSpec extends AnyWordSpec with Matchers {
   "PlayingState" should {
@@ -27,7 +28,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       base.copy(players = players, currentPlayerIndex = index)
 
     def makeController(gd: GameData): GameController = {
-      val c = new GameController(PlayingState, gd)
+      val c = new GameController(PlayingState, gd, new UndoManager())
       c.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
       c
     }

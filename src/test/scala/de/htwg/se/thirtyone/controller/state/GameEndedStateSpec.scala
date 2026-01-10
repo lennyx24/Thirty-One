@@ -2,18 +2,19 @@ package de.htwg.se.thirtyone.controller.state
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model.GameData
+import de.htwg.se.thirtyone.model.gameImplementation.GameData
 import de.htwg.se.thirtyone.util._
 import de.htwg.se.thirtyone.controller.state._
 import scala.collection.mutable.ArrayBuffer
 import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
+import de.htwg.se.thirtyone.controller.command.UndoManager
 
 class GameEndedStateSpec extends AnyWordSpec with Matchers {
   "GameEndedState" should {
 
     val events = ArrayBuffer.empty[String]
     def makeController(): GameController =
-      new GameController(GameEndedState, GameData(2)) {
+      new GameController(GameEndedState, GameData(2), new UndoManager()) {
         override def notifyObservers(event: GameEvent): Unit = events += event.toString
       }
 
@@ -35,4 +36,3 @@ class GameEndedStateSpec extends AnyWordSpec with Matchers {
     }
   }
 }
-

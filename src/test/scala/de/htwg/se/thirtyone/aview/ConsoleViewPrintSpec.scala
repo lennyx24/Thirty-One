@@ -2,9 +2,10 @@ package de.htwg.se.thirtyone.aview
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import de.htwg.se.thirtyone.controller.controllerImplementation.*
+import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.model.GameData
+import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 
 import java.io.ByteArrayOutputStream
@@ -13,7 +14,7 @@ import java.io.PrintStream
 class ConsoleViewPrintSpec extends AnyWordSpec with Matchers {
   "ConsoleView" should {
     val gameData = GameData(2)
-    val controller = new GameController(PlayingState, gameData)
+    val controller = new GameController(PlayingState, gameData, new UndoManager())
     val view = ConsoleView(controller)
 
     def capture(f: => Unit): String = {

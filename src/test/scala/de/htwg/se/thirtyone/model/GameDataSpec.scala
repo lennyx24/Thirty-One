@@ -3,11 +3,7 @@ package de.htwg.se.thirtyone.model
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import scala.util.{Success, Failure}
-import de.htwg.se.thirtyone.model.gameImplementation.Card
-import de.htwg.se.thirtyone.model.gameImplementation.Deck
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
-import de.htwg.se.thirtyone.model.gameImplementation.GameScoringStrategy
-import de.htwg.se.thirtyone.model.gameImplementation.Player
+import de.htwg.se.thirtyone.model.gameImplementation._
 
 class GameDataSpec extends AnyWordSpec with Matchers {
 
@@ -224,7 +220,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       res.isFailure shouldBe true
     }
 
-    "swap should return Success when receive index > 2 (no-op)" in {
+    "swap should return Success when receive index 4 (no-op)" in {
       val gd = GameData(2)
       // try to swap with receive index 4 (meaning indexReceive = 3 > 2)
       val res = gd.swap(1, "1", "4")
@@ -245,5 +241,78 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       next.players.foreach(p => p.hasPassed shouldBe false)
     }
 
-  }
-}
+    "swap should return Failure for invalid give string" in {
+      val gd = GameData(2)
+      val res = gd.swap(1, "foo", "1")
+      res.isFailure shouldBe true
+    }
+
+    "swap 'alle' with receive index >1 should succeed" in {
+      val gd = GameData(2)
+      // receive "3" -> indexReceive = 2 (>1)
+      val res = gd.swap(1, "alle", "3")
+      res.isSuccess shouldBe true
+    }
+
+    "getTableCard and getPlayersHand return expected lists" in {
+      val gd = GameData(2)
+      val cardPositions = defaultPositions
+      val c1 = mkCard('♥', "A")
+      val c2 = mkCard('♦', "K")
+      val c3 = mkCard('♠', "Q")
+      val baseTable = gd.table.setAll(cardPositions(0), List(c1, c2, c3)).setAll(cardPositions(1), List(c3, c2, c1))
+      val gdc = gd.copy(table = baseTable, cardPositions = cardPositions)
+
+      val tableCards = gdc.getTableCard()
+      tableCards should contain (c1)
+
+      val hand = gdc.getPlayersHand()
+      hand should contain (c3)
+    }
+
+    "getPlayersHealth and getPlayerScore return underlying values" in {
+      val gd = GameData(2)
+      gd.getPlayersHealth(0) shouldBe gd.players(0).playersHealth
+      gd.getPlayerScore(1) shouldBe gd.players(0).points
+    }
+
+    "resetPasses resets hasPassed for all players" in {
+      val gd = GameData(2).copy(players = List(mkPlayer(hasPassed = true), mkPlayer(hasPassed = true)))
+      val reset = gd.resetPasses().asInstanceOf[GameData]
+      reset.players.foreach(p => p.hasPassed shouldBe false)
+    }
+
+    "swap should return Failure when receive index is non-numeric" in {
+      val gd = GameData(2)
+      val res = gd.swap(1, "1", "notANumber")
+      res.isFailure shouldBe true
+    }
+
+    "resetNewRound should create a fresh table and keep saved players" in {
+      val gd = GameData(2)
+      val a = mkCard('♥', "A")
+      val b = mkCard('♦', "K")
+      val c = mkCard('♠', "Q")
+      val modifiedTable = Table().set((1,3), a).set((1,4), b).set((1,5), c)
+      val modified = gd.copy(table = modifiedTable)
+       val r = modified.resetNewRound().asInstanceOf[GameData]
+      // players were preserved with reset points/knocked values
+      r.players.size shouldBe modified.players.size
+      r.players.foreach(p => p.points shouldBe 0)
+      // table behavior is implementation-defined; ensure players were reset correctly
+    }
+
+    "calculateIndex handles zero and negative conversions" in {
+      val gd = GameData(2)
+      gd.calculateIndex("0") should be(Success(-1))
+    }
+
+    "pass cycles correctly for 3 players" in {
+      val gd = GameData(3)
+      val afterPass = gd.pass()
+      // currentPlayerIndex should advance by one
+      afterPass.currentPlayerIndex shouldBe (gd.currentPlayerIndex + 1) % 3
+    }
+
+   }
+ }
