@@ -9,7 +9,7 @@ import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 
 class ConsoleViewSpec extends AnyWordSpec with Matchers {
-  // helper für Konsole-Capture
+  // helper für Konsole-Capture (lokal)
   private def captureOut(f: => Unit): String = {
     val baos = new java.io.ByteArrayOutputStream()
     val ps = new java.io.PrintStream(baos)
@@ -35,12 +35,25 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
       (out.contains("Punkte") || out.toLowerCase.contains("spieler")) shouldBe true
     }
 
-    "print table when printNewRound is called" in {
+    "print table when PrintTable event is received" in {
       val controller = new GameController(PlayingState, GameData(2), new UndoManager())
       val view = ConsoleView(controller)
-      val table = Table()
-      val out = captureOut { view.printNewRound(table.printTable(controller.gameData.players)) }
+      val out = captureOut { view.update(PrintTable) }
       out should not be empty
+      out should include("+")
+    }
+
+    "print PlayerPassed/Knocked/Swapped messages" in {
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager())
+      val view = ConsoleView(controller)
+      val passed = captureOut { view.update(PlayerPassed(1)) }
+      passed should include("Spieler 1")
+
+      val knocked = captureOut { view.update(PlayerKnocked(2)) }
+      knocked should include("hat diese Runde geklopft")
+
+      val swapped = captureOut { view.update(PlayerSwapped(3)) }
+      swapped should include("tauscht")
     }
   }
 }

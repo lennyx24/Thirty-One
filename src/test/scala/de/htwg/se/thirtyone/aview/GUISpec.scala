@@ -9,7 +9,7 @@ import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 
 class GUISpec extends AnyWordSpec with Matchers {
-  // helper für Konsole-Capture (falls nötig) und GUI traversal
+  // lokale Helfer (zuvor in TestHelpers)
   private def captureOut(f: => Unit): String = {
     val baos = new java.io.ByteArrayOutputStream()
     val ps = new java.io.PrintStream(baos)
@@ -30,6 +30,9 @@ class GUISpec extends AnyWordSpec with Matchers {
       case p: scala.swing.Container => findTextFields(p)
       case _ => Nil
     }
+
+  private def runOnEDT(f: => Unit): Unit =
+    javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = f })
 
   "GUI" should {
     "drawTable and update paths should behave without errors" in {
@@ -52,7 +55,7 @@ class GUISpec extends AnyWordSpec with Matchers {
       gui.swapMode shouldBe "take"
 
       gui.update(PlayerScore(1))
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run() = {} })
+      runOnEDT { }
       gui.scoreLabels(0).text should include ("Punkte")
     }
 
@@ -72,7 +75,7 @@ class GUISpec extends AnyWordSpec with Matchers {
       val gui = new de.htwg.se.thirtyone.aview.GUI(spy)
 
       gui.update(GameStarted)
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = {} })
+      runOnEDT { }
 
       val setup = gui.contents.head.asInstanceOf[scala.swing.Container]
       val buttons = findButtons(setup)
@@ -83,16 +86,16 @@ class GUISpec extends AnyWordSpec with Matchers {
       subOpt.isDefined shouldBe true
       startOpt.isDefined shouldBe true
 
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = addOpt.get.peer.doClick() })
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = {} })
+      runOnEDT { addOpt.get.peer.doClick() }
+      runOnEDT { }
       val tfields = findTextFields(setup)
       tfields.length should be >= 3
 
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = startOpt.get.peer.doClick() })
+      runOnEDT { startOpt.get.peer.doClick() }
       spy.calls.exists(_.startsWith("init:")) shouldBe true
 
       gui.update(PrintTable)
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = {} })
+      runOnEDT { }
       val play = gui.contents.head.asInstanceOf[scala.swing.Container]
       val playButtons = findButtons(play)
       val passBtn = playButtons.find(_.text == "Passen").get
@@ -100,12 +103,12 @@ class GUISpec extends AnyWordSpec with Matchers {
       val swapBtn = playButtons.find(_.text == "Tauschen").get
       val swapAllBtn = playButtons.find(_.text == "Alles tauschen")
 
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = passBtn.peer.doClick() })
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = knockBtn.peer.doClick() })
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = swapBtn.peer.doClick() })
-      swapAllBtn.foreach(b => javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = b.peer.doClick() }))
+      runOnEDT { passBtn.peer.doClick() }
+      runOnEDT { knockBtn.peer.doClick() }
+      runOnEDT { swapBtn.peer.doClick() }
+      swapAllBtn.foreach(b => runOnEDT { b.peer.doClick() })
 
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = {} })
+      runOnEDT { }
       spy.calls should contain atLeastOneOf ("pass", "knock", "swap")
     }
 
@@ -149,7 +152,7 @@ class GUISpec extends AnyWordSpec with Matchers {
       val controller = new GameController(SetupState, GameData(4), new UndoManager())
       val gui = new de.htwg.se.thirtyone.aview.GUI(controller)
       gui.update(GameStarted)
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = {} })
+      runOnEDT { }
 
       val setup = gui.contents.head.asInstanceOf[scala.swing.Container]
       val tfields = findTextFields(setup)
@@ -169,8 +172,8 @@ class GUISpec extends AnyWordSpec with Matchers {
       // Click start to apply names to controller (initialGame is invoked on start button)
       val startBtnOpt = findButtons(setup).find(_.text == "Spiel starten")
       startBtnOpt.isDefined shouldBe true
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = startBtnOpt.get.peer.doClick() })
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = {} })
+      runOnEDT { startBtnOpt.get.peer.doClick() }
+      runOnEDT { }
 
       val playerNames = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.gameImplementation.GameData].players.map(_.name)
       playerNames.length shouldBe 4
