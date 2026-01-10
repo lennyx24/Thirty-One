@@ -7,8 +7,9 @@ import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util._
 import de.htwg.se.thirtyone.model.gameImplementation.GameData
 import de.htwg.se.thirtyone.model.gameImplementation.Player
+import com.google.inject.Inject
 
-class GameController(var state: ControllerState, var gameData: GameInterface, val undoManager: UndoManager) extends ControllerInterface:
+class GameController @Inject() (var state: ControllerState, var gameData: GameInterface, val undoManager: UndoManager) extends ControllerInterface:
   override def handleInput(input: String): Unit = state.handleInput(input, this)
 
   override def pass(): Unit = state.pass(this)
