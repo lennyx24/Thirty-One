@@ -1,8 +1,6 @@
 package de.htwg.se.thirtyone.model.gameImplementation
 
 import scala.util._
-import de.htwg.se.thirtyone.model.gameImplementation.InvisibleCard
-import de.htwg.se.thirtyone.model.gameImplementation.Player
 
 case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])):
   val height: Int = 3

@@ -1,10 +1,10 @@
 package de.htwg.se.thirtyone.controller.state
 
-import de.htwg.se.thirtyone.controller.*
+import de.htwg.se.thirtyone.controller._
 import de.htwg.se.thirtyone.controller.chainOfResponsibility.SwapProcessor
-import de.htwg.se.thirtyone.util.*
+import de.htwg.se.thirtyone.util._
 
-import scala.util.*
+import scala.util._
 
 class SwapState extends ControllerState:
   var give: String = ""

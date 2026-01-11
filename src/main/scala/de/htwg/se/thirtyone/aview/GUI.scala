@@ -14,11 +14,13 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
   var swapMode: String = "none"
 
   val setupPanel = new BoxPanel(Orientation.Vertical) {
+    border = Swing.EmptyBorder(15, 15, 15, 15)
+      contents += new GridPanel(1, 1) {
+        contents += new Label("Willkommen zu Schwimmen!")
+      }
+    contents += Swing.VStrut(20)
 
-    contents += new GridPanel(6, 2) {
-      contents += new Label("")
-      contents += new Label("Willkommen zu Schwimmen!")
-
+    contents += new GridPanel(3, 2) {
       contents += new Label("Wie viele Spieler seit ihr?")
 
       val playerCount = new TextField("2")
@@ -105,6 +107,8 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
           val currentNames = nameFields.take(playerCount.text.toInt).map(_.text)
           controller.initialGame(playerCount.text, currentNames)
       }
+      hGap = 5
+      vGap = 5
     }
   }
 

@@ -1,7 +1,7 @@
 package de.htwg.se.thirtyone.controller.state
 
-import de.htwg.se.thirtyone.controller.*
-import de.htwg.se.thirtyone.util.*
+import de.htwg.se.thirtyone.controller._
+import de.htwg.se.thirtyone.util._
 
 trait ControllerState:
   final def handleInput(input: String, c: ControllerInterface): Unit =

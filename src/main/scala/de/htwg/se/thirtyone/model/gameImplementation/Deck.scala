@@ -1,5 +1,4 @@
 package de.htwg.se.thirtyone.model.gameImplementation
-import de.htwg.se.thirtyone.model.gameImplementation.Card
 
 case class Deck(size: Int = 10) {
 

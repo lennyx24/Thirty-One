@@ -1,8 +1,8 @@
 package de.htwg.se.thirtyone.controller.state
 
 import de.htwg.se.thirtyone.controller.ControllerInterface
-import de.htwg.se.thirtyone.controller.command.*
-import de.htwg.se.thirtyone.util.*
+import de.htwg.se.thirtyone.controller.command._
+import de.htwg.se.thirtyone.util._
 
 object PlayingState extends ControllerState:
   override def pass(c: ControllerInterface): Unit =

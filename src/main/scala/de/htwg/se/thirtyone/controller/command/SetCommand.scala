@@ -1,8 +1,8 @@
 package de.htwg.se.thirtyone.controller.command
 
-import de.htwg.se.thirtyone.controller.*
-import de.htwg.se.thirtyone.controller.state.*
-import de.htwg.se.thirtyone.model.*
+import de.htwg.se.thirtyone.controller._
+import de.htwg.se.thirtyone.controller.state._
+import de.htwg.se.thirtyone.model._
 
 class SetCommand(controller: ControllerInterface, action: () => Unit) extends Command {
   var oGameData: Option[GameInterface] = None
