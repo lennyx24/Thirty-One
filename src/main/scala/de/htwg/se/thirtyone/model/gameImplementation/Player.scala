@@ -1,4 +1,5 @@
 package de.htwg.se.thirtyone.model.gameImplementation
+import scala.xml.Elem
 
 case class Player(
     name: String = "Nameless Player",
@@ -10,3 +11,12 @@ case class Player(
 ):
     def receiveDamage(amount: Int): Player = if playersHealth > 1 then copy(playersHealth = playersHealth-1) else copy(isAlive = false)
     def changeName(newName: String): Player = copy(name = newName)
+    def toXML: Elem =
+      <Player>
+        <name>{name}</name>
+        <hasKnocked>{hasKnocked}</hasKnocked>
+        <points>{points}</points>
+        <playersHealth>{playersHealth}</playersHealth>
+        <isAlive>{isAlive}</isAlive>
+        <hasPassed>{hasPassed}</hasPassed>
+      </Player>

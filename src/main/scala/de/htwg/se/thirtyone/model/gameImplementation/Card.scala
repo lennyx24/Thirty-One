@@ -1,5 +1,7 @@
 package de.htwg.se.thirtyone.model.gameImplementation
 
+import scala.xml.Elem
+
 case class Card(symbol: Char, value: String, size: Int = 10) {
   require(size > 3)
   private val valueString: String = value + symbol.toString
@@ -17,4 +19,11 @@ case class Card(symbol: Char, value: String, size: Int = 10) {
       (cells + "\n") * (size / 2 - 1) +
       bar + "\n"
   }
+
+  def toXML: Elem =
+    <Card>
+      <symbol>{ symbol.toString }</symbol>
+      <value>{ value }</value>
+      <size>{ size }</size>
+    </Card>
 }

@@ -1,7 +1,9 @@
 package de.htwg.se.thirtyone.model
 
 import scala.util.Try
-import de.htwg.se.thirtyone.model.gameImplementation._
+import de.htwg.se.thirtyone.model.gameImplementation.*
+
+import scala.xml.Elem
 
 trait GameInterface {
     def table: Table
@@ -31,4 +33,5 @@ trait GameInterface {
     def resetNewRound(): GameInterface
     def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameInterface
     def calculateIndex(indexToGive: String): Try[Int]
+    def saveGameXML(): Unit
 }

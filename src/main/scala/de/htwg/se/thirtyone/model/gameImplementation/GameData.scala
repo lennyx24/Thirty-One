@@ -1,10 +1,13 @@
 package de.htwg.se.thirtyone.model.gameImplementation
 
 import scala.annotation.tailrec
-import scala.util.{Try, Success, Failure}
-import de.htwg.se.thirtyone.model.factory._
+import scala.util.{Failure, Success, Try}
+import de.htwg.se.thirtyone.model.factory.*
 import GameScoringStrategy.Strategy
-import de.htwg.se.thirtyone.model._
+import de.htwg.se.thirtyone.model.*
+
+import java.nio.file.{Files, Paths}
+import scala.xml.{Elem, Node, XML}
 
 case class GameData(
     table: Table,
@@ -123,7 +126,42 @@ case class GameData(
       val newGame = GameData(playerCount)
       newGame.copy(players = savedPlayers)
 
+    override def saveGameXML(): Unit = {
+      val xml: Elem =
+        <GameData>
+          { table.toXML }
+          <strategy>{ scoringStrategy }</strategy>
+          <playerCount>{playerCount}</playerCount>
+          <players>{players.map(p=>p.toXML)}</players>
+          <currentPlayerIndex>{currentPlayerIndex}</currentPlayerIndex>
+          <deck>{deck.map(_.toXML)}</deck>
+          <indexes>{indexes.mkString(",")}</indexes>
+          <drawIndex>{drawIndex}</drawIndex>
+          <gameRunning>{gameRunning}</gameRunning>
+          <cardPositions>{
+            cardPositions.zipWithIndex.map { case (posList, pi) =>
+              <player index={ pi.toString }>{
+                posList.map { case (r, c) => <pos row={ r.toString } col={ c.toString }/> }
+                }</player>
+            }
+            }</cardPositions>
+        </GameData>
+      val userHome = System.getProperty("user.home")
+      val downloadsDir = Paths.get(userHome, "Downloads")
+      val name = players(0).name + players(1).name + "Game"
+      val ending = ".xml"
+      //falls wir mehrere mit untersch. namen haben wollen
+      var target = downloadsDir.resolve(name + ending)
+      var i = 1
+      while (Files.exists(target)) {
+        target = downloadsDir.resolve(s"${name}(${i})${ending}")
+        i += 1
+      }
+      XML.save(target.toString, xml)
+    }
+
 object GameData:
   def apply(playerAmount: Int, gameMode: GameFactory = StandardGameFactory): GameData =
     gameMode.createGame(playerAmount)
-        
+  def loadGame(node: xml.Node): GameData =
+    val tableNode = (node \ "table").head

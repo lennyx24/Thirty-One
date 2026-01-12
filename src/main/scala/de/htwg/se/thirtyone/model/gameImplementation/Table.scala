@@ -1,6 +1,7 @@
 package de.htwg.se.thirtyone.model.gameImplementation
 
-import scala.util._
+import scala.util.*
+import scala.xml.Elem
 
 case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.empty[Card])):
   val height: Int = 3
@@ -93,3 +94,22 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
       output + playerHeader + barNL + topNL + repeatCells + barNL
     }
   }
+  def toXML: Elem =
+    <Table>
+      {grid.zipWithIndex.map { case (row, ri) =>
+      <row index={ri.toString}>
+        {row.zipWithIndex.map { case (optCard, ci) =>
+        optCard match
+          case Some(card) => <cell index={ci.toString}>
+            {card.toXML}
+          </cell>
+          case None => <cell index={ci.toString}/>
+      }}
+      </row>
+    }}
+    </Table>
+    
+object Table:
+  def fromXML(node: xml.Node): Table =
+    val 
+    

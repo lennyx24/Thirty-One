@@ -138,6 +138,8 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
     hGap = 5
     preferredSize = new Dimension(600, 300)
   }
+  
+  val toXMLButton = new Button("save")
 
   val playingPanel = new BoxPanel(Orientation.Vertical) {
     contents += infoLabel
@@ -165,19 +167,20 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       contents += playerNameLabels(2)
       contents += scoreLabels(2)
 
-      contents += new Label("")
+      contents += toXMLButton
       contents += passButton
       contents += knockButton
       contents += swapButton
       contents += swapAllButton
     }
 
-    listenTo(passButton, knockButton, swapButton, swapAllButton)
+    listenTo(passButton, knockButton, swapButton, swapAllButton, toXMLButton)
     reactions += {
       case ButtonClicked(`passButton`) => controller.pass()
       case ButtonClicked(`knockButton`) => controller.knock()
       case ButtonClicked(`swapButton`) => controller.swap()
       case ButtonClicked(`swapAllButton`) => controller.selectAll()
+      case ButtonClicked(`toXMLButton`) => controller.gameData.saveGameXML()
     }
   }
 
