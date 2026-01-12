@@ -20,3 +20,13 @@ case class Player(
         <isAlive>{isAlive}</isAlive>
         <hasPassed>{hasPassed}</hasPassed>
       </Player>
+      
+object Player:
+  def fromXML(node: xml.Node): Player =
+    val name = (node \ "name").text
+    val hasKnocked = (node \ "hasKnocked").text.toBoolean
+    val points = (node \ "points").text.toDouble
+    val playersHealth = (node \ "playersHealth").text.toInt
+    val isAlive = (node \ "isAlive").text.toBoolean
+    val hasPassed = (node \ "hasPassed").text.toBoolean
+    Player(name, hasKnocked, points, playersHealth, isAlive, hasPassed)

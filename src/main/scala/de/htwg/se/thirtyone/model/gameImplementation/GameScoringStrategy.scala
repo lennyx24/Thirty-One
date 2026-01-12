@@ -22,3 +22,14 @@ object GameScoringStrategy:
     val threeOfAKind = if byValue.size == 1 then 30.5 else 0.0
 
     Math.max(pointsPerSymbol.max, threeOfAKind)
+
+  def fromString (name: String): Strategy =
+    name match {
+      case "simple" => simpleScoringStrategy
+      case "normal" => normalScoringStrategy
+      case _ => normalScoringStrategy
+    }
+  def toString (strategy: Strategy): String =
+    if strategy eq simpleScoringStrategy then "simple"
+    else if strategy eq normalScoringStrategy then "normal"
+    else "normal"

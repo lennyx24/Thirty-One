@@ -111,5 +111,21 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     
 object Table:
   def fromXML(node: xml.Node): Table =
-    val 
-    
+    val emptyGrid = Vector.fill(3, 9)(Option.empty[Card])
+    val rows = (node \ "row").toList
+
+    val filledGrid = rows.foldLeft(emptyGrid) { (gridAcc, rowNode) =>
+      val ri = (rowNode \ "@index").text.trim match
+        case s if s.nonEmpty => s.toInt
+        case _ => 0
+      val cells = (rowNode \ "cell").toList
+      cells.foldLeft(gridAcc) { (g, cellNode) =>
+        val ci = (cellNode \ "@index").text.trim match
+          case s if s.nonEmpty => s.toInt
+          case _ => 0
+        val optCard = cellNode.child.collect { case e: xml.Elem => e }.headOption.map(Card.fromXML)
+        g.updated(ri, g(ri).updated(ci, optCard))
+      }
+    }
+
+    Table(filledGrid)

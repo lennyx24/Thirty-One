@@ -130,7 +130,7 @@ case class GameData(
       val xml: Elem =
         <GameData>
           { table.toXML }
-          <strategy>{ scoringStrategy }</strategy>
+          <strategy>{GameScoringStrategy.toString(scoringStrategy)}</strategy>
           <playerCount>{playerCount}</playerCount>
           <players>{players.map(p=>p.toXML)}</players>
           <currentPlayerIndex>{currentPlayerIndex}</currentPlayerIndex>
@@ -165,3 +165,34 @@ object GameData:
     gameMode.createGame(playerAmount)
   def loadGame(node: xml.Node): GameData =
     val tableNode = (node \ "table").head
+    val table = Table.fromXML(tableNode)
+    val scoringStrategy = GameScoringStrategy.fromString((node \ "strategy").text)
+    val playerCount = (node \ "playercount").text.toInt
+    val currentPlayerIndex = (node \ "currentPlayerIndex").text.toInt
+    val drawIndex = (node \ "drawIndex").text.toInt
+    val gameRunning = (node \ "gameRunning").text.toBoolean
+    val players: List[Player] = (node \ "players").headOption.map(p=>p.child.collect{case e: xml.Elem => e}.toList.map(Player.fromXML)).getOrElse(Nil)
+    val deck: Vector[Card] = (node \ "deck").headOption.map(d => d.child.collect { case e: scala.xml.Elem => e }.toList.map(Card.fromXML).toVector).getOrElse(Vector.empty)
+    val indexes: Vector[Int] = (node \ "indexes").text.split(",").flatMap(s => s.toIntOption).toVector
+    val cardPositions: List[List[(Int, Int)]] =
+      (node \ "cardPositions" \ "player").toList
+        .sortBy(p => (p \ "@index").text.trim.toIntOption.getOrElse(0))
+        .map { p =>
+          (p \ "pos").toList.map { pos =>
+            val r = (pos \ "@row").text.trim.toIntOption.getOrElse(0)
+            val c = (pos \ "@col").text.trim.toIntOption.getOrElse(0)
+            (r, c)
+          }
+        }
+    GameData(
+      table = table,
+      scoringStrategy = scoringStrategy,
+      playerCount = playerCount,
+      players = players,
+      currentPlayerIndex = currentPlayerIndex,
+      deck = deck,
+      indexes = indexes,
+      drawIndex = drawIndex,
+      gameRunning = gameRunning,
+      cardPositions = cardPositions
+    )

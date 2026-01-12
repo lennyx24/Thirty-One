@@ -27,3 +27,9 @@ case class Card(symbol: Char, value: String, size: Int = 10) {
       <size>{ size }</size>
     </Card>
 }
+object Card:
+  def fromXML(node: xml.Node): Card =
+    val symbol = (node \ "symbol").text.charAt(0)
+    val value = (node \ "value").text
+    val size = (node \ "size").text.toInt
+    Card(symbol, value, size)
