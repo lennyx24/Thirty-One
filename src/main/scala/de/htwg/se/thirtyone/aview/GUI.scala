@@ -97,15 +97,20 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       nameP3.visible = false
       nameP4.visible = false
 
-      contents += new Label("")
+      val loadGameButton = new Button("Load saved Game")
+      contents += loadGameButton
       val start = new Button("Spiel starten")
       contents += start
 
-      listenTo(start)
+      listenTo(start,loadGameButton)
       reactions += {
         case ButtonClicked(`start`) => 
           val currentNames = nameFields.take(playerCount.text.toInt).map(_.text)
           controller.initialGame(playerCount.text, currentNames)
+        case ButtonClicked(`loadGameButton`) =>
+          controller.gameData.loadGameXML() match {
+            case Some(game) => controller.loadGameXML(game)
+          }
       }
       hGap = 5
       vGap = 5

@@ -34,4 +34,5 @@ trait GameInterface {
     def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameInterface
     def calculateIndex(indexToGive: String): Try[Int]
     def saveGameXML(): Unit
+    def loadGameXML(): Option[GameInterface]
 }

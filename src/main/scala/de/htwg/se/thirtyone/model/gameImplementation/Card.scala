@@ -21,11 +21,11 @@ case class Card(symbol: Char, value: String, size: Int = 10) {
   }
 
   def toXML: Elem =
-    <Card>
+    <card>
       <symbol>{ symbol.toString }</symbol>
       <value>{ value }</value>
       <size>{ size }</size>
-    </Card>
+    </card>
 }
 object Card:
   def fromXML(node: xml.Node): Card =

@@ -5,6 +5,7 @@ import scala.util.{Failure, Success, Try}
 import de.htwg.se.thirtyone.model.factory.*
 import GameScoringStrategy.Strategy
 import de.htwg.se.thirtyone.model.*
+import de.htwg.se.thirtyone.model.gameImplementation.GameData.loadGame
 
 import java.nio.file.{Files, Paths}
 import scala.xml.{Elem, Node, XML}
@@ -129,7 +130,7 @@ case class GameData(
     override def saveGameXML(): Unit = {
       val xml: Elem =
         <GameData>
-          { table.toXML }
+          {table.toXML}
           <strategy>{GameScoringStrategy.toString(scoringStrategy)}</strategy>
           <playerCount>{playerCount}</playerCount>
           <players>{players.map(p=>p.toXML)}</players>
@@ -143,31 +144,28 @@ case class GameData(
               <player index={ pi.toString }>{
                 posList.map { case (r, c) => <pos row={ r.toString } col={ c.toString }/> }
                 }</player>
-            }
+              }
             }</cardPositions>
         </GameData>
-      val userHome = System.getProperty("user.home")
-      val downloadsDir = Paths.get(userHome, "Downloads")
-      val name = players(0).name + players(1).name + "Game"
-      val ending = ".xml"
-      //falls wir mehrere mit untersch. namen haben wollen
-      var target = downloadsDir.resolve(name + ending)
-      var i = 1
-      while (Files.exists(target)) {
-        target = downloadsDir.resolve(s"${name}(${i})${ending}")
-        i += 1
-      }
-      XML.save(target.toString, xml)
+      val name = "src\\main\\scala\\de\\htwg\\se\\thirtyone\\savedGame.xml"
+      XML.save(name, xml)
+    }
+
+    override def loadGameXML(): Option[GameInterface] = {
+      val path = Paths.get("src\\main\\scala\\de\\htwg\\se\\thirtyone\\savedGame.xml")
+      if (!Files.exists(path)) return None
+      val xml = XML.loadFile(path.toFile)
+      Some(loadGame(xml))
     }
 
 object GameData:
   def apply(playerAmount: Int, gameMode: GameFactory = StandardGameFactory): GameData =
     gameMode.createGame(playerAmount)
   def loadGame(node: xml.Node): GameData =
-    val tableNode = (node \ "table").head
+    val tableNode = (node \ "table").headOption.getOrElse(throw new Exception("Saved game missing <table> node"))
     val table = Table.fromXML(tableNode)
     val scoringStrategy = GameScoringStrategy.fromString((node \ "strategy").text)
-    val playerCount = (node \ "playercount").text.toInt
+    val playerCount = (node \ "playerCount").text.toInt
     val currentPlayerIndex = (node \ "currentPlayerIndex").text.toInt
     val drawIndex = (node \ "drawIndex").text.toInt
     val gameRunning = (node \ "gameRunning").text.toBoolean

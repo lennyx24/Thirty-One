@@ -22,6 +22,15 @@ class GameController @Inject() (var state: ControllerState, var gameData: GameIn
     selectNumber(idx)
     gameData = gameData.changePlayersNames(playerNames)
 
+  override def loadGameXML(game: GameInterface): Unit =
+    game match {
+      case gd: GameInterface => 
+        this.gameData = gd
+        if(game.gameRunning) setState(PlayingState)
+        notifyObservers(GameStarted)
+        notifyObservers(PrintTable)
+    }
+
   override def selectNumber(idx: String): Unit = state.selectNumber(idx, this)
 
   override def selectAll(): Unit = state.selectAll(this)

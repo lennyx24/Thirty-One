@@ -95,7 +95,7 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     }
   }
   def toXML: Elem =
-    <Table>
+    <table>
       {grid.zipWithIndex.map { case (row, ri) =>
       <row index={ri.toString}>
         {row.zipWithIndex.map { case (optCard, ci) =>
@@ -107,7 +107,7 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
       }}
       </row>
     }}
-    </Table>
+    </table>
     
 object Table:
   def fromXML(node: xml.Node): Table =
