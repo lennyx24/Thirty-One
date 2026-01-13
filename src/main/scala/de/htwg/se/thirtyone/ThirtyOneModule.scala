@@ -23,6 +23,6 @@ class ThirtyOneModule extends AbstractModule with ScalaModule{
 
         bind[GameInterface].toInstance(StandardGameFactory.createGame(0))
         
-        bind(classOf[FileIO]).to(classOf[XmlFileIO])
-        //bind(classOf[FileIO]).to(classOf[JsonFileIO])
+        //bind(classOf[FileIO]).to(classOf[XmlFileIO])
+        bind(classOf[FileIO]).to(classOf[JsonFileIO])
 }

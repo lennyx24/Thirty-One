@@ -25,7 +25,7 @@ class GameController @Inject() (var state: ControllerState, var gameData: GameIn
     selectNumber(idx)
     gameData = gameData.changePlayersNames(playerNames)
 
-  override def loadGameXML(): Unit = {
+  override def loadGame(): Unit = {
     val game = fileIO.load()
     game match {
       case gd: GameInterface => 
@@ -36,7 +36,7 @@ class GameController @Inject() (var state: ControllerState, var gameData: GameIn
     }
   }
 
-  override def saveGameXML(): Unit =
+  override def saveGame(): Unit =
     fileIO.save(gameData)
 
   override def selectNumber(idx: String): Unit = state.selectNumber(idx, this)

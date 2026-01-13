@@ -1,5 +1,7 @@
 package de.htwg.se.thirtyone.model.gameImplementation
 
+import play.api.libs.json.{JsNull, JsValue, Json}
+
 import scala.util.*
 import scala.xml.Elem
 
@@ -108,12 +110,23 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
       </row>
     }}
     </table>
+
+  def toJson: JsValue =
+    Json.obj(
+      "grid" -> Json.toJson(
+        grid.map { row =>
+          row.map {
+            case Some(card) => card.toJson
+            case None => JsNull
+          }
+        }
+      )
+    )
     
 object Table:
   def fromXML(node: xml.Node): Table =
     val emptyGrid = Vector.fill(3, 9)(Option.empty[Card])
     val rows = (node \ "row").toList
-
     val filledGrid = rows.foldLeft(emptyGrid) { (gridAcc, rowNode) =>
       val ri = (rowNode \ "@index").text.trim match
         case s if s.nonEmpty => s.toInt
@@ -127,5 +140,27 @@ object Table:
         g.updated(ri, g(ri).updated(ci, optCard))
       }
     }
-
     Table(filledGrid)
+
+  def fromJson(js: JsValue): Table =
+    val node = (js \ "table").toOption.getOrElse(js)
+    val gridNode = (node \ "grid").asOpt[Seq[Seq[JsValue]]].getOrElse(Seq.empty)
+    val filledGrid: Vector[Vector[Option[Card]]] =
+      gridNode.map { rowSeq =>
+        rowSeq.map { cellJs =>
+          if cellJs == JsNull then None
+          else Some(Card.fromJson(cellJs))
+        }.toVector
+      }.toVector
+    val paddedGrid =
+      if filledGrid.length >= 3 && filledGrid.forall(_.length >= 9) then
+        filledGrid.map(_.padTo(9, None)).take(3)
+      else
+        Vector.fill(3, 9)(Option.empty[Card]).zipWithIndex.map { (defaultRow, ri) =>
+          if ri < filledGrid.length then
+            val row = filledGrid(ri)
+            row.padTo(9, None)
+          else
+            defaultRow
+        }
+    Table(paddedGrid)

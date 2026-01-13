@@ -107,7 +107,7 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
         case ButtonClicked(`start`) => 
           val currentNames = nameFields.take(playerCount.text.toInt).map(_.text)
           controller.initialGame(playerCount.text, currentNames)
-        case ButtonClicked(`loadGameButton`) => controller.loadGameXML()
+        case ButtonClicked(`loadGameButton`) => controller.loadGame()
       }
       hGap = 5
       vGap = 5
@@ -182,7 +182,7 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       case ButtonClicked(`knockButton`) => controller.knock()
       case ButtonClicked(`swapButton`) => controller.swap()
       case ButtonClicked(`swapAllButton`) => controller.selectAll()
-      case ButtonClicked(`toXMLButton`) => controller.saveGameXML()
+      case ButtonClicked(`toXMLButton`) => controller.saveGame()
     }
   }
 

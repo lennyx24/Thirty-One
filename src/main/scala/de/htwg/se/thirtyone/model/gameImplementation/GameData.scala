@@ -6,6 +6,7 @@ import de.htwg.se.thirtyone.model.factory.*
 import GameScoringStrategy.Strategy
 import de.htwg.se.thirtyone.model.*
 import de.htwg.se.thirtyone.model.gameImplementation.GameData.loadGame
+import play.api.libs.json.{JsValue, Json}
 
 import java.nio.file.{Files, Paths}
 import scala.xml.{Elem, Node, XML}
@@ -147,9 +148,30 @@ case class GameData(
           }</cardPositions>
       </GameData>
 
+    override def toJson(): JsValue =
+      Json.obj(
+        "GameData" -> Json.obj(
+          "table" -> table.toJson,
+          "strategy" -> GameScoringStrategy.toString(scoringStrategy),
+          "playerCount" -> playerCount,
+          "players" -> Json.toJson(players.map(_.toJson)),
+          "currentPlayerIndex" -> currentPlayerIndex,
+          "deck" -> Json.toJson(deck.map(_.toJson)),
+          "indexes" -> Json.toJson(indexes),
+          "drawIndex" -> drawIndex,
+          "gameRunning" -> gameRunning,
+          "cardPositions" -> Json.toJson(
+            cardPositions.map { posList =>
+              Json.toJson(posList.map { case (r, c) => Json.obj("row" -> r, "col" -> c) })
+            }
+          )
+        )
+      )
+
 object GameData:
   def apply(playerAmount: Int, gameMode: GameFactory = StandardGameFactory): GameData =
     gameMode.createGame(playerAmount)
+    
   def loadGame(node: xml.Node): GameData =
     val tableNode = (node \ "table").headOption.getOrElse(throw new Exception("Saved game missing <table> node"))
     val table = Table.fromXML(tableNode)
@@ -171,6 +193,44 @@ object GameData:
             (r, c)
           }
         }
+    GameData(
+      table = table,
+      scoringStrategy = scoringStrategy,
+      playerCount = playerCount,
+      players = players,
+      currentPlayerIndex = currentPlayerIndex,
+      deck = deck,
+      indexes = indexes,
+      drawIndex = drawIndex,
+      gameRunning = gameRunning,
+      cardPositions = cardPositions
+    )
+    
+  def loadGame(js: JsValue): GameData =
+    val node = (js \ "GameData").toOption.getOrElse(js)
+    val tableNode = (node \ "table").toOption.getOrElse(node)
+    val table = Table.fromJson(tableNode)
+    val scoringStrategy = GameScoringStrategy.fromString((node \ "strategy").asOpt[String].getOrElse("STANDARD"))
+    val playerCount = (node \ "playerCount").asOpt[Int].getOrElse(0)
+    val currentPlayerIndex = (node \ "currentPlayerIndex").asOpt[Int].getOrElse(0)
+    val drawIndex = (node \ "drawIndex").asOpt[Int].getOrElse(0)
+    val gameRunning = (node \ "gameRunning").asOpt[Boolean].getOrElse(false)
+    val players = (node \ "players").asOpt[Seq[JsValue]].getOrElse(Seq.empty).toList.map(pj => Player.fromJson(pj))
+    val deck = (node \ "deck").asOpt[Seq[JsValue]].getOrElse(Seq.empty).toVector.map(cj => Card.fromJson(cj))
+    val indexes: Vector[Int] =
+      (node \ "indexes").asOpt[Seq[Int]].map(_.toVector)
+        .orElse((node \ "indexes").asOpt[String].map(s => s.split(",").flatMap(_.toIntOption).toVector))
+        .getOrElse(Vector.empty)
+    val cpSeq = (node \ "cardPositions").asOpt[Seq[Seq[JsValue]]].getOrElse(Seq.empty)
+    val cardPositions: List[List[(Int, Int)]] =
+      cpSeq.map { rowSeq =>
+        rowSeq.map { cellJs =>
+          val r = (cellJs \ "row").asOpt[Int].getOrElse(0)
+          val c = (cellJs \ "col").asOpt[Int].getOrElse(0)
+          (r, c)
+        }.toList
+      }.toList
+
     GameData(
       table = table,
       scoringStrategy = scoringStrategy,
