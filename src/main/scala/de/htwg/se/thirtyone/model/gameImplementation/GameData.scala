@@ -127,36 +127,25 @@ case class GameData(
       val newGame = GameData(playerCount)
       newGame.copy(players = savedPlayers)
 
-    override def saveGameXML(): Unit = {
-      val xml: Elem =
-        <GameData>
-          {table.toXML}
-          <strategy>{GameScoringStrategy.toString(scoringStrategy)}</strategy>
-          <playerCount>{playerCount}</playerCount>
-          <players>{players.map(p=>p.toXML)}</players>
-          <currentPlayerIndex>{currentPlayerIndex}</currentPlayerIndex>
-          <deck>{deck.map(_.toXML)}</deck>
-          <indexes>{indexes.mkString(",")}</indexes>
-          <drawIndex>{drawIndex}</drawIndex>
-          <gameRunning>{gameRunning}</gameRunning>
-          <cardPositions>{
-            cardPositions.zipWithIndex.map { case (posList, pi) =>
-              <player index={ pi.toString }>{
-                posList.map { case (r, c) => <pos row={ r.toString } col={ c.toString }/> }
-                }</player>
-              }
-            }</cardPositions>
-        </GameData>
-      val name = "src\\main\\scala\\de\\htwg\\se\\thirtyone\\savedGame.xml"
-      XML.save(name, xml)
-    }
-
-    override def loadGameXML(): Option[GameInterface] = {
-      val path = Paths.get("src\\main\\scala\\de\\htwg\\se\\thirtyone\\savedGame.xml")
-      if (!Files.exists(path)) return None
-      val xml = XML.loadFile(path.toFile)
-      Some(loadGame(xml))
-    }
+    override def toXml(): Elem =
+      <GameData>
+        {table.toXML}
+        <strategy>{GameScoringStrategy.toString(scoringStrategy)}</strategy>
+        <playerCount>{playerCount}</playerCount>
+        <players>{players.map(p=>p.toXML)}</players>
+        <currentPlayerIndex>{currentPlayerIndex}</currentPlayerIndex>
+        <deck>{deck.map(_.toXML)}</deck>
+        <indexes>{indexes.mkString(",")}</indexes>
+        <drawIndex>{drawIndex}</drawIndex>
+        <gameRunning>{gameRunning}</gameRunning>
+        <cardPositions>{
+          cardPositions.zipWithIndex.map { case (posList, pi) =>
+            <player index={ pi.toString }>{
+              posList.map { case (r, c) => <pos row={ r.toString } col={ c.toString }/> }
+              }</player>
+            }
+          }</cardPositions>
+      </GameData>
 
 object GameData:
   def apply(playerAmount: Int, gameMode: GameFactory = StandardGameFactory): GameData =

@@ -18,7 +18,9 @@ trait ControllerInterface extends Observable {
     def swap(): Unit
 
     def initialGame(idx: String, playerNames: List[String]): Unit
-    def loadGameXML(game: GameInterface): Unit
+    def loadGameXML(): Unit
+    def saveGameXML(): Unit
+    
     def selectNumber(idx: String): Unit
     def selectAll(): Unit
 
