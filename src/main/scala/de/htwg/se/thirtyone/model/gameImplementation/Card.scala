@@ -22,7 +22,7 @@ case class Card(symbol: Char, value: String, size: Int = 10) {
 
   def toXML: Elem =
     <card>
-      <symbol>{ symbol.toString }</symbol>
+      <symbol>{ symbol }</symbol>
       <value>{ value }</value>
       <size>{ size }</size>
     </card>
