@@ -4,7 +4,7 @@ case class Player(
     name: String = "Nameless Player",
     hasKnocked: Boolean = false, 
     points: Double = 0,
-    playersHealth: Int = 2,
+    playersHealth: Int = 3,
     isAlive: Boolean = true,
     hasPassed:Boolean = false
 ):
