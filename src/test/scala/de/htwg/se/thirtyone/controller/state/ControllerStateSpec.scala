@@ -9,6 +9,7 @@ import de.htwg.se.thirtyone.controller.state._
 import de.htwg.se.thirtyone.controller._
 import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 import de.htwg.se.thirtyone.controller.command.UndoManager
+import java.security.Permission
 
 class ControllerStateSpec extends AnyWordSpec with Matchers {
   "ControllerState.checkIfGameEnded" should {
@@ -32,7 +33,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
   }
 
   "ControllerState.handleInput" should {
-    "handle quit/exit" in {
+    "delegate non-quit input to execute" in {
       val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       var executed = false
       val stub = new ControllerState {
@@ -43,6 +44,31 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
       
       stub.handleInput("something", controller)
       executed shouldBe true
+    }
+
+    "call System.exit on quit" in {
+      class NoExitSecurityManager extends SecurityManager {
+        override def checkPermission(perm: Permission): Unit = ()
+        override def checkPermission(perm: Permission, context: Object): Unit = ()
+        override def checkExit(status: Int): Unit = throw new SecurityException(status.toString)
+      }
+
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      var executed = false
+      val stub = new ControllerState {
+        override def execute(input: String, c: ControllerInterface): Unit = {
+          executed = true
+        }
+      }
+
+      val original = System.getSecurityManager
+      try {
+        System.setSecurityManager(new NoExitSecurityManager)
+        an [SecurityException] should be thrownBy stub.handleInput("quit", controller)
+        executed shouldBe false
+      } finally {
+        System.setSecurityManager(original)
+      }
     }
 
     "default methods notify InvalidInput" in {
@@ -89,10 +115,24 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
       val stub = new ControllerState {}
       stub.checkIfRoundEnded(controller, p1)
 
-      // After processing, there should be PlayerScore notifications and PrintTable/RunningGame
       events.exists(_.contains("PlayerScore(")) shouldBe true
       events.exists(_.contains("PrintTable")) shouldBe true
       events.exists(_.contains("RunningGame")) shouldBe true
+      controller.state shouldBe PlayingState
+    }
+  }
+
+  "ControllerState.checkIfRoundEnded when round should continue" should {
+    "return false and keep state unchanged" in {
+      val p1 = Player(points = 10.0, playersHealth = 3)
+      val p2 = Player(points = 5.0, playersHealth = 3)
+      val gd = GameData(2).copy(gameRunning = true, players = List(p1, p2))
+      val controller = new GameController(PlayingState, gd, new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val stub = new ControllerState {}
+
+      val ended = stub.checkIfRoundEnded(controller, p1)
+
+      ended shouldBe false
       controller.state shouldBe PlayingState
     }
   }

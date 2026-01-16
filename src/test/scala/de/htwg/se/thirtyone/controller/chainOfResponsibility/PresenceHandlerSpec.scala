@@ -22,7 +22,6 @@ class PresenceHandlerSpec extends AnyWordSpec with Matchers {
     "throw IndexOutOfBoundsException when a cell is empty" in {
       val handler = PresenceHandler(None)
       val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
-      // set empty table via setGameData
       controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(table = Table()))
 
       val res = handler.handle(controller, "1", "1")
@@ -34,10 +33,9 @@ class PresenceHandlerSpec extends AnyWordSpec with Matchers {
     "return Failure when next is None but cells present (no next handler)" in {
       val handler = PresenceHandler(None)
       val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
-      // ensure default table has cards present
       val res = handler.handle(controller, "1", "1")
       res match
-        case Failure(_: IndexOutOfBoundsException) => succeed // SwapHandler.passNext returns Failure when next is None
+        case Failure(_: IndexOutOfBoundsException) => succeed
         case _ => fail("Expected Failure(IndexOutOfBoundsException) when next is None")
     }
 

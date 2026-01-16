@@ -7,6 +7,7 @@ import de.htwg.se.thirtyone.util._
 import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 import de.htwg.se.thirtyone.controller.command.UndoManager
 import scala.collection.mutable.ArrayBuffer
+import java.security.Permission
 
 class GameEndedStateSpec extends AnyWordSpec with Matchers {
   "GameEndedState" should {
@@ -18,7 +19,6 @@ class GameEndedStateSpec extends AnyWordSpec with Matchers {
       GameEndedState.execute("j", controller)
       controller.state shouldBe SetupState
       events.exists(_.contains("GameStarted")) shouldBe true
-      // Also SetupState.reset() should have been called (playerAmount=0)
       SetupState.playerAmount shouldBe 0
     }
 
@@ -29,6 +29,23 @@ class GameEndedStateSpec extends AnyWordSpec with Matchers {
 
       GameEndedState.execute("x", controller)
       events.exists(_.contains("InvalidInput")) shouldBe true
+    }
+
+    "call System.exit on 'n'" in {
+      class NoExitSecurityManager extends SecurityManager {
+        override def checkPermission(perm: Permission): Unit = ()
+        override def checkPermission(perm: Permission, context: Object): Unit = ()
+        override def checkExit(status: Int): Unit = throw new SecurityException(status.toString)
+      }
+
+      val controller = new GameController(GameEndedState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val original = System.getSecurityManager
+      try {
+        System.setSecurityManager(new NoExitSecurityManager)
+        an [SecurityException] should be thrownBy GameEndedState.execute("n", controller)
+      } finally {
+        System.setSecurityManager(original)
+      }
     }
   }
 }

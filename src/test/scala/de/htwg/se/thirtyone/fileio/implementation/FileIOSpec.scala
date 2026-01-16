@@ -9,7 +9,6 @@ import de.htwg.se.thirtyone.model.GameInterface
 
 class FileIOSpec extends AnyWordSpec with Matchers {
 
-  // Override filepath to use a temporary location for tests
   class TestJsonFileIO extends JsonFileIO {
     override def filepath: Path = Paths.get("target", "test_save_game")
   }
@@ -27,7 +26,6 @@ class FileIOSpec extends AnyWordSpec with Matchers {
     "save and load the game correctly" in {
       cleanUp()
       val game = StandardGameFactory.createGame(2)
-      // Modify game state to ensure we are not just loading default
       val modifiedGame = game.changePlayerName(game.players.head, "TesterJson")
       
       val fileIO = new TestJsonFileIO
@@ -38,7 +36,6 @@ class FileIOSpec extends AnyWordSpec with Matchers {
       loadedGame.playerCount shouldBe modifiedGame.playerCount
       loadedGame.players.head.name shouldBe "TesterJson"
       loadedGame.currentPlayerIndex shouldBe modifiedGame.currentPlayerIndex
-      // Deep check on table if possible, or at least size
       loadedGame.table.grid.length shouldBe 3
       
       cleanUp()

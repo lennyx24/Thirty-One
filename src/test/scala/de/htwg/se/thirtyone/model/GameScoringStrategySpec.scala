@@ -19,19 +19,15 @@ class GameScoringStrategySpec extends AnyWordSpec with Matchers {
 
     "calculate normal strategy by best symbol" in {
       val cards = List(Card('♠', "A"), Card('♠', "K"), Card('♦', "9"))
-      // by symbol ♠ -> 11 + 10 = 21, ♦ -> 9
       GameScoringStrategy.normalScoringStrategy(cards) shouldBe 21
     }
 
     "handle empty list without throwing" in {
       GameScoringStrategy.simpleScoringStrategy(Nil) shouldBe 0
-      // normalScoringStrategy on empty list would call max on empty -> to avoid exception ensure behaviour
-      // Since normalScoringStrategy uses pointsPerSymbol.max which throws on empty, we guard this test by providing at least one card
     }
 
     "handle tie between symbols by choosing max of sums" in {
       val cards = List(Card('♠', "5"), Card('♣', "5"), Card('♠', "K"))
-      // ♠: 5 + 10 = 15, ♣: 5
       GameScoringStrategy.normalScoringStrategy(cards) shouldBe 15
     }
 

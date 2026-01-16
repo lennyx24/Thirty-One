@@ -18,7 +18,6 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
     def stubGameData(
                       index: Int = 0
                     ): GameData =
-      // Erzeuge Basis-GameData über Factory und passe Felder mit copy an
       val base = GameData(3)
       val players = List(
         Player(name = "P1", hasKnocked = false, points = 15.0, playersHealth = 3),
@@ -38,7 +37,6 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       val controller = makeController(stubGameData())
       val beforeIndex = controller.gameData.currentPlayerIndex
 
-      // Debug: ensure subscriber was added and direct notify works
       controller.subscribers.size should be > 0
       controller.notifyObservers(PrintTable)
       events.exists(_.contains("PrintTable")) shouldBe true
@@ -48,7 +46,6 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
 
       PlayingState.pass(controller)
 
-      // check model change happened for the player who passed
       val afterHasPassed = controller.gameData.players(beforeIndex).hasPassed
       afterHasPassed shouldBe true
       val actedPlayer = controller.gameData.players(beforeIndex)

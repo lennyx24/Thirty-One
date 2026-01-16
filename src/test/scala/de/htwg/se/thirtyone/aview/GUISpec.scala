@@ -9,10 +9,8 @@ import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 
 class GUISpec extends AnyWordSpec with Matchers {
-  // detect CI environments (GitHub Actions, generic CI)
   private val isCI: Boolean = sys.env.get("GITHUB_ACTIONS").isDefined || sys.env.get("CI").isDefined
 
-  // lokale Helfer (zuvor in TestHelpers)
   private def captureOut(f: => Unit): String = {
     val baos = new java.io.ByteArrayOutputStream()
     val ps = new java.io.PrintStream(baos)
@@ -173,7 +171,6 @@ class GUISpec extends AnyWordSpec with Matchers {
       val tfields = findTextFields(setup)
       val playerCount = tfields.find(_.text == "2").get
 
-      // set to 4 players explicitly
       playerCount.text = "4"
       playerCount.publish(scala.swing.event.EditDone(playerCount))
       playerCount.text shouldBe "4"
@@ -184,7 +181,6 @@ class GUISpec extends AnyWordSpec with Matchers {
         f.publish(scala.swing.event.EditDone(f))
       }
 
-      // Click start to apply names to controller (initialGame is invoked on start button)
       val startBtnOpt = findButtons(setup).find(_.text == "Spiel starten")
       startBtnOpt.isDefined shouldBe true
       runOnEDT { startBtnOpt.get.peer.doClick() }

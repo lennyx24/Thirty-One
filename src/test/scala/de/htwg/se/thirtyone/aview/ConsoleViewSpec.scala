@@ -9,7 +9,6 @@ import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 
 class ConsoleViewSpec extends AnyWordSpec with Matchers {
-  // helper für Konsole-Capture (lokal)
   private def captureOut(f: => Unit): String = {
     val baos = new java.io.ByteArrayOutputStream()
     val ps = new java.io.PrintStream(baos)

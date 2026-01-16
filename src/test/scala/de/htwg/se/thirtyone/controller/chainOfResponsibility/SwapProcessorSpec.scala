@@ -48,11 +48,9 @@ class SwapProcessorSpec extends AnyWordSpec with Matchers {
 
     "fail when cardPositions entries are missing (BoundsHandler index access)" in {
       val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
-      // create cardPositions with proper outer length but empty inner lists to force IndexOutOfBounds
       val badPositions = List(List.empty[(Int, Int)], List.empty[(Int, Int)])
       controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(cardPositions = badPositions))
 
-      // BoundsHandler may throw IndexOutOfBounds directly (before returning a Failure), so accept either thrown exception
       intercept[IndexOutOfBoundsException] {
         SwapProcessor.process(controller, "1", "1")
       }

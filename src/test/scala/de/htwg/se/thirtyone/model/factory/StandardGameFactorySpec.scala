@@ -12,7 +12,7 @@ class StandardGameFactorySpec extends AnyWordSpec with Matchers {
       gd.deck.nonEmpty shouldBe true
       gd.table.grid.length shouldBe 3
       gd.table.grid.head.length shouldBe 9
-      gd.cardPositions.length should be >= 2 // positions defined for up to 5, ensure at least 2
+      gd.cardPositions.length should be >= 2
       gd.players.length shouldBe 2
     }
 

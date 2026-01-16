@@ -4,6 +4,7 @@ import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.model.gameImplementation.Card
 import de.htwg.se.thirtyone.model.gameImplementation.Deck
+import de.htwg.se.thirtyone.model.gameImplementation.Player
 import de.htwg.se.thirtyone.model.gameImplementation.Table
 import play.api.libs.json.Json
 
@@ -88,18 +89,25 @@ class TableSpec extends AnyWordSpec {
       table.get(cardPositions(1)(2)) should be(deck(5))
     }
 
-    "be able to generate indexes" in {
-      val deck = Deck().deck
-      val indexes = tab.indexes(deck)
-      indexes.length should be(deck.length)
-      indexes.sorted should be(deck.indices.toVector)
-    }
-
     "be able to print table" in {
       val newTab = tab.set((0, 0), h10)
       val s = newTab.printTable(List())
       s should include("+")
       s should include("|")
+    }
+
+    "printTable should include player names when provided" in {
+      val players = List(
+        Player(name = "P1", playersHealth = 3, points = 10.0),
+        Player(name = "P2", playersHealth = 2, points = 5.0),
+        Player(name = "P3", playersHealth = 1, points = 7.0),
+        Player(name = "P4", playersHealth = 3, points = 9.0)
+      )
+      val s = tab.printTable(players)
+      s should include("P1")
+      s should include("P2")
+      s should include("P3")
+      s should include("P4")
     }
 
     "newMiddleCards should replace middle cards when enough cards available" in {

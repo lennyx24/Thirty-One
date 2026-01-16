@@ -11,7 +11,6 @@ class ThirtyOneModuleSpec extends AnyWordSpec with Matchers {
       val injector = Guice.createInjector(new ThirtyOneModule)
       val controller = injector.getInstance(classOf[ControllerInterface])
       controller should not be null
-      // verifying specific implementations could be done but instanceof checks are enough to ensure binding exists
       controller.getClass.getName should include ("GameController")
     }
   }

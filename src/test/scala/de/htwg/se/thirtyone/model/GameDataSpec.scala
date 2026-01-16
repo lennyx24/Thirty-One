@@ -4,6 +4,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import scala.util.{Success, Failure}
 import de.htwg.se.thirtyone.model.gameImplementation._
+import play.api.libs.json.Json
 
 class GameDataSpec extends AnyWordSpec with Matchers {
 
@@ -321,6 +322,12 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       gd.swap(stranger, "1", "1").isFailure shouldBe true
     }
 
+    "swapTable should return unchanged when player is unknown" in {
+      val gd = GameData(2)
+      val stranger = Player(name = "Stranger")
+      gd.swapTable(stranger, 0, 0, swapFinished = true) shouldBe gd
+    }
+
     "loadGame should restore from XML and JSON" in {
       val gd = GameData(2)
       val named = gd.changePlayerName(gd.players.head, "Alice")
@@ -332,6 +339,27 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       val fromJson = GameData.loadGame(named.toJson())
       fromJson.playerCount shouldBe gd.playerCount
       fromJson.players.head.name shouldBe "Alice"
+    }
+
+    "loadGame should accept JSON with string indexes" in {
+      val gd = GameData(2)
+      val js = Json.obj(
+        "GameData" -> Json.obj(
+          "table" -> gd.table.toJson,
+          "strategy" -> "simple",
+          "playerCount" -> gd.playerCount,
+          "players" -> Json.toJson(gd.players.map(_.toJson)),
+          "currentPlayerIndex" -> gd.currentPlayerIndex,
+          "deck" -> Json.toJson(gd.deck.map(_.toJson)),
+          "indexes" -> "1,2,3",
+          "drawIndex" -> gd.drawIndex,
+          "gameRunning" -> gd.gameRunning,
+          "cardPositions" -> Json.arr()
+        )
+      )
+      val loaded = GameData.loadGame(js)
+      loaded.indexes shouldBe Vector(1, 2, 3)
+      loaded.cardPositions shouldBe Nil
     }
 
     "serialize to JSON and XML" in {
