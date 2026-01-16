@@ -6,29 +6,31 @@ import de.htwg.se.thirtyone.util._
 
 object PlayingState extends ControllerState:
   override def pass(c: ControllerInterface): Unit =
-    val currentPlayer = c.gameData.currentPlayerIndex + 1
+    val currentPlayer = c.gameData.currentPlayer
+    val currentPlayerIndex = c.gameData.currentPlayerIndex
     val command = new SetCommand(c, () => {
       c.gamePass()
     })
     c.undoManager.doStep(command)
-    checkIfRoundEnded(c, currentPlayer)
-    c.notifyObservers(PrintTable)
-    c.notifyObservers(PlayerPassed(currentPlayer))
-    c.notifyObservers(RunningGame(c.gameData.currentPlayer))
+    if !checkIfRoundEnded(c, currentPlayerIndex) then
+      c.notifyObservers(PrintTable)
+      c.notifyObservers(PlayerPassed(currentPlayer))
+      c.notifyObservers(RunningGame(c.gameData.currentPlayer))
 
   override def knock(c: ControllerInterface): Unit =
-    val currentPlayer = c.gameData.currentPlayerIndex + 1
+    val currentPlayer = c.gameData.currentPlayer
+    val currentPlayerIndex = c.gameData.currentPlayerIndex
     val command = new SetCommand(c, () => {
       c.gameKnock()
     })
     c.undoManager.doStep(command)
-    checkIfRoundEnded(c, currentPlayer)
-    c.notifyObservers(PrintTable)
-    c.notifyObservers(PlayerKnocked(currentPlayer))
-    c.notifyObservers(RunningGame(c.gameData.currentPlayer))
+    if !checkIfRoundEnded(c, currentPlayerIndex) then
+      c.notifyObservers(PrintTable)
+      c.notifyObservers(PlayerKnocked(currentPlayer))
+      c.notifyObservers(RunningGame(c.gameData.currentPlayer))
 
   override def swap(c: ControllerInterface): Unit =
-    val currentPlayer = c.gameData.currentPlayerIndex + 1
+    val currentPlayer = c.gameData.currentPlayer
     val command = new SetCommand(c, () => {
       c.setState(SwapState())
     })

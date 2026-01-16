@@ -17,7 +17,8 @@ case class ConsoleView(controller: ControllerInterface) extends Observer:
             printNewRound(controller.gameData.table.printTable(controller.gameData.players))
 
         case PlayerScore(player) =>
-            val points = controller.gameData.getPlayerPoints(player)
+            val playerIndex = controller.gameData.players.indexOf(player)
+            val points = controller.gameData.getPlayerPoints(playerIndex)
             println(s"Spieler $player hat $points Punkte.")
 
         case RunningGame(player) =>
@@ -40,8 +41,11 @@ case class ConsoleView(controller: ControllerInterface) extends Observer:
             println(s"Spieler $player tauscht diese Runde.")
 
         case GameEnded(player) =>
-            println(s"Spieler $player hat gewonnen. Glückwunsch!")
+            println(s"Spieler ${player.name} hat die Runde gewonnen. Glückwunsch!")
             println("Wollt ihr noch eine Runde spielen? (j/n):")
+
+        case PlayerName(player) =>
+            println(s"Name für Spieler $player: ")
 
     def printNewRound(gameTable: String): Unit = 
         (1 until 20).foreach(x => println)

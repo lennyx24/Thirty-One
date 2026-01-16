@@ -17,6 +17,7 @@ trait GameInterface {
     def getPlayersHand(): List[Card]
     def getPlayersHealth(player: Int): Int
     def getPlayerScore(player: Int): Double
+    def changePlayerName(newName: String, playerIdx: Int): GameInterface
     def changePlayersNames(playersName: List[String]): GameInterface
     def getTableCard(): List[Card]
     def doDamage(player: Player): GameInterface

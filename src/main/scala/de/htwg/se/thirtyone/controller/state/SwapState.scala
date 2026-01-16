@@ -12,7 +12,8 @@ class SwapState extends ControllerState:
   override def execute(input: String, c: ControllerInterface): Unit =
     input match
       case "1" | "2" | "3" | "alle" =>
-        val currentPlayer = c.gameData.currentPlayerIndex + 1
+        val currentPlayerIndex = c.gameData.currentPlayerIndex + 1
+        val currentPlayer = c.gameData.currentPlayer
         if give == "" then
           give = input.toLowerCase()
           if give != "alle" then c.notifyObservers(PlayerSwapTake(currentPlayer))
@@ -21,8 +22,8 @@ class SwapState extends ControllerState:
           val take = input
           SwapProcessor.process(c, give, take) match
             case Success(v) =>
-              c.countPoints(c, currentPlayer)
-              checkIfRoundEnded(c, currentPlayer)
+              c.countPoints(c, currentPlayerIndex)
+              checkIfRoundEnded(c, currentPlayerIndex)
               c.setState(PlayingState)
 
               c.notifyObservers(PrintTable)

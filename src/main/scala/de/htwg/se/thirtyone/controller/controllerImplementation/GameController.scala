@@ -22,6 +22,8 @@ class GameController @Inject() (var state: ControllerState, var gameData: GameIn
     selectNumber(idx)
     gameData = gameData.changePlayersNames(playerNames)
 
+  override def changePlayerName(newName: String, playerIdx: Int): Unit = gameData = gameData.changePlayerName(newName, playerIdx)
+  
   override def selectNumber(idx: String): Unit = state.selectNumber(idx, this)
 
   override def selectAll(): Unit = state.selectAll(this)

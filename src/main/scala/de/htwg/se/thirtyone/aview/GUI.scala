@@ -6,6 +6,7 @@ import de.htwg.se.thirtyone.util._
 import java.awt.Color
 import scala.swing._
 import scala.swing.event._
+import de.htwg.se.thirtyone.model.gameImplementation.Player
 
 class GUI(controller: ControllerInterface) extends Frame with Observer {
   title = "Thirty-One"
@@ -181,6 +182,33 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
     }
   }
 
+  var winningPlayer: Option[Player] = None
+
+  val gameEndedPanel = new BoxPanel(Orientation.Vertical) {
+      border = Swing.EmptyBorder(15, 15, 15, 15)
+      val playAgainButton = new Button(" Nochmal spielen")
+      val quitButton = new Button("Verlassen")
+      
+      val playerDummy = Player("None")
+      val winnerName = winningPlayer.getOrElse(playerDummy).name
+
+      contents += new GridPanel(1, 1) {
+        contents += new Label(s"Glückwunsch Spieler $winnerName du hast das Spiel gewonnen!")
+      }
+
+      contents += Swing.VStrut(25)
+
+      contents += new GridPanel(2, 1) {
+        contents += playAgainButton
+        contents += quitButton
+      }
+      listenTo(playAgainButton, quitButton)
+      reactions += {
+        case ButtonClicked(`playAgainButton`) => controller.handleInput("j")
+        case ButtonClicked(`quitButton`) => controller.handleInput("n") 
+      }
+  }
+
   def drawTable(): Unit =
     cardGrid.contents.clear()
     val gridData = controller.gameData.table.grid
@@ -256,12 +284,13 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       swapMode = "none"
 
     case PlayerScore(player) =>
-      val points = controller.gameData.getPlayerScore(player)
+      val playerIndex = controller.gameData.players.indexOf(player)
+      val points = controller.gameData.getPlayerScore(playerIndex)
       javax.swing.SwingUtilities.invokeLater(() => {
-        if player >= 0 then
-          scoreLabels(player - 1).text = s"Punkte: $points"
-          if (player - 1) < controller.gameData.players.length then
-            playerNameLabels(player - 1).text = s"Spieler ${player} (Leben: ${controller.gameData.getPlayersHealth(player - 1)})"
+        if playerIndex >= 0 then
+          scoreLabels(playerIndex - 1).text = s"Punkte: $points"
+          if (playerIndex - 1) < controller.gameData.players.length then
+            playerNameLabels(playerIndex - 1).text = s"Spieler ${player} (Leben: ${controller.gameData.getPlayersHealth(playerIndex - 1)})"
       })
 
     case PlayerSwapGive(player) =>
@@ -272,5 +301,15 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
     case PlayerSwapTake(player) =>
       infoLabel.text = s"Spieler $player, wähle eine Karte zum nehmen"
       swapMode = "take"
+
+    case GameEnded(winner) =>
+      javax.swing.SwingUtilities.invokeLater(() => {
+        winningPlayer = Some(winner)
+        contents = gameEndedPanel
+        pack()
+        centerOnScreen()
+        open()
+      })
+
     case _ =>
 }

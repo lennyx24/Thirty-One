@@ -11,7 +11,6 @@ object GameEndedState extends ControllerState:
         c.notifyObservers(GameStarted)
 
       case "n" =>
-        println("Spiel wird beendet...")
         System.exit(0)
 
       case _ =>

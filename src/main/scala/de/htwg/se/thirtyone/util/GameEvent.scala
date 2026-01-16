@@ -12,16 +12,20 @@ case object PrintTable extends GameEvent
 
 case class RunningGame(player: Player) extends GameEvent
 
-case class PlayerScore(player: Int) extends GameEvent
+case class PlayerScore(player: Player) extends GameEvent
 
-case class PlayerSwapGive(player: Int) extends GameEvent
+case class PlayerSwapGive(player: Player) extends GameEvent
 
-case class PlayerSwapTake(player: Int) extends GameEvent
+case class PlayerSwapTake(player: Player) extends GameEvent
 
-case class PlayerPassed(player: Int) extends GameEvent
+case class PlayerPassed(player: Player) extends GameEvent
 
-case class PlayerKnocked(player: Int) extends GameEvent
+case class PlayerKnocked(player: Player) extends GameEvent
 
-case class PlayerSwapped(player: Int) extends GameEvent
+case class PlayerSwapped(player: Player) extends GameEvent
 
-case class GameEnded(winner: Int) extends GameEvent
+case class RoundEnded(winner: Player) extends GameEvent
+
+case class GameEnded(winner: Player) extends GameEvent
+
+case class PlayerName(player: Int) extends GameEvent

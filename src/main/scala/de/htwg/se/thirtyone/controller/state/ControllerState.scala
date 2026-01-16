@@ -24,7 +24,7 @@ trait ControllerState:
 
   def selectAll(c: ControllerInterface): Unit = c.notifyObservers(InvalidInput)
 
-  def checkIfRoundEnded(c: ControllerInterface, currentPlayer: Int): Unit =
+  def checkIfRoundEnded(c: ControllerInterface, currentPlayer: Int): Boolean =
     if !c.gameData.gameRunning || c.gameData.getPlayerPoints(currentPlayer) == 31 then
       val worstPlayer = c.gameData.getWorstPlayerByPoints
       c.dealDamage(worstPlayer)
@@ -32,13 +32,17 @@ trait ControllerState:
         val bestPlayer = c.gameData.getBestPlayerByPoints
         val playerNumber = c.gameData.players.indexOf(bestPlayer) + 1
         c.setState(GameEndedState)
-        c.notifyObservers(GameEnded(playerNumber))
+        c.notifyObservers(GameEnded(bestPlayer))
       else
         c.resetGame()
         c.setState(PlayingState)
         for (i <- 1 to c.gameData.playerCount) do
           c.countPoints(c, i)
-          c.notifyObservers(PlayerScore(i))
+          val player = c.gameData.players(i-1)
+          c.notifyObservers(PlayerScore(player))
 
         c.notifyObservers(PrintTable)
         c.notifyObservers(RunningGame(c.gameData.currentPlayer))
+      true
+    else
+      false

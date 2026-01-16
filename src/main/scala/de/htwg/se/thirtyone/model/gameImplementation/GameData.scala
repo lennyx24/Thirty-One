@@ -50,6 +50,11 @@ case class GameData(
 
     override def getPlayerScore(player: Int): Double = getPlayerPoints(player)
 
+    override def changePlayerName(newName: String, playerIdx: Int): GameInterface =
+      val newPlayer = players(playerIdx).changeName(newName)
+      val newPlayers = players.updated(playerIdx, newPlayer)
+      copy(players = newPlayers)
+
     override def changePlayersNames(playersName: List[String]): GameInterface =
       val newPlayers = players.zip(playersName).map { case (player, newName) =>
         player.changeName(newName)
