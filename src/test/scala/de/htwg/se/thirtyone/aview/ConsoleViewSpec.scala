@@ -69,5 +69,47 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
       val out = captureOut { view.update(PlayerNameSet(1, "Lenny")) }
       out should include("Spieler 1 heißt nun Lenny")
     }
+
+    "print InvalidInput message" in {
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val view = ConsoleView(controller)
+      val out = captureOut { view.update(InvalidInput) }
+      out should include("keine valide Option")
+    }
+
+    "print RunningGame message" in {
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val view = ConsoleView(controller)
+      val out = captureOut { view.update(RunningGame(controller.gameData.players.head)) }
+      out should include("ist dran")
+    }
+
+    "print PlayerSwapGive message" in {
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val view = ConsoleView(controller)
+      val out = captureOut { view.update(PlayerSwapGive(controller.gameData.players.head)) }
+      out should include("abgeben")
+    }
+
+    "print PlayerSwapTake message" in {
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val view = ConsoleView(controller)
+      val out = captureOut { view.update(PlayerSwapTake(controller.gameData.players.head)) }
+      out should include("erhalten")
+    }
+
+    "print GameEnded message" in {
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val view = ConsoleView(controller)
+      val out = captureOut { view.update(GameEnded(controller.gameData.players.head)) }
+      out should include("gewonnen")
+    }
+
+    "print PlayerName message" in {
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val view = ConsoleView(controller)
+      val out = captureOut { view.update(PlayerName(1)) }
+      out should include("Name für Spieler")
+    }
   }
 }

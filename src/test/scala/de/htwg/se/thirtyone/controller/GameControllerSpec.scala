@@ -7,6 +7,9 @@ import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 import de.htwg.se.thirtyone.model.gameImplementation.GameData
 import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.model.gameImplementation.Player
+import de.htwg.se.thirtyone.fileio.FileIO
+import de.htwg.se.thirtyone.model.GameInterface
+import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
 
 class GameControllerSpec extends AnyWordSpec with Matchers {
@@ -95,6 +98,61 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
       controller.selectNumber("1")
       controller.selectAll()
       called should contain allOf ("select:1", "selectAll")
+    }
+
+    "saveGame should delegate to fileIO" in {
+      var saved = false
+      val mockIO = new FileIO {
+        override def save(game: GameInterface): Unit = { saved = true }
+        override def load(): GameInterface = GameData(2)
+        override def filepath = java.nio.file.Paths.get(".")
+      }
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), mockIO)
+      controller.saveGame()
+      saved shouldBe true
+    }
+
+    "loadGame should load game and update state" in {
+      val loadedGame = GameData(4).copy(gameRunning = true)
+      val mockIO = new FileIO {
+        override def save(game: GameInterface): Unit = {}
+        override def load(): GameInterface = loadedGame
+        override def filepath = java.nio.file.Paths.get(".")
+      }
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), mockIO)
+      val events = ArrayBuffer.empty[String]
+      controller.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
+
+      controller.loadGame()
+      controller.gameData.playerCount shouldBe 4
+      controller.state shouldBe PlayingState
+      events.exists(_.contains("GameStarted")) shouldBe true
+      events.exists(_.contains("PrintTable")) shouldBe true
+    }
+
+    "changePlayerName should update gameData" in {
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val p = controller.gameData.players.head
+      controller.changePlayerName(p, "NewName")
+      controller.gameData.players.head.name shouldBe "NewName"
+    }
+
+    "gameDataSetup should initialize gameData" in {
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      controller.gameDataSetup("3")
+      controller.gameData.playerCount shouldBe 3
+    }
+
+    "gamePass and gameKnock should update gameData" in {
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      // pass
+      controller.gamePass()
+      controller.gameData.currentPlayerIndex shouldBe 1
+
+      // knock
+      controller.gameKnock()
+      controller.gameData.currentPlayerIndex shouldBe 0 // 1 knocked -> next is 0 (since 2 players, index 1 -> 0)
+      controller.gameData.players(1).hasKnocked shouldBe true
     }
   }
 }

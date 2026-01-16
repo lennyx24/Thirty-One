@@ -27,7 +27,6 @@ object GameScoringStrategy:
     name match {
       case "simple" => simpleScoringStrategy
       case "normal" => normalScoringStrategy
-      case _ => normalScoringStrategy
     }
   def toString (strategy: Strategy): String =
     if strategy eq simpleScoringStrategy then "simple"
