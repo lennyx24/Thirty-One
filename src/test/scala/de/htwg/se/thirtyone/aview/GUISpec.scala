@@ -50,7 +50,7 @@ class GUISpec extends AnyWordSpec with Matchers {
       gui.cardGrid.contents.exists(_.isInstanceOf[scala.swing.Button]) shouldBe true
 
       gui.update(RunningGame(controller.gameData.currentPlayer))
-      gui.infoLabel.text.toLowerCase should include ("spieler")
+      gui.infoLabel.text.toLowerCase should include ("dran")
       gui.swapMode shouldBe "none"
 
       val swapPlayer = controller.gameData.currentPlayer

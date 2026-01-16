@@ -209,6 +209,11 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       }
   }
 
+  // val playersNamePanel = new BoxPanel(Orientation.Vertical) {
+  //   border = Swing.EmptyBorder(15,15, 15, 15)
+    
+  // }
+
   def drawTable(): Unit =
     cardGrid.contents.clear()
     val gridData = controller.gameData.table.grid
@@ -266,40 +271,42 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
           contents = playingPanel
           pack()
           centerOnScreen()
-          for i <- 0 until controller.gameData.players.length do
+          for i <- 0 until controller.gameData.playerCount do
             if i < playerNameLabels.length then
-              playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.gameData.getPlayersHealth(i)})"
-              if i < scoreLabels.length then scoreLabels(i).text = s"Punkte: ${controller.gameData.getPlayerScore(i + 1)}"
+              val player = controller.gameData.players(i)
+              playerNameLabels(i).text = s"${player.name} (Leben: ${controller.gameData.getPlayersHealth(player)})"
+              if i < scoreLabels.length then scoreLabels(i).text = s"Punkte: ${controller.gameData.getPlayerScore(player)}"
         drawTable()
         repaint()
 
-        for i <- 0 until controller.gameData.players.length do
+        for i <- 0 until controller.gameData.playerCount do
           if i < playerNameLabels.length then
-            playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.gameData.getPlayersHealth(i)})"
+            val player = controller.gameData.players(i)
+            playerNameLabels(i).text = s"${player.name} (Leben: ${controller.gameData.getPlayersHealth(player)})"
       })
 
     case RunningGame(player) =>
-      infoLabel.text = s"Spieler $player ist dran"
+      infoLabel.text = s"${player.name} ist dran"
       swapAllButton.visible = false
       swapMode = "none"
 
     case PlayerScore(player) =>
-      val playerIndex = controller.gameData.players.indexOf(player)
-      val points = controller.gameData.getPlayerScore(playerIndex)
+      val playerIndex = controller.gameData.players.indexWhere(p => p.id == player.id)
+      val points = controller.gameData.getPlayerScore(player)
       javax.swing.SwingUtilities.invokeLater(() => {
-        if playerIndex >= 0 then
-          scoreLabels(playerIndex - 1).text = s"Punkte: $points"
-          if (playerIndex - 1) < controller.gameData.players.length then
-            playerNameLabels(playerIndex - 1).text = s"Spieler ${player} (Leben: ${controller.gameData.getPlayersHealth(playerIndex - 1)})"
+        if playerIndex >= 0 && playerIndex < scoreLabels.length then
+          scoreLabels(playerIndex).text = s"Punkte: $points"
+          if playerIndex < controller.gameData.players.length then
+            playerNameLabels(playerIndex).text = s"Spieler ${player.name} (Leben: ${controller.gameData.getPlayersHealth(player)})"
       })
 
     case PlayerSwapGive(player) =>
-      infoLabel.text = s"Spieler $player, wähle eine Karte zum abgeben"
+      infoLabel.text = s"${player.name}, wähle eine Karte zum abgeben"
       swapAllButton.visible = true
       swapMode = "give"
 
     case PlayerSwapTake(player) =>
-      infoLabel.text = s"Spieler $player, wähle eine Karte zum nehmen"
+      infoLabel.text = s"${player.name}, wähle eine Karte zum nehmen"
       swapMode = "take"
 
     case GameEnded(winner) =>

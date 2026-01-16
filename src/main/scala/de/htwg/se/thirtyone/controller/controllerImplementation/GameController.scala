@@ -22,13 +22,14 @@ class GameController @Inject() (var state: ControllerState, var gameData: GameIn
     selectNumber(idx)
     gameData = gameData.changePlayersNames(playerNames)
 
-  override def changePlayerName(newName: String, playerIdx: Int): Unit = gameData = gameData.changePlayerName(newName, playerIdx)
+  override def changePlayerName(player: Player, newName: String): Unit = gameData = gameData.changePlayerName(player, newName)
   
   override def selectNumber(idx: String): Unit = state.selectNumber(idx, this)
 
   override def selectAll(): Unit = state.selectAll(this)
 
-  override def countPoints(c: ControllerInterface, currentPlayer: Int): Unit = gameData = c.gameData.calculatePlayerPoints(currentPlayer)
+  override def countPoints(c: ControllerInterface, currentPlayer: Player): Unit =
+    gameData = c.gameData.calculatePlayerPoints(currentPlayer)
 
   override def setState(controllerState: ControllerState): Unit = state = controllerState
 

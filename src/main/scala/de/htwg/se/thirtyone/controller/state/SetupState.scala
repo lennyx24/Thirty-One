@@ -13,15 +13,16 @@ object SetupState extends ControllerState:
       c.notifyObservers(PlayerName(finishedPlayerCount + 1))
     else if finishedPlayerCount == playerAmount - 1 then
       c.setState(PlayingState)
-      val currentPlayer = c.gameData.currentPlayerIndex + 1
-      for (i <- 1 to c.gameData.playerCount) do
-        c.countPoints(c, i)
-        val player = c.gameData.players(i-1)
-        c.notifyObservers(PlayerScore(player))
+      for (i <- c.gameData.players.indices) do
+        val player = c.gameData.players(i)
+        c.countPoints(c, player)
+        val updatedPlayer = c.gameData.players(i)
+        c.notifyObservers(PlayerScore(updatedPlayer))
       c.notifyObservers(PrintTable)
       c.notifyObservers(RunningGame(c.gameData.currentPlayer))
     else
-      c.changePlayerName(input, finishedPlayerCount)
+      val player = c.gameData.players(finishedPlayerCount)
+      c.changePlayerName(player, input)
       finishedPlayerCount += 1
       c.notifyObservers(PlayerName(finishedPlayerCount + 1))
 

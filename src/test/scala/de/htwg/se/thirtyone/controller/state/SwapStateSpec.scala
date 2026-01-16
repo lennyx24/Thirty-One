@@ -25,13 +25,13 @@ class SwapStateSpec extends AnyWordSpec with Matchers {
       val currentPlayer = controller.gameData.currentPlayer
 
       state.execute("1", controller)
-      events.exists(_.contains(s"PlayerSwapTake($currentPlayer)")) shouldBe true
+      events.exists(e => e.contains("PlayerSwapTake(") && e.contains(currentPlayer.name)) shouldBe true
 
       events.clear()
       state.execute("1", controller)
 
       events.exists(_.contains("PrintTable")) shouldBe true
-      events.exists(_.contains(s"PlayerSwapped($currentPlayer)")) shouldBe true
+      events.exists(e => e.contains("PlayerSwapped(") && e.contains(currentPlayer.name)) shouldBe true
       events.exists(_.contains("RunningGame(")) shouldBe true
       controller.state shouldBe PlayingState
     }
@@ -52,7 +52,7 @@ class SwapStateSpec extends AnyWordSpec with Matchers {
 
       state.execute("alle", controller)
 
-      events.exists(_.contains(s"PlayerSwapped($currentPlayer)")) shouldBe true
+      events.exists(e => e.contains("PlayerSwapped(") && e.contains(currentPlayer.name)) shouldBe true
       controller.state shouldBe PlayingState
     }
 

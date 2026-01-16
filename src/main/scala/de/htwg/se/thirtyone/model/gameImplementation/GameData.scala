@@ -20,6 +20,13 @@ case class GameData(
 ) extends GameInterface:
     override def currentPlayer: Player = players(currentPlayerIndex)
 
+    private def indexOfPlayer(player: Player): Option[Int] =
+      val idx = players.indexWhere(p => p.id == player.id)
+      if idx >= 0 then Some(idx) else None
+
+    private def positionIndex(player: Player): Option[Int] =
+      indexOfPlayer(player).map(_ + 1)
+
     override def nextPlayer(): GameInterface =
       val next: GameData =
         if currentPlayerIndex + 1 == playerCount then copy(currentPlayerIndex = 0)
@@ -34,26 +41,32 @@ case class GameData(
       if nextGameState.currentPlayer.hasKnocked then nextGameState.copy(gameRunning = false)
       else nextGameState
 
-    override def calculatePlayerPoints(playerNumber: Int): GameInterface =
-      val cards = table.getAll(playerNumber, cardPositions).toList
-      val p = scoringStrategy(cards)
-
-      val playerIndex = playerNumber - 1
-      val playerToUpdate = players(playerIndex)
-      val newPlayer = playerToUpdate.copy(points = p)
-      val newPlayers = players.updated(playerIndex, newPlayer)
-      copy(players = newPlayers)
+    override def calculatePlayerPoints(player: Player): GameInterface =
+      positionIndex(player) match
+        case None => this
+        case Some(posIndex) =>
+          val cards = table.getAll(posIndex, cardPositions).toList
+          val p = scoringStrategy(cards)
+          val playerIndex = posIndex - 1
+          val playerToUpdate = players(playerIndex)
+          val newPlayer = playerToUpdate.copy(points = p)
+          val newPlayers = players.updated(playerIndex, newPlayer)
+          copy(players = newPlayers)
     
     override def getPlayersHand(): List[Card] = table.getAll(currentPlayerIndex + 1, cardPositions)
 
-    override def getPlayersHealth(player: Int): Int = players(player).playersHealth
+    override def getPlayersHealth(player: Player): Int =
+      indexOfPlayer(player).map(players(_).playersHealth).getOrElse(0)
 
-    override def getPlayerScore(player: Int): Double = getPlayerPoints(player)
+    override def getPlayerScore(player: Player): Double = getPlayerPoints(player)
 
-    override def changePlayerName(newName: String, playerIdx: Int): GameInterface =
-      val newPlayer = players(playerIdx).changeName(newName)
-      val newPlayers = players.updated(playerIdx, newPlayer)
-      copy(players = newPlayers)
+    override def changePlayerName(player: Player, newName: String): GameInterface =
+      indexOfPlayer(player) match
+        case None => this
+        case Some(playerIdx) =>
+          val newPlayer = players(playerIdx).changeName(newName)
+          val newPlayers = players.updated(playerIdx, newPlayer)
+          copy(players = newPlayers)
 
     override def changePlayersNames(playersName: List[String]): GameInterface =
       val newPlayers = players.zip(playersName).map { case (player, newName) =>
@@ -64,13 +77,15 @@ case class GameData(
     override def getTableCard(): List[Card] = table.getAll(0, cardPositions)
 
     override def doDamage(player: Player): GameInterface =
-      val playerIndex = players.indexOf(player)
-      val newPlayer = player.receiveDamage(1)
-      
-      val newPlayers = players.updated(playerIndex, newPlayer)
-      copy(players = newPlayers)
+      indexOfPlayer(player) match
+        case None => this
+        case Some(playerIndex) =>
+          val newPlayer = player.receiveDamage(1)
+          val newPlayers = players.updated(playerIndex, newPlayer)
+          copy(players = newPlayers)
 
-    override def getPlayerPoints(playerNumber: Int): Double = players(playerNumber - 1).points
+    override def getPlayerPoints(player: Player): Double =
+      indexOfPlayer(player).map(players(_).points).getOrElse(0.0)
 
     override def isGameEnded: Boolean = players.exists(!_.isAlive)
 
@@ -92,36 +107,41 @@ case class GameData(
 
     override def resetPasses(): GameInterface = copy(players = players.map(_.copy(hasPassed = false)))
 
-    override def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameInterface =
-        val gs = copy(table = table.swap(cardPositions(playersTurn)(idx1), cardPositions(0)(idx2)))
-        if swapFinished then gs.resetPasses().nextPlayer() else gs
+    override def swapTable(player: Player, idx1: Int, idx2: Int, swapFinished: Boolean): GameInterface =
+        positionIndex(player) match
+          case None => this
+          case Some(playersTurn) =>
+            val gs = copy(table = table.swap(cardPositions(playersTurn)(idx1), cardPositions(0)(idx2)))
+            if swapFinished then gs.resetPasses().nextPlayer() else gs
 
     override def calculateIndex(indexToGive: String): Try[Int] = Try(indexToGive.toInt - 1)
 
-    override def swap(playersTurn: Int, idxGiveString: String, idxReceiveString: String): Try[GameInterface] =
-      @tailrec
-      def swapRec(currentGS: GameInterface, iGiveStr: String, iReceiveStr: String): Try[GameInterface] =
-        calculateIndex(iReceiveStr) match
-          case Failure(e) => Failure(e)
-          case Success(indexReceive) =>
-            if indexReceive > 2 then Success(currentGS)
-            else
-              iGiveStr match
-                case "1" | "2" | "3" =>
-                  calculateIndex(iGiveStr) match
-                    case Failure(e) => Failure(e)
-                    case Success(indexGive) =>
-                      val nextGS = currentGS.swapTable(playersTurn, indexGive, indexReceive, true)
-                      swapRec(nextGS, iGiveStr, "4") // Rekursion beenden
-                case "alle" =>
-                  val nextGS =
-                    if indexReceive > 1 then currentGS.swapTable(playersTurn, indexReceive, indexReceive, true)
-                    else currentGS.swapTable(playersTurn, indexReceive, indexReceive, false)
-                  val nextIndex = (indexReceive + 2).toString
-                  swapRec(nextGS, iGiveStr, nextIndex)
-                case _ => Failure(new Exception("Invalid give string"))
-
-      swapRec(this, idxGiveString, idxReceiveString)
+    override def swap(player: Player, idxGiveString: String, idxReceiveString: String): Try[GameInterface] =
+      positionIndex(player) match
+        case None => Failure(new Exception("Unknown player"))
+        case Some(_) =>
+          @tailrec
+          def swapRec(currentGS: GameInterface, iGiveStr: String, iReceiveStr: String): Try[GameInterface] =
+            calculateIndex(iReceiveStr) match
+              case Failure(e) => Failure(e)
+              case Success(indexReceive) =>
+                if indexReceive > 2 then Success(currentGS)
+                else
+                  iGiveStr match
+                    case "1" | "2" | "3" =>
+                      calculateIndex(iGiveStr) match
+                        case Failure(e) => Failure(e)
+                        case Success(indexGive) =>
+                          val nextGS = currentGS.swapTable(player, indexGive, indexReceive, true)
+                          swapRec(nextGS, iGiveStr, "4") // Rekursion beenden
+                    case "alle" =>
+                      val nextGS =
+                        if indexReceive > 1 then currentGS.swapTable(player, indexReceive, indexReceive, true)
+                        else currentGS.swapTable(player, indexReceive, indexReceive, false)
+                      val nextIndex = (indexReceive + 2).toString
+                      swapRec(nextGS, iGiveStr, nextIndex)
+                    case _ => Failure(new Exception("Invalid give string"))
+          swapRec(this, idxGiveString, idxReceiveString)
 
     override def resetNewRound(): GameInterface =
       val savedPlayers = players.map(_.copy(hasKnocked = false, points = 0))

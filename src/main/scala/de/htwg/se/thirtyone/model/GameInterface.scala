@@ -13,23 +13,23 @@ trait GameInterface {
 
     def currentPlayer: Player
     def nextPlayer(): GameInterface
-    def calculatePlayerPoints(playerNumber: Int): GameInterface
+    def calculatePlayerPoints(player: Player): GameInterface
     def getPlayersHand(): List[Card]
-    def getPlayersHealth(player: Int): Int
-    def getPlayerScore(player: Int): Double
-    def changePlayerName(newName: String, playerIdx: Int): GameInterface
+    def getPlayersHealth(player: Player): Int
+    def getPlayerScore(player: Player): Double
+    def changePlayerName(player: Player, newName: String): GameInterface
     def changePlayersNames(playersName: List[String]): GameInterface
     def getTableCard(): List[Card]
     def doDamage(player: Player): GameInterface
-    def getPlayerPoints(playerNumber: Int): Double
+    def getPlayerPoints(player: Player): Double
     def isGameEnded: Boolean
     def getBestPlayerByPoints: Player
     def getWorstPlayerByPoints: Player
     def pass(): GameInterface
     def knock(): GameInterface
     def resetPasses(): GameInterface
-    def swap(playersTurn: Int, idxGiveString: String, idxReceiveString: String): Try[GameInterface]
+    def swap(player: Player, idxGiveString: String, idxReceiveString: String): Try[GameInterface]
     def resetNewRound(): GameInterface
-    def swapTable(playersTurn: Int, idx1: Int, idx2: Int, swapFinished: Boolean): GameInterface
+    def swapTable(player: Player, idx1: Int, idx2: Int, swapFinished: Boolean): GameInterface
     def calculateIndex(indexToGive: String): Try[Int]
 }

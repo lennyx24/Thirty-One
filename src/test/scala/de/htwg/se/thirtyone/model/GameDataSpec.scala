@@ -73,18 +73,18 @@ class GameDataSpec extends AnyWordSpec with Matchers {
     }
 
     "handle card swaps correctly" in {
-      val singleSwap = game.swap(1, "1", "1")
+      val singleSwap = game.swap(game.players(0), "1", "1")
       singleSwap.isSuccess should be(true)
       singleSwap.get.currentPlayerIndex should be(1) 
 
-      val allSwap = game.swap(1, "alle", "1")
+      val allSwap = game.swap(game.players(0), "alle", "1")
       allSwap.isSuccess should be(true)
       allSwap.get.currentPlayerIndex should be(1)
     }
 
     "calculate player points" in {
       val g = GameData(2)
-      val gWithPoints = g.calculatePlayerPoints(1)
+      val gWithPoints = g.calculatePlayerPoints(g.players(0))
       gWithPoints.players(0).points should be >= 0.0
     }
 
@@ -98,7 +98,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
 
     "get player points" in {
       val g = GameData(2)
-      g.getPlayerPoints(1) should be(g.players(0).points)
+      g.getPlayerPoints(g.players(0)) should be(g.players(0).points)
     }
 
     "check if game ended" in {
@@ -147,7 +147,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       val beforeGive = gdc.table.get(posGive)
       val beforeReceive = gdc.table.get(posReceive)
 
-      val res = gdc.swapTable(1, 0, 0, false)
+      val res = gdc.swapTable(gdc.players(0), 0, 0, false)
       res match
         case ng: GameData =>
           ng.currentPlayerIndex shouldBe beforeIndex
@@ -169,7 +169,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       val baseTable = gd.table.setAll(cardPositions(0), List(h10, d4, h10)).setAll(cardPositions(1), List(d4, h10, d4))
       val gdc = gd.copy(table = baseTable, cardPositions = cardPositions, players = players, currentPlayerIndex = 0)
 
-      val res = gdc.swapTable(1, 0, 0, true)
+      val res = gdc.swapTable(gdc.players(0), 0, 0, true)
       res match
         case ng: GameData =>
           ng.currentPlayerIndex shouldBe 1
@@ -195,7 +195,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       val baseTable = gd.table.setAll(cardPositions(1), List(h10, d4, s7))
       val gdc = gd.copy(table = baseTable, cardPositions = cardPositions, scoringStrategy = GameScoringStrategy.simpleScoringStrategy)
 
-      val res = gdc.calculatePlayerPoints(1)
+      val res = gdc.calculatePlayerPoints(gdc.players(0))
       res.players(0).points should be(10.0 + 4.0 + 7.0)
     }
 
@@ -209,7 +209,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       val baseTable = gd.table.setAll(cardPositions(1), List(c1, c2, c3))
       val gdc = gd.copy(table = baseTable, cardPositions = cardPositions, scoringStrategy = GameScoringStrategy.normalScoringStrategy)
 
-      val res = gdc.calculatePlayerPoints(1)
+      val res = gdc.calculatePlayerPoints(gdc.players(0))
       res.players(0).points should be(30.5)
     }
 
@@ -223,7 +223,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
     "swap should return Success when receive index 4 (no-op)" in {
       val gd = GameData(2)
       // try to swap with receive index 4 (meaning indexReceive = 3 > 2)
-      val res = gd.swap(1, "1", "4")
+      val res = gd.swap(gd.players(0), "1", "4")
       res.isSuccess shouldBe true
     }
 
@@ -243,14 +243,14 @@ class GameDataSpec extends AnyWordSpec with Matchers {
 
     "swap should return Failure for invalid give string" in {
       val gd = GameData(2)
-      val res = gd.swap(1, "foo", "1")
+      val res = gd.swap(gd.players(0), "foo", "1")
       res.isFailure shouldBe true
     }
 
     "swap 'alle' with receive index >1 should succeed" in {
       val gd = GameData(2)
       // receive "3" -> indexReceive = 2 (>1)
-      val res = gd.swap(1, "alle", "3")
+      val res = gd.swap(gd.players(0), "alle", "3")
       res.isSuccess shouldBe true
     }
 
@@ -272,8 +272,8 @@ class GameDataSpec extends AnyWordSpec with Matchers {
 
     "getPlayersHealth and getPlayerScore return underlying values" in {
       val gd = GameData(2)
-      gd.getPlayersHealth(0) shouldBe gd.players(0).playersHealth
-      gd.getPlayerScore(1) shouldBe gd.players(0).points
+      gd.getPlayersHealth(gd.players(0)) shouldBe gd.players(0).playersHealth
+      gd.getPlayerScore(gd.players(0)) shouldBe gd.players(0).points
     }
 
     "resetPasses resets hasPassed for all players" in {
@@ -284,7 +284,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
 
     "swap should return Failure when receive index is non-numeric" in {
       val gd = GameData(2)
-      val res = gd.swap(1, "1", "notANumber")
+      val res = gd.swap(gd.players(0), "1", "notANumber")
       res.isFailure shouldBe true
     }
 

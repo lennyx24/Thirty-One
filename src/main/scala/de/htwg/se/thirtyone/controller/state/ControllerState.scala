@@ -2,6 +2,7 @@ package de.htwg.se.thirtyone.controller.state
 
 import de.htwg.se.thirtyone.controller._
 import de.htwg.se.thirtyone.util._
+import de.htwg.se.thirtyone.model.gameImplementation.Player
 
 trait ControllerState:
   final def handleInput(input: String, c: ControllerInterface): Unit =
@@ -24,7 +25,7 @@ trait ControllerState:
 
   def selectAll(c: ControllerInterface): Unit = c.notifyObservers(InvalidInput)
 
-  def checkIfRoundEnded(c: ControllerInterface, currentPlayer: Int): Boolean =
+  def checkIfRoundEnded(c: ControllerInterface, currentPlayer: Player): Boolean =
     if !c.gameData.gameRunning || c.gameData.getPlayerPoints(currentPlayer) == 31 then
       val worstPlayer = c.gameData.getWorstPlayerByPoints
       c.dealDamage(worstPlayer)
@@ -36,10 +37,11 @@ trait ControllerState:
       else
         c.resetGame()
         c.setState(PlayingState)
-        for (i <- 1 to c.gameData.playerCount) do
-          c.countPoints(c, i)
-          val player = c.gameData.players(i-1)
-          c.notifyObservers(PlayerScore(player))
+        for (i <- c.gameData.players.indices) do
+          val player = c.gameData.players(i)
+          c.countPoints(c, player)
+          val updatedPlayer = c.gameData.players(i)
+          c.notifyObservers(PlayerScore(updatedPlayer))
 
         c.notifyObservers(PrintTable)
         c.notifyObservers(RunningGame(c.gameData.currentPlayer))

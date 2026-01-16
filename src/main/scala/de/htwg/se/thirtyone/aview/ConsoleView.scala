@@ -17,31 +17,29 @@ case class ConsoleView(controller: ControllerInterface) extends Observer:
             printNewRound(controller.gameData.table.printTable(controller.gameData.players))
 
         case PlayerScore(player) =>
-            val playerIndex = controller.gameData.players.indexOf(player)
-            val points = controller.gameData.getPlayerPoints(playerIndex)
-            println(s"Spieler $player hat $points Punkte.")
+            val points = controller.gameData.getPlayerPoints(player)
+            println(s"Spieler ${player.name} hat $points Punkte.")
 
         case RunningGame(player) =>
-            val playerName = player.name
-            println(s"Spieler $playerName ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
+            println(s"${player.name} ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
 
         case PlayerSwapGive(player) =>
-            println(s"Spieler $player, welche Karte willst du abgeben? (1, 2, 3 oder alle):")
+            println(s"${player.name}, welche Karte willst du abgeben? (1, 2, 3 oder alle):")
 
         case PlayerSwapTake(player) =>
             println(s"Welche Karte willst du dafür erhalten? (1, 2 oder 3):")
 
         case PlayerPassed(player) =>
-            println(s"Spieler $player setzt diese Runde aus.")
+            println(s"${player.name} setzt diese Runde aus.")
 
         case PlayerKnocked(player) =>
-            println(s"Spieler $player hat diese Runde geklopft, es darf jeder noch einen Zug machen!")
+            println(s"${player.name} hat diese Runde geklopft, es darf jeder noch einen Zug machen!")
 
         case PlayerSwapped(player) =>
-            println(s"Spieler $player tauscht diese Runde.")
+            println(s"${player.name} tauscht diese Runde.")
 
         case GameEnded(player) =>
-            println(s"Spieler ${player.name} hat die Runde gewonnen. Glückwunsch!")
+            println(s"${player.name} hat die Runde gewonnen. Glückwunsch!")
             println("Wollt ihr noch eine Runde spielen? (j/n):")
 
         case PlayerName(player) =>

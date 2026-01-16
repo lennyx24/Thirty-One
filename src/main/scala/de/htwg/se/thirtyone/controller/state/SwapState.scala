@@ -1,6 +1,7 @@
 package de.htwg.se.thirtyone.controller.state
 
 import de.htwg.se.thirtyone.controller._
+import de.htwg.se.thirtyone.controller.command.SetCommand
 import de.htwg.se.thirtyone.controller.chainOfResponsibility.SwapProcessor
 import de.htwg.se.thirtyone.util._
 
@@ -12,7 +13,7 @@ class SwapState extends ControllerState:
   override def execute(input: String, c: ControllerInterface): Unit =
     input match
       case "1" | "2" | "3" | "alle" =>
-        val currentPlayerIndex = c.gameData.currentPlayerIndex + 1
+        val actedIndex = c.gameData.currentPlayerIndex
         val currentPlayer = c.gameData.currentPlayer
         if give == "" then
           give = input.toLowerCase()
@@ -20,21 +21,36 @@ class SwapState extends ControllerState:
           else handleInput("1", c) // When input is "all" call same Method to get into else part, "1" to make recursion in GameData work and change all
         else if input != "alle" then
           val take = input
-          SwapProcessor.process(c, give, take) match
-            case Success(v) =>
-              c.countPoints(c, currentPlayerIndex)
-              checkIfRoundEnded(c, currentPlayerIndex)
-              c.setState(PlayingState)
+          var swapSuccess = false
+          var roundEnded = false
+          val command = new SetCommand(c, () => {
+            SwapProcessor.process(c, give, take) match
+              case Success(_) =>
+                swapSuccess = true
+                val actedPlayer =
+                  if actedIndex >= 0 && actedIndex < c.gameData.players.length then c.gameData.players(actedIndex)
+                  else currentPlayer
+                c.countPoints(c, actedPlayer)
+                roundEnded = checkIfRoundEnded(c, actedPlayer)
+                c.setState(PlayingState)
+              case Failure(_) =>
+                swapSuccess = false
+          })
+          c.undoManager.doStep(command)
 
+          if swapSuccess then
+            val actedPlayer =
+              if actedIndex >= 0 && actedIndex < c.gameData.players.length then c.gameData.players(actedIndex)
+              else currentPlayer
+            if !roundEnded then
               c.notifyObservers(PrintTable)
-              c.notifyObservers(PlayerScore(currentPlayer))
-              c.notifyObservers(PlayerSwapped(currentPlayer))
+              c.notifyObservers(PlayerScore(actedPlayer))
+              c.notifyObservers(PlayerSwapped(actedPlayer))
               c.notifyObservers(RunningGame(c.gameData.currentPlayer))
-
-              give = ""
-            case Failure(_) =>
-              c.notifyObservers(InvalidInput)
-              give = ""
+            give = ""
+          else
+            c.notifyObservers(InvalidInput)
+            give = ""
         else
           c.notifyObservers(InvalidInput)
       case _ =>

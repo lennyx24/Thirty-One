@@ -10,13 +10,13 @@ class GameDataSwapSpec extends AnyWordSpec with Matchers {
   "GameData.swap" should {
     "return Failure on invalid receive index string" in {
       val gd = GameData(2)
-      val res = gd.swap(gd.currentPlayerIndex + 1, "1", "x")
+      val res = gd.swap(gd.currentPlayer, "1", "x")
       res.isFailure shouldBe true
     }
 
     "return Success when receive index > 2 (no-op)" in {
       val gd = GameData(2)
-      val res = gd.swap(gd.currentPlayerIndex + 1, "1", "5")
+      val res = gd.swap(gd.currentPlayer, "1", "5")
       res.isSuccess shouldBe true
       res.get shouldBe gd
     }

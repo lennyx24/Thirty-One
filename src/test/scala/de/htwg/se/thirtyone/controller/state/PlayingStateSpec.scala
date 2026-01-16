@@ -36,7 +36,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
     "execute passen" in {
       events.clear()
       val controller = makeController(stubGameData())
-      val currentPlayer = controller.gameData.currentPlayer
+      val beforeIndex = controller.gameData.currentPlayerIndex
 
       // Debug: ensure subscriber was added and direct notify works
       controller.subscribers.size should be > 0
@@ -44,7 +44,6 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       events.exists(_.contains("PrintTable")) shouldBe true
       events.clear()
 
-      val beforeIndex = controller.gameData.currentPlayerIndex
       val beforeHasPassed = controller.gameData.players(beforeIndex).hasPassed
 
       PlayingState.pass(controller)
@@ -52,21 +51,23 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       // check model change happened for the player who passed
       val afterHasPassed = controller.gameData.players(beforeIndex).hasPassed
       afterHasPassed shouldBe true
+      val actedPlayer = controller.gameData.players(beforeIndex)
 
       events.exists(_.contains("PrintTable")) shouldBe true
-      events.exists(_.contains(s"PlayerPassed($currentPlayer)")) shouldBe true
+      events.exists(_.contains(s"PlayerPassed($actedPlayer)")) shouldBe true
       events.exists(_.contains("RunningGame")) shouldBe true
     }
 
     "execute klopfen" in {
       events.clear()
       val controller = makeController(stubGameData())
-      val currentPlayer = controller.gameData.currentPlayer
+      val beforeIndex = controller.gameData.currentPlayerIndex
 
       PlayingState.knock(controller)
+      val actedPlayer = controller.gameData.players(beforeIndex)
 
       events.exists(_.contains("PrintTable")) shouldBe true
-      events.exists(_.contains(s"PlayerKnocked($currentPlayer)")) shouldBe true
+      events.exists(_.contains(s"PlayerKnocked($actedPlayer)")) shouldBe true
       events.exists(_.contains("RunningGame")) shouldBe true
     }
 

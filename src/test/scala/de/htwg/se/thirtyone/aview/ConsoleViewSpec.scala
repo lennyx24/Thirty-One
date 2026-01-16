@@ -30,7 +30,7 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
       val base = GameData(2)
       val custom = base.copy(players = List(Player(name = "Alice"), Player(name = "Bob")))
       val controller = new GameController(PlayingState, custom, new UndoManager())
-      controller.setGameData(controller.gameData.calculatePlayerPoints(1))
+      controller.setGameData(controller.gameData.calculatePlayerPoints(controller.gameData.players(0)))
       val view = ConsoleView(controller)
       val scorePlayer = controller.gameData.players(1)
       val out = captureOut { view.update(PlayerScore(scorePlayer)) }

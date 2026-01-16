@@ -64,7 +64,7 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
     "countPoints should update gameData via calculatePlayerPoints" in {
       val controller = new GameController(SetupState, GameData(2), new UndoManager())
       val before = controller.gameData.players.map(_.points)
-      controller.countPoints(controller, 1)
+      controller.countPoints(controller, controller.gameData.players(0))
       // should still be GameData and have players list
       controller.gameData.players.map(_.points).length shouldBe before.length
     }

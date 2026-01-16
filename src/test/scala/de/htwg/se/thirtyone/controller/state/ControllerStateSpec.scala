@@ -24,8 +24,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
         override def execute(input: String, c: ControllerInterface): Unit = ()
       }
 
-      val player = 1
-      stub.checkIfRoundEnded(controller, player)
+      stub.checkIfRoundEnded(controller, p1)
 
       controller.state shouldBe GameEndedState
       events.exists(_.contains(s"GameEnded")) shouldBe true
@@ -88,7 +87,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
       controller.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
 
       val stub = new ControllerState {}
-      stub.checkIfRoundEnded(controller, 1)
+      stub.checkIfRoundEnded(controller, p1)
 
       // After processing, there should be PlayerScore notifications and PrintTable/RunningGame
       events.exists(_.contains("PlayerScore(")) shouldBe true
