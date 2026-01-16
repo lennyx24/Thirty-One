@@ -19,7 +19,7 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
 
   "ConsoleView" should {
     "print something on GameStarted" in {
-      val controller = new GameController(SetupState, GameData(2), new UndoManager())
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val view = ConsoleView(controller)
       val out = captureOut { view.update(GameStarted) }
       out should not be empty
@@ -29,7 +29,7 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
     "print player score when PlayerScore notification is received" in {
       val base = GameData(2)
       val custom = base.copy(players = List(Player(name = "Alice"), Player(name = "Bob")))
-      val controller = new GameController(PlayingState, custom, new UndoManager())
+      val controller = new GameController(PlayingState, custom, new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       controller.setGameData(controller.gameData.calculatePlayerPoints(controller.gameData.players(0)))
       val view = ConsoleView(controller)
       val scorePlayer = controller.gameData.players(1)
@@ -39,7 +39,7 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
     }
 
     "print table when PrintTable event is received" in {
-      val controller = new GameController(PlayingState, GameData(2), new UndoManager())
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val view = ConsoleView(controller)
       val out = captureOut { view.update(PrintTable) }
       out should not be empty
@@ -49,7 +49,7 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
     "print PlayerPassed/Knocked/Swapped messages" in {
       val base = GameData(2)
       val custom = base.copy(players = List(Player(name = "Alice"), Player(name = "Bob")))
-      val controller = new GameController(PlayingState, custom, new UndoManager())
+      val controller = new GameController(PlayingState, custom, new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val view = ConsoleView(controller)
       val player1 = controller.gameData.players.head
       val player2 = controller.gameData.players(1)

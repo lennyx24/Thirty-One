@@ -8,6 +8,7 @@ object GameEndedState extends ControllerState:
     input.toLowerCase() match
       case "j" =>
         c.setState(SetupState)
+        SetupState.reset()
         c.notifyObservers(GameStarted)
 
       case "n" =>

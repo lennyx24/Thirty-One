@@ -11,7 +11,7 @@ import de.htwg.se.thirtyone.controller.command.UndoManager
 class SetCommandSpec extends AnyWordSpec with Matchers {
   "SetCommand" should {
     "store and restore controller state and gamedata on undo/redo" in {
-      val controller = new GameController(SetupState, GameData(2), new UndoManager())
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val initialState = controller.state
       val initialGameData = controller.gameData
 

@@ -29,3 +29,5 @@ case class RoundEnded(winner: Player) extends GameEvent
 case class GameEnded(winner: Player) extends GameEvent
 
 case class PlayerName(player: Int) extends GameEvent
+
+case class PlayerNameSet(index: Int, name: String) extends GameEvent

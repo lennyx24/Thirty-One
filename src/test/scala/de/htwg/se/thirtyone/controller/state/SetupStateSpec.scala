@@ -14,13 +14,14 @@ class SetupStateSpec extends AnyWordSpec with Matchers {
 
     val events = ArrayBuffer.empty[String]
     def makeController(): GameController = {
-      val c = new GameController(SetupState, GameData(2), new UndoManager())
+      val c = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       c.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
       c
     }
 
     "initialize on valid player count" in {
       events.clear()
+      SetupState.reset()
       val controller = makeController()
 
       SetupState.selectNumber("3", controller)
@@ -29,6 +30,7 @@ class SetupStateSpec extends AnyWordSpec with Matchers {
 
     "prompt names and start game after all names are entered" in {
       events.clear()
+      SetupState.reset()
       val controller = makeController()
 
       SetupState.selectNumber("3", controller)

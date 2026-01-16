@@ -28,7 +28,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       base.copy(players = players, currentPlayerIndex = index)
 
     def makeController(gd: GameData): GameController = {
-      val c = new GameController(PlayingState, gd, new UndoManager())
+      val c = new GameController(PlayingState, gd, new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       c.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
       c
     }

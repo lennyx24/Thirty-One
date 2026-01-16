@@ -12,7 +12,7 @@ class PerformSwapHandlerSpec extends AnyWordSpec with Matchers {
   "PerformSwapHandler" should {
     "perform swap and update gameData on success" in {
       val handler = PerformSwapHandler(None)
-      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager())
+      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
 
       val posGive = controller.gameData.cardPositions(controller.gameData.currentPlayerIndex + 1).head
       val posReceive = controller.gameData.cardPositions(0).head
@@ -30,7 +30,7 @@ class PerformSwapHandlerSpec extends AnyWordSpec with Matchers {
 
     "throw NoSuchElementException when swap fails on empty table" in {
       val handler = PerformSwapHandler(None)
-      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager())
+      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       // controller.gameData is GameInterface; set empty table via setGameData
       controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(table = Table()))
 

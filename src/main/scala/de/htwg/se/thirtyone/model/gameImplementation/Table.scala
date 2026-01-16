@@ -66,13 +66,13 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     grid.zipWithIndex.foldLeft("") { case (output, (row, rowIndex)) =>
       val playerHeader = rowIndex match {
         case 0 =>
-          val p1 = if (players.nonEmpty) s"Spieler 1: ${players(0).playersHealth} Leben, ${players(0).points} Punkte" else ""
-          val p2 = if (players.length > 1) s"Spieler 2: ${players(1).playersHealth} Leben, ${players(1).points} Punkte" else ""
+          val p1 = if (players.nonEmpty) s"${players(0).name}: ${players(0).playersHealth} Leben, ${players(0).points} Punkte" else ""
+          val p2 = if (players.length > 1) s"${players(1).name}: ${players(1).playersHealth} Leben, ${players(1).points} Punkte" else ""
           if (p1.nonEmpty || p2.nonEmpty) " " * 13 + f"$p1%-52s" + p2 + "\n" else ""
 
         case 2 =>
-          val p4 = if (players.length > 3) s"Spieler 4: ${players(3).playersHealth} Leben, ${players(3).points} Punkte" else ""
-          val p3 = if (players.length > 2) s"Spieler 3: ${players(2).playersHealth} Leben, ${players(2).points} Punkte" else ""
+          val p4 = if (players.length > 3) s"${players(2).name}: ${players(3).playersHealth} Leben, ${players(3).points} Punkte" else ""
+          val p3 = if (players.length > 2) s"S${players(3).name}: ${players(2).playersHealth} Leben, ${players(2).points} Punkte" else ""
           if (p4.nonEmpty || p3.nonEmpty) " " * 13 + f"$p4%-52s" + p3 + "\n" else ""
 
         case _ => ""

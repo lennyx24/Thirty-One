@@ -25,6 +25,9 @@ trait ControllerState:
 
   def selectAll(c: ControllerInterface): Unit = c.notifyObservers(InvalidInput)
 
+  def setupGame(playerCount: Int, names: List[String], c: ControllerInterface): Unit =
+    c.notifyObservers(InvalidInput)
+
   def checkIfRoundEnded(c: ControllerInterface, currentPlayer: Player): Boolean =
     if !c.gameData.gameRunning || c.gameData.getPlayerPoints(currentPlayer) == 31 then
       val worstPlayer = c.gameData.getWorstPlayerByPoints

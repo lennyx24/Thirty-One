@@ -13,7 +13,7 @@ class SwapStateSpec extends AnyWordSpec with Matchers {
   "SwapState" should {
     val events = ArrayBuffer.empty[String]
     def makeController(state: SwapState = new SwapState): GameController = {
-      val c = new GameController(state, GameData(2), new UndoManager())
+      val c = new GameController(state, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       c.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
       c
     }

@@ -21,7 +21,7 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
         override def selectAll(c: ControllerInterface): Unit = { called ::= "selectAll" }
         override def execute(input: String, c: ControllerInterface): Unit = { called ::= s"handle:$input" }
       }
-      val controller = new GameController(mockState, GameData(2), new UndoManager())
+      val controller = new GameController(mockState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       controller.pass()
       controller.knock()
       controller.swap()
@@ -31,19 +31,19 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
       called should contain allOf ("pass", "knock", "swap", "select:3", "selectAll", "handle:x")
     }
 
-    "initialGame calls selectNumber and changes player names" in {
-      var selected: Option[String] = None
+    "initialGame delegates to setupGame" in {
+      var called: Option[(Int, List[String])] = None
       val mockState = new ControllerState {
-        override def selectNumber(idx: String, c: ControllerInterface): Unit = { selected = Some(idx) }
+        override def setupGame(playerCount: Int, names: List[String], c: ControllerInterface): Unit =
+          called = Some((playerCount, names))
       }
-      val controller = new GameController(mockState, GameData(2), new UndoManager())
+      val controller = new GameController(mockState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       controller.initialGame("2", List("Alice", "Bob"))
-      selected shouldBe Some("2")
-      controller.gameData.players.map(_.name) should contain allElementsOf List("Alice", "Bob")
+      called shouldBe Some((2, List("Alice", "Bob")))
     }
 
     "setGameData, resetGame and dealDamage modify gameData" in {
-      val controller = new GameController(SetupState, GameData(2), new UndoManager())
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       // setGameData
       controller.setGameData(GameData(3))
       controller.gameData.playerCount shouldBe 3
@@ -62,7 +62,7 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
     }
 
     "countPoints should update gameData via calculatePlayerPoints" in {
-      val controller = new GameController(SetupState, GameData(2), new UndoManager())
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val before = controller.gameData.players.map(_.points)
       controller.countPoints(controller, controller.gameData.players(0))
       // should still be GameData and have players list
@@ -70,7 +70,7 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
     }
 
     "undo and redo should notify PrintTable and RunningGame" in {
-      val controller = new GameController(SetupState, GameData(2), new UndoManager())
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val events = ArrayBuffer.empty[String]
       controller.add(new de.htwg.se.thirtyone.util.Observer { override def update(e: de.htwg.se.thirtyone.util.GameEvent): Unit = events += e.toString })
 
@@ -91,7 +91,7 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
         override def selectNumber(idx: String, c: ControllerInterface): Unit = { called ::= s"select:$idx" }
         override def selectAll(c: ControllerInterface): Unit = { called ::= "selectAll" }
       }
-      val controller = new GameController(mockState, GameData(2), new UndoManager())
+      val controller = new GameController(mockState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       controller.selectNumber("1")
       controller.selectAll()
       called should contain allOf ("select:1", "selectAll")

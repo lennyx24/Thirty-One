@@ -13,7 +13,7 @@ class PresenceHandlerSpec extends AnyWordSpec with Matchers {
   "PresenceHandler" should {
     "pass when both cells present" in {
       val handler = PresenceHandler(Some(new de.htwg.se.thirtyone.controller.chainOfResponsibility.swap.PerformSwapHandler(None)))
-      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager())
+      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
 
       val res = handler.handle(controller, "1", "1")
       res.isSuccess shouldBe true
@@ -21,7 +21,7 @@ class PresenceHandlerSpec extends AnyWordSpec with Matchers {
 
     "throw IndexOutOfBoundsException when a cell is empty" in {
       val handler = PresenceHandler(None)
-      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager())
+      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       // set empty table via setGameData
       controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(table = Table()))
 
@@ -33,7 +33,7 @@ class PresenceHandlerSpec extends AnyWordSpec with Matchers {
 
     "return Failure when next is None but cells present (no next handler)" in {
       val handler = PresenceHandler(None)
-      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager())
+      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       // ensure default table has cards present
       val res = handler.handle(controller, "1", "1")
       res match

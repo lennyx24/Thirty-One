@@ -12,7 +12,7 @@ import de.htwg.se.thirtyone.controller.chainOfResponsibility.swap.{BoundsHandler
 class SwapProcessorSpec extends AnyWordSpec with Matchers {
   "SwapProcessor" should {
     "process a valid swap successfully" in {
-      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager())
+      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val currentPlayer = controller.gameData.currentPlayerIndex + 1
 
       val posGive = controller.gameData.cardPositions(currentPlayer).head
@@ -30,7 +30,7 @@ class SwapProcessorSpec extends AnyWordSpec with Matchers {
     }
 
     "fail when one of the cells is empty (PresenceHandler)" in {
-      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager())
+      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(table = Table()))
 
       val res = SwapProcessor.process(controller, "1", "1")
@@ -47,7 +47,7 @@ class SwapProcessorSpec extends AnyWordSpec with Matchers {
     }
 
     "fail when cardPositions entries are missing (BoundsHandler index access)" in {
-      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager())
+      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       // create cardPositions with proper outer length but empty inner lists to force IndexOutOfBounds
       val badPositions = List(List.empty[(Int, Int)], List.empty[(Int, Int)])
       controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(cardPositions = badPositions))

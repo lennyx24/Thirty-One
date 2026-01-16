@@ -22,8 +22,7 @@ class GameController @Inject() (var state: ControllerState, var gameData: GameIn
   override def swap(): Unit = state.swap(this)
 
   override def initialGame(idx: String, playerNames: List[String]): Unit =
-    selectNumber(idx)
-    gameData = gameData.changePlayersNames(playerNames)
+    state.setupGame(idx.toInt, playerNames, this)
 
   override def changePlayerName(player: Player, newName: String): Unit = gameData = gameData.changePlayerName(player, newName)
 

@@ -14,7 +14,7 @@ class GameEndedStateSpec extends AnyWordSpec with Matchers {
 
     val events = ArrayBuffer.empty[String]
     def makeController(): GameController =
-      new GameController(GameEndedState, GameData(2), new UndoManager()) {
+      new GameController(GameEndedState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
         override def notifyObservers(event: GameEvent): Unit = events += event.toString
       }
 

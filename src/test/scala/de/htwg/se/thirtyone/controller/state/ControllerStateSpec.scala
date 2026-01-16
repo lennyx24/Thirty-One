@@ -17,7 +17,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
       val p1 = Player(playersHealth = 1)
       val p2 = Player(playersHealth = 1)
       val gd = GameData(2).copy(gameRunning = false, players = List(p1, p2))
-      val controller = new GameController(PlayingState, gd, new UndoManager())
+      val controller = new GameController(PlayingState, gd, new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       controller.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
 
       val stub = new ControllerState {
@@ -33,7 +33,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
 
   "ControllerState.handleInput" should {
     "handle quit/exit" in {
-      val controller = new GameController(PlayingState, GameData(2), new UndoManager())
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       var executed = false
       val stub = new ControllerState {
         override def execute(input: String, c: ControllerInterface): Unit = {
@@ -46,7 +46,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
     }
 
     "default methods notify InvalidInput" in {
-      val controller = new GameController(PlayingState, GameData(2), new UndoManager())
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val events = ArrayBuffer.empty[String]
       controller.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
 
@@ -83,7 +83,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
       val p1 = Player(points = 31.0, playersHealth = 3)
       val p2 = Player(points = 5.0, playersHealth = 3)
       val gd = GameData(2).copy(gameRunning = true, players = List(p1, p2))
-      val controller = new GameController(PlayingState, gd, new UndoManager())
+      val controller = new GameController(PlayingState, gd, new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       controller.add(new Observer { override def update(e: GameEvent): Unit = events += e.toString })
 
       val stub = new ControllerState {}
