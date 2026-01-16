@@ -2,7 +2,7 @@
 
 AIN Semester 3 HTWG, project in software engineering by Daniel Sauer and Lenny Jung
 
-## Spielanleitung (kurz)
+## Spielanleitung
 
   - Ziel: Erreiche 31 Punkte mit drei Handkarten (gleiche Farbe zählt am meisten).
   - Start: Jeder bekommt 3 Karten, in der Mitte liegen 3 Karten zum Tauschen.
@@ -14,7 +14,7 @@ AIN Semester 3 HTWG, project in software engineering by Daniel Sauer and Lenny J
   - Gewinner: Wer 31 hat oder am Ende die meisten Punkte.
 ———
 
-  ## Punktewertung (kurz)
+  ## Punktewertung
 
   - Nur eine Farbe zählt: Du darfst nur die beste Farbe in deiner Hand werten.
   - Zahlenkarten: zählen ihren Zahlenwert (z. B. 7 = 7 Punkte).
@@ -23,5 +23,3 @@ AIN Semester 3 HTWG, project in software engineering by Daniel Sauer and Lenny J
   - Drei gleiche Karten (Drilling): zählen 30,5 Punkte (beste Hand außer 31).
 
   Beispiel: Herz‑A, Herz‑K, Kreuz‑10 → zählt 11 + 10 = 21 (nur Herz‑Farbe).
-
-  ———
