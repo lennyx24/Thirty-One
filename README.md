@@ -12,3 +12,16 @@ AIN Semester 3 HTWG, project in software engineering by Daniel Sauer and Lenny J
       - Klopfen (letzte Runde einläuten).
   - Rundenende: Nach dem Klopfen haben alle noch genau einen Zug.
   - Gewinner: Wer 31 hat oder am Ende die meisten Punkte.
+———
+
+  ## Punktewertung (kurz)
+
+  - Nur eine Farbe zählt: Du darfst nur die beste Farbe in deiner Hand werten.
+  - Zahlenkarten: zählen ihren Zahlenwert (z. B. 7 = 7 Punkte).
+  - Bilderkarten (B, D, K): zählen je 10 Punkte.
+  - Ass: zählt 11 Punkte.
+  - Drei gleiche Karten (Drilling): zählen 30,5 Punkte (beste Hand außer 31).
+
+  Beispiel: Herz‑A, Herz‑K, Kreuz‑10 → zählt 11 + 10 = 21 (nur Herz‑Farbe).
+
+  ———
