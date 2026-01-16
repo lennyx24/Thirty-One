@@ -15,13 +15,13 @@ import de.htwg.se.thirtyone.fileio.implementation._
 
 class ThirtyOneModule extends AbstractModule with ScalaModule{
     override def configure(): Unit =
-        bind[ControllerInterface].to[GameController]
+        bind(classOf[ControllerInterface]).to(classOf[GameController])
 
-        bind[ControllerState].toInstance(SetupState)
+        bind(classOf[ControllerState]).toInstance(SetupState)
 
-        bind[UndoManager].asEagerSingleton()
+        bind(classOf[UndoManager]).asEagerSingleton()
 
-        bind[GameInterface].toInstance(StandardGameFactory.createGame(0))
+        bind(classOf[GameInterface]).toInstance(StandardGameFactory.createGame(0))
         
         //bind(classOf[FileIO]).to(classOf[XmlFileIO])
         bind(classOf[FileIO]).to(classOf[JsonFileIO])
