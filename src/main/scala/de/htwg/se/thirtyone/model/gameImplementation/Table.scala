@@ -96,14 +96,15 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
       output + playerHeader + barNL + topNL + repeatCells + barNL
     }
   }
-  def toXML: Elem =
+
+  def toXml: Elem =
     <table>
       {grid.zipWithIndex.map { case (row, ri) =>
       <row index={ri.toString}>
         {row.zipWithIndex.map { case (optCard, ci) =>
         optCard match
           case Some(card) => <cell index={ci.toString}>
-            {card.toXML}
+            {card.toXml}
           </cell>
           case None => <cell index={ci.toString}/>
       }}
@@ -122,9 +123,9 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
         }
       )
     )
-    
+
 object Table:
-  def fromXML(node: xml.Node): Table =
+  def fromXml(node: xml.Node): Table =
     val emptyGrid = Vector.fill(3, 9)(Option.empty[Card])
     val rows = (node \ "row").toList
     val filledGrid = rows.foldLeft(emptyGrid) { (gridAcc, rowNode) =>
@@ -136,7 +137,7 @@ object Table:
         val ci = (cellNode \ "@index").text.trim match
           case s if s.nonEmpty => s.toInt
           case _ => 0
-        val optCard = cellNode.child.collect { case e: xml.Elem => e }.headOption.map(Card.fromXML)
+        val optCard = cellNode.child.collect { case e: xml.Elem => e }.headOption.map(Card.fromXml)
         g.updated(ri, g(ri).updated(ci, optCard))
       }
     }

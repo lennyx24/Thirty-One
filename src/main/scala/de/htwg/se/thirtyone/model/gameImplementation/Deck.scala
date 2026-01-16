@@ -2,9 +2,9 @@ package de.htwg.se.thirtyone.model.gameImplementation
 
 case class Deck(size: Int = 10) {
 
-  val symbols: List[Char] = '♦' :: '♠' :: '♥' :: '♣' :: Nil
-  val numbers: List[String] = "2" :: "3" :: "4" :: "5" :: "6" :: "7" :: "8" :: "9" :: "10" :: "J" :: "Q" :: "K" :: "A" :: Nil
-  val numbersSmall: List[String] = "7" :: "8" :: "9" :: "10" :: "J" :: "Q" :: "K" :: "A" :: Nil
+  private val symbols: List[Char] = List('♦', '♠', '♥', '♣')
+  private val numbers: List[String] = List("2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A")
+  private val numbersSmall: List[String] = List("7", "8", "9", "10", "J", "Q", "K", "A")
 
   val deck: Vector[Card] = (for {
     s <- symbols

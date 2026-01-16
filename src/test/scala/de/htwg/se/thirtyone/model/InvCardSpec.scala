@@ -18,9 +18,9 @@ class InvCardSpec extends AnyWordSpec{
     }
 
     "have a scalable size" in {
-      InvisibleCard(small).invCard should be("    \n    \n")
-      InvisibleCard(medium).invCard should be("     \n     \n     \n")
-      InvisibleCard(large).invCard should be("        \n        \n        \n        \n")
+      InvisibleCard(small).toString should be("    \n    \n")
+      InvisibleCard(medium).toString should be("     \n     \n     \n")
+      InvisibleCard(large).toString should be("        \n        \n        \n        \n")
     }
   }
 }

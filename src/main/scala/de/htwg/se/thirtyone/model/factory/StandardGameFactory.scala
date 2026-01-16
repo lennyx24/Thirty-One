@@ -12,15 +12,9 @@ object StandardGameFactory extends GameFactory:
       List((2, 5), (2, 6), (2, 7)), //Position Player 3
       List((2, 1), (2, 2), (2, 3)), //Position Player 4
     )
-    val modus = "normal"
-    val cardDeck = modus match {
-      case "normal" => Deck().deck
-      case "small" => Deck().smallDeck
-      case _ => Deck().deck
-    }
+    val cardDeck = Deck().deck
     val indexes = Table().indexes(cardDeck)
     val (gameTable, drawIndex) = Table().createGameTable(playerAmount, indexes, positions, cardDeck)
-
     val playersList = (1 to playerAmount).map(i => Player()).toList
 
     GameData(

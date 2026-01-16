@@ -29,14 +29,14 @@ class CardSpec extends AnyWordSpec {
     }
 
     "have a scalable size" in {
-      Card('♦', "K", 5).cardSize should be("+-----+ \n| K♦  | \n|     | \n+-----+ \n")
-      Card('♦', "9", 8).cardSize should be("+--------+ \n| 9♦     | \n|        | \n|        | \n|        | \n+--------+ \n")
-      Card('♦', "9").cardSize should be("+----------+ \n| 9♦       | \n|          | \n|          | \n|          | \n|          | \n+----------+ \n")
+      Card('♦', "K", 5).toString should be("+-----+ \n| K♦  | \n|     | \n+-----+ \n")
+      Card('♦', "9", 8).toString should be("+--------+ \n| 9♦     | \n|        | \n|        | \n|        | \n+--------+ \n")
+      Card('♦', "9").toString should be("+----------+ \n| 9♦       | \n|          | \n|          | \n|          | \n|          | \n+----------+ \n")
     }
 
-    "have a cardString equal to cardSize" in {
+    "have a cardString equal to toString" in {
       val c = Card('♦', "K", 5)
-      c.cardString should be(c.cardSize)
+      c.cardString should be(c.toString)
     }
 
     "require size > 3" in {
