@@ -36,7 +36,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
     "execute passen" in {
       events.clear()
       val controller = makeController(stubGameData())
-      val current = controller.gameData.currentPlayerIndex + 1
+      val currentPlayer = controller.gameData.currentPlayer
 
       // Debug: ensure subscriber was added and direct notify works
       controller.subscribers.size should be > 0
@@ -54,31 +54,31 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       afterHasPassed shouldBe true
 
       events.exists(_.contains("PrintTable")) shouldBe true
-      events.exists(_.contains(s"PlayerPassed($current)")) shouldBe true
+      events.exists(_.contains(s"PlayerPassed($currentPlayer)")) shouldBe true
       events.exists(_.contains("RunningGame")) shouldBe true
     }
 
     "execute klopfen" in {
       events.clear()
       val controller = makeController(stubGameData())
-      val current = controller.gameData.currentPlayerIndex + 1
+      val currentPlayer = controller.gameData.currentPlayer
 
       PlayingState.knock(controller)
 
       events.exists(_.contains("PrintTable")) shouldBe true
-      events.exists(_.contains(s"PlayerKnocked($current)")) shouldBe true
+      events.exists(_.contains(s"PlayerKnocked($currentPlayer)")) shouldBe true
       events.exists(_.contains("RunningGame")) shouldBe true
     }
 
     "execute tauschen" in {
       events.clear()
       val controller = makeController(stubGameData())
-      val current = controller.gameData.currentPlayerIndex + 1
+      val currentPlayer = controller.gameData.currentPlayer
 
       PlayingState.swap(controller)
 
       controller.state should not be PlayingState
-      events.exists(_.contains(s"PlayerSwapGive($current)")) shouldBe true
+      events.exists(_.contains(s"PlayerSwapGive($currentPlayer)")) shouldBe true
     }
 
     "handle invalid input" in {

@@ -4,7 +4,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Table}
+import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Player, Table}
 import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 
@@ -40,7 +40,9 @@ class GUISpec extends AnyWordSpec with Matchers {
   "GUI" should {
     "drawTable and update paths should behave without errors" in {
       if (isCI) cancel("Skipping GUI tests in CI (no display)")
-      val controller = new GameController(PlayingState, GameData(2), new UndoManager())
+      val base = GameData(2)
+      val custom = base.copy(players = List(Player(name = "Alice"), Player(name = "Bob")))
+      val controller = new GameController(PlayingState, custom, new UndoManager())
       val gui = new de.htwg.se.thirtyone.aview.GUI(controller)
 
       gui.drawTable()
@@ -51,14 +53,16 @@ class GUISpec extends AnyWordSpec with Matchers {
       gui.infoLabel.text.toLowerCase should include ("spieler")
       gui.swapMode shouldBe "none"
 
-      gui.update(PlayerSwapGive(1))
+      val swapPlayer = controller.gameData.currentPlayer
+      gui.update(PlayerSwapGive(swapPlayer))
       gui.swapMode shouldBe "give"
       gui.swapAllButton.visible shouldBe true
 
-      gui.update(PlayerSwapTake(1))
+      gui.update(PlayerSwapTake(swapPlayer))
       gui.swapMode shouldBe "take"
 
-      gui.update(PlayerScore(1))
+      val scorePlayer = controller.gameData.players(1)
+      gui.update(PlayerScore(scorePlayer))
       runOnEDT { }
       gui.scoreLabels(0).text should include ("Punkte")
     }
@@ -76,7 +80,11 @@ class GUISpec extends AnyWordSpec with Matchers {
         override def initialGame(idx: String, playerNames: List[String]): Unit = { calls += s"init:${playerNames.mkString(",")}"; super.initialGame(idx, playerNames) }
       }
 
-      val spy = new SpyController(SetupState, GameData(3))
+      val base = GameData(3)
+      val custom = base.copy(
+        players = List(Player(name = "Alice"), Player(name = "Bob"), Player(name = "Cara"))
+      )
+      val spy = new SpyController(SetupState, custom)
       val gui = new de.htwg.se.thirtyone.aview.GUI(spy)
 
       gui.update(GameStarted)

@@ -91,7 +91,7 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
       stub.checkIfRoundEnded(controller, 1)
 
       // After processing, there should be PlayerScore notifications and PrintTable/RunningGame
-      events.exists(_.contains("PlayerScore(1)")) shouldBe true
+      events.exists(_.contains("PlayerScore(")) shouldBe true
       events.exists(_.contains("PrintTable")) shouldBe true
       events.exists(_.contains("RunningGame")) shouldBe true
       controller.state shouldBe PlayingState

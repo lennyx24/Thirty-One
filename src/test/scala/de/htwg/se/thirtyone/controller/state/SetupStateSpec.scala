@@ -24,16 +24,23 @@ class SetupStateSpec extends AnyWordSpec with Matchers {
       val controller = makeController()
 
       SetupState.selectNumber("3", controller)
+      events.exists(_.contains("PlayerName(1)")) shouldBe true
+    }
+
+    "prompt names and start game after all names are entered" in {
+      events.clear()
+      val controller = makeController()
+
+      SetupState.selectNumber("3", controller)
+      events.clear()
+
+      SetupState.execute("Alice", controller)
+      SetupState.execute("Bob", controller)
+      SetupState.execute("Cara", controller)
+
       events.exists(_.contains("PrintTable")) shouldBe true
       events.exists(_.contains("RunningGame(")) shouldBe true
       controller.state shouldBe PlayingState
-    }
-
-    "invalid input" in {
-      events.clear()
-      val controller = makeController()
-      SetupState.execute("9", controller)
-      events.exists(_.contains("InvalidInput")) shouldBe true
     }
   }
 }

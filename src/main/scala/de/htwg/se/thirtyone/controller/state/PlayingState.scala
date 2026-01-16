@@ -7,7 +7,7 @@ import de.htwg.se.thirtyone.util._
 object PlayingState extends ControllerState:
   override def pass(c: ControllerInterface): Unit =
     val currentPlayer = c.gameData.currentPlayer
-    val currentPlayerIndex = c.gameData.currentPlayerIndex
+    val currentPlayerIndex = c.gameData.currentPlayerIndex + 1
     val command = new SetCommand(c, () => {
       c.gamePass()
     })
@@ -19,7 +19,7 @@ object PlayingState extends ControllerState:
 
   override def knock(c: ControllerInterface): Unit =
     val currentPlayer = c.gameData.currentPlayer
-    val currentPlayerIndex = c.gameData.currentPlayerIndex
+    val currentPlayerIndex = c.gameData.currentPlayerIndex + 1
     val command = new SetCommand(c, () => {
       c.gameKnock()
     })

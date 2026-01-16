@@ -4,7 +4,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Table}
+import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Player, Table}
 import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 
@@ -27,10 +27,13 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
     }
 
     "print player score when PlayerScore notification is received" in {
-      val controller = new GameController(PlayingState, GameData(2), new UndoManager())
+      val base = GameData(2)
+      val custom = base.copy(players = List(Player(name = "Alice"), Player(name = "Bob")))
+      val controller = new GameController(PlayingState, custom, new UndoManager())
       controller.setGameData(controller.gameData.calculatePlayerPoints(1))
       val view = ConsoleView(controller)
-      val out = captureOut { view.update(PlayerScore(1)) }
+      val scorePlayer = controller.gameData.players(1)
+      val out = captureOut { view.update(PlayerScore(scorePlayer)) }
       out should not be empty
       (out.contains("Punkte") || out.toLowerCase.contains("spieler")) shouldBe true
     }
@@ -44,15 +47,19 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
     }
 
     "print PlayerPassed/Knocked/Swapped messages" in {
-      val controller = new GameController(PlayingState, GameData(2), new UndoManager())
+      val base = GameData(2)
+      val custom = base.copy(players = List(Player(name = "Alice"), Player(name = "Bob")))
+      val controller = new GameController(PlayingState, custom, new UndoManager())
       val view = ConsoleView(controller)
-      val passed = captureOut { view.update(PlayerPassed(1)) }
-      passed should include("Spieler 1")
+      val player1 = controller.gameData.players.head
+      val player2 = controller.gameData.players(1)
+      val passed = captureOut { view.update(PlayerPassed(player1)) }
+      passed should include(player1.name)
 
-      val knocked = captureOut { view.update(PlayerKnocked(2)) }
+      val knocked = captureOut { view.update(PlayerKnocked(player2)) }
       knocked should include("hat diese Runde geklopft")
 
-      val swapped = captureOut { view.update(PlayerSwapped(3)) }
+      val swapped = captureOut { view.update(PlayerSwapped(player1)) }
       swapped should include("tauscht")
     }
   }
