@@ -24,9 +24,9 @@ object ThirtyOneApp:
     while (true) do
       val input = readLine()
       input match
-        case "passen" | "pass" | "p" => controller.pass()
-        case "klopfen" | "knock" | "k" => controller.knock()
-        case "tauschen" | "swap" | "s" => controller.swap()
+        case "passen" | "pass" => controller.pass()
+        case "klopfen" | "knock" => controller.knock()
+        case "tauschen" | "swap" => controller.swap()
 
         case "2" | "3" | "4" => controller.selectNumber(input)
         case "alle" | "all" | "a" => controller.selectAll()
@@ -34,5 +34,8 @@ object ThirtyOneApp:
         case "undo" | "u" => controller.undo()
         case "redo" | "r" => controller.redo()
         case "exit" | "quit" | "q" => System.exit(0)
+
+        case "save" => controller.saveGame()
+        case "load" => controller.loadGame()
 
         case _ => controller.handleInput(input)
