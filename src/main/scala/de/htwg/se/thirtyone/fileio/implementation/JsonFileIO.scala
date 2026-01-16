@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.*
 
 class JsonFileIO extends FileIO{
-  val file = name + ".json"
+  val file = filepath.toString + ".json"
   override def save(game: GameInterface): Unit =
     val json = game.toJson()
     val str = Json.prettyPrint(json)
