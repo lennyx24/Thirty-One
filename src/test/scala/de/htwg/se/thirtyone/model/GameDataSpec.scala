@@ -24,7 +24,9 @@ class GameDataSpec extends AnyWordSpec with Matchers {
   private val defaultPositions: List[List[(Int, Int)]] = List(
     List((1, 3), (1, 4), (1, 5)), // middle
     List((0, 1), (0, 2), (0, 3)), // player1
-    List((0, 5), (0, 6), (0, 7)) // player2
+    List((0, 5), (0, 6), (0, 7)), // player2
+    List((2, 5), (2, 6), (2, 7)), // player3
+    List((2, 1), (2, 2), (2, 3))  // player4
   )
 
   "A GameData" should {
@@ -132,10 +134,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
     // Additional small, complementary tests merged here to improve coverage
     "swapTable should not advance player when swapFinished is false" in {
       val gd = GameData(2)
-      val cardPositions = List(
-        List((1, 3), (1, 4), (1, 5)), // middle
-        List((0, 1), (0, 2), (0, 3))  // player1
-      )
+      val cardPositions = defaultPositions
       val h10 = mkCard('♥', "10")
       val d4 = mkCard('♦', "4")
       val baseTable = gd.table.setAll(cardPositions(0), List(h10, d4, h10)).setAll(cardPositions(1), List(d4, h10, d4))
@@ -159,10 +158,7 @@ class GameDataSpec extends AnyWordSpec with Matchers {
     "swapTable should advance player and reset passes when swapFinished is true" in {
       val gd = GameData(2)
       val players = List(mkPlayer(name = "P1", hasPassed = true), mkPlayer(name = "P2", hasPassed = true))
-      val cardPositions = List(
-        List((1, 3), (1, 4), (1, 5)), // middle
-        List((0, 1), (0, 2), (0, 3))  // player1
-      )
+      val cardPositions = defaultPositions
 
       val h10 = mkCard('♥', "10")
       val d4 = mkCard('♦', "4")

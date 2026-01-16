@@ -5,6 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.model.gameImplementation.Card
 import de.htwg.se.thirtyone.model.gameImplementation.Deck
 import de.htwg.se.thirtyone.model.gameImplementation.Table
+import play.api.libs.json.Json
 
 class TableSpec extends AnyWordSpec {
   "Table" should {
@@ -141,6 +142,32 @@ class TableSpec extends AnyWordSpec {
         tab.swap((9,9),(10,10))
       }
       ex shouldBe a[IndexOutOfBoundsException]
+    }
+
+    "serialize to and from XML" in {
+      val newTab = tab.set((0,0), h10).set((1,1), d4)
+      val xml = newTab.toXml
+      val loadedTab = Table.fromXml(xml)
+      
+      loadedTab.grid(0)(0) shouldBe Some(h10)
+      loadedTab.grid(1)(1) shouldBe Some(d4)
+      loadedTab.grid(2)(2) shouldBe None
+    }
+
+    "serialize to and from JSON" in {
+      val newTab = tab.set((0,0), h10).set((1,1), d4)
+      val json = newTab.toJson
+      val loadedTab = Table.fromJson(json)
+
+      loadedTab.grid(0)(0) shouldBe Some(h10)
+      loadedTab.grid(1)(1) shouldBe Some(d4)
+      loadedTab.grid(2)(2) shouldBe None
+    }
+
+    "handle malformed/empty JSON gracefully (default empty table)" in {
+      val emptyJson = Json.obj()
+      val t = Table.fromJson(emptyJson)
+      t.grid.flatten.flatten shouldBe empty
     }
   }
 }

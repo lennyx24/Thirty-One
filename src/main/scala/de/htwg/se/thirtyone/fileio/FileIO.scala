@@ -7,7 +7,7 @@ import java.nio.file._
 trait FileIO {
   def save(game: GameInterface): Unit
   def load(): GameInterface
-  val filepath = Paths.get(
+  def filepath = Paths.get(
     System.getProperty("user.dir"),
     "src", "main", "scala", "de", "htwg", "se", "thirtyone", "savedGame"
   )
