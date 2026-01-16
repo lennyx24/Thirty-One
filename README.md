@@ -12,7 +12,6 @@ AIN Semester 3 HTWG, project in software engineering by Daniel Sauer and Lenny J
       - Klopfen (letzte Runde einläuten).
   - Rundenende: Nach dem Klopfen haben alle noch genau einen Zug.
   - Gewinner: Wer 31 hat oder am Ende die meisten Punkte.
-———
 
   ## Punktewertung
 
