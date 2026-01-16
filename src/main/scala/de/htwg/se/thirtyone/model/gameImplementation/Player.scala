@@ -5,6 +5,8 @@ import scala.xml.Elem
 
 import java.util.UUID
 
+import java.util.UUID
+
 case class Player(
     name: String = "Nameless Player",
     hasKnocked: Boolean = false, 

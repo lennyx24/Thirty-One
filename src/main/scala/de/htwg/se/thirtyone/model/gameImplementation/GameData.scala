@@ -32,6 +32,13 @@ case class GameData(
     private def positionIndex(player: Player): Option[Int] =
       indexOfPlayer(player).map(_ + 1)
 
+    private def indexOfPlayer(player: Player): Option[Int] =
+      val idx = players.indexWhere(p => p.id == player.id)
+      if idx >= 0 then Some(idx) else None
+
+    private def positionIndex(player: Player): Option[Int] =
+      indexOfPlayer(player).map(_ + 1)
+
     override def nextPlayer(): GameInterface =
       val next: GameData =
         if currentPlayerIndex + 1 == playerCount then copy(currentPlayerIndex = 0)

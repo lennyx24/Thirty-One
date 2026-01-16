@@ -85,3 +85,4 @@ project/plugins/project/
 .vscode/
 project/
 src/main/scala/de/htwg/se/thirtyone/controller/.scala-build/
+src/main/scala/de/htwg/se/thirtyone/savedGame.json

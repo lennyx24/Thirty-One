@@ -285,11 +285,7 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
           contents = playingPanel
           pack()
           centerOnScreen()
-          val playerCount = controller.gameData.playerCount
-          for (i<-playerNameLabels.indices)
-            playerNameLabels(i).visible = i < playerCount
-            scoreLabels(i).visible = i < playerCount
-          for i <- 0 until controller.gameData.players.length do
+          for i <- 0 until controller.gameData.playerCount do
             if i < playerNameLabels.length then
               val player = controller.gameData.players(i)
               playerNameLabels(i).text = s"${player.name} (Leben: ${controller.gameData.getPlayersHealth(player)})"
