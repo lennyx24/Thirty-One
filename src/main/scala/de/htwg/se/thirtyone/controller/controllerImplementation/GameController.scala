@@ -1,15 +1,18 @@
 package de.htwg.se.thirtyone.controller.controllerImplementation
 
 import de.htwg.se.thirtyone.controller.command.UndoManager
-import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.controller._
+import de.htwg.se.thirtyone.controller.state.*
+import de.htwg.se.thirtyone.controller.*
 import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util._
 import de.htwg.se.thirtyone.model.gameImplementation.GameData
 import de.htwg.se.thirtyone.model.gameImplementation.Player
 import com.google.inject.Inject
+import de.htwg.se.thirtyone.fileio._
+import de.htwg.se.thirtyone.fileio.implementation.XmlFileIO
 
-class GameController @Inject() (var state: ControllerState, var gameData: GameInterface, val undoManager: UndoManager) extends ControllerInterface:
+class GameController @Inject() (var state: ControllerState, var gameData: GameInterface, val undoManager: UndoManager, val fileIO: FileIO) extends ControllerInterface:
+
   override def handleInput(input: String): Unit = state.handleInput(input, this)
 
   override def pass(): Unit = state.pass(this)
@@ -23,7 +26,21 @@ class GameController @Inject() (var state: ControllerState, var gameData: GameIn
     gameData = gameData.changePlayersNames(playerNames)
 
   override def changePlayerName(newName: String, playerIdx: Int): Unit = gameData = gameData.changePlayerName(newName, playerIdx)
-  
+
+  override def loadGame(): Unit = {
+    val game = fileIO.load()
+    game match {
+      case gd: GameInterface =>
+        this.gameData = gd
+        if(game.gameRunning) setState(PlayingState)
+        notifyObservers(GameStarted)
+        notifyObservers(PrintTable)
+    }
+  }
+
+  override def saveGame(): Unit =
+    fileIO.save(gameData)
+
   override def selectNumber(idx: String): Unit = state.selectNumber(idx, this)
 
   override def selectAll(): Unit = state.selectAll(this)

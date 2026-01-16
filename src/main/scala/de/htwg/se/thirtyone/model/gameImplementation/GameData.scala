@@ -1,10 +1,15 @@
 package de.htwg.se.thirtyone.model.gameImplementation
 
 import scala.annotation.tailrec
-import scala.util.{Try, Success, Failure}
-import de.htwg.se.thirtyone.model.factory._
+import scala.util.{Failure, Success, Try}
+import de.htwg.se.thirtyone.model.factory.*
 import GameScoringStrategy.Strategy
-import de.htwg.se.thirtyone.model._
+import de.htwg.se.thirtyone.model.*
+import de.htwg.se.thirtyone.model.gameImplementation.GameData.loadGame
+import play.api.libs.json.{JsValue, Json}
+
+import java.nio.file.{Files, Paths}
+import scala.xml.{Elem, Node, XML}
 
 case class GameData(
     table: Table,
@@ -128,7 +133,118 @@ case class GameData(
       val newGame = GameData(playerCount)
       newGame.copy(players = savedPlayers)
 
+    override def toXml(): Elem =
+      <GameData>
+        {table.toXML}
+        <strategy>{GameScoringStrategy.toString(scoringStrategy)}</strategy>
+        <playerCount>{playerCount}</playerCount>
+        <players>{players.map(p=>p.toXML)}</players>
+        <currentPlayerIndex>{currentPlayerIndex}</currentPlayerIndex>
+        <deck>{deck.map(_.toXML)}</deck>
+        <indexes>{indexes.mkString(",")}</indexes>
+        <drawIndex>{drawIndex}</drawIndex>
+        <gameRunning>{gameRunning}</gameRunning>
+        <cardPositions>{
+          cardPositions.zipWithIndex.map { case (posList, pi) =>
+            <player index={ pi.toString }>{
+              posList.map { case (r, c) => <pos row={ r.toString } col={ c.toString }/> }
+              }</player>
+            }
+          }</cardPositions>
+      </GameData>
+
+    override def toJson(): JsValue =
+      Json.obj(
+        "GameData" -> Json.obj(
+          "table" -> table.toJson,
+          "strategy" -> GameScoringStrategy.toString(scoringStrategy),
+          "playerCount" -> playerCount,
+          "players" -> Json.toJson(players.map(_.toJson)),
+          "currentPlayerIndex" -> currentPlayerIndex,
+          "deck" -> Json.toJson(deck.map(_.toJson)),
+          "indexes" -> Json.toJson(indexes),
+          "drawIndex" -> drawIndex,
+          "gameRunning" -> gameRunning,
+          "cardPositions" -> Json.toJson(
+            cardPositions.map { posList =>
+              Json.toJson(posList.map { case (r, c) => Json.obj("row" -> r, "col" -> c) })
+            }
+          )
+        )
+      )
+
 object GameData:
   def apply(playerAmount: Int, gameMode: GameFactory = StandardGameFactory): GameData =
     gameMode.createGame(playerAmount)
-        
+    
+  def loadGame(node: xml.Node): GameData =
+    val tableNode = (node \ "table").headOption.getOrElse(throw new Exception("Saved game missing <table> node"))
+    val table = Table.fromXML(tableNode)
+    val scoringStrategy = GameScoringStrategy.fromString((node \ "strategy").text)
+    val playerCount = (node \ "playerCount").text.toInt
+    val currentPlayerIndex = (node \ "currentPlayerIndex").text.toInt
+    val drawIndex = (node \ "drawIndex").text.toInt
+    val gameRunning = (node \ "gameRunning").text.toBoolean
+    val players: List[Player] = (node \ "players").headOption.map(p=>p.child.collect{case e: xml.Elem => e}.toList.map(Player.fromXML)).getOrElse(Nil)
+    val deck: Vector[Card] = (node \ "deck").headOption.map(d => d.child.collect { case e: scala.xml.Elem => e }.toList.map(Card.fromXML).toVector).getOrElse(Vector.empty)
+    val indexes: Vector[Int] = (node \ "indexes").text.split(",").flatMap(s => s.toIntOption).toVector
+    val cardPositions: List[List[(Int, Int)]] =
+      (node \ "cardPositions" \ "player").toList
+        .sortBy(p => (p \ "@index").text.trim.toIntOption.getOrElse(0))
+        .map { p =>
+          (p \ "pos").toList.map { pos =>
+            val r = (pos \ "@row").text.trim.toIntOption.getOrElse(0)
+            val c = (pos \ "@col").text.trim.toIntOption.getOrElse(0)
+            (r, c)
+          }
+        }
+    GameData(
+      table = table,
+      scoringStrategy = scoringStrategy,
+      playerCount = playerCount,
+      players = players,
+      currentPlayerIndex = currentPlayerIndex,
+      deck = deck,
+      indexes = indexes,
+      drawIndex = drawIndex,
+      gameRunning = gameRunning,
+      cardPositions = cardPositions
+    )
+    
+  def loadGame(js: JsValue): GameData =
+    val node = (js \ "GameData").toOption.getOrElse(js)
+    val tableNode = (node \ "table").toOption.getOrElse(node)
+    val table = Table.fromJson(tableNode)
+    val scoringStrategy = GameScoringStrategy.fromString((node \ "strategy").asOpt[String].getOrElse("STANDARD"))
+    val playerCount = (node \ "playerCount").asOpt[Int].getOrElse(0)
+    val currentPlayerIndex = (node \ "currentPlayerIndex").asOpt[Int].getOrElse(0)
+    val drawIndex = (node \ "drawIndex").asOpt[Int].getOrElse(0)
+    val gameRunning = (node \ "gameRunning").asOpt[Boolean].getOrElse(false)
+    val players = (node \ "players").asOpt[Seq[JsValue]].getOrElse(Seq.empty).toList.map(pj => Player.fromJson(pj))
+    val deck = (node \ "deck").asOpt[Seq[JsValue]].getOrElse(Seq.empty).toVector.map(cj => Card.fromJson(cj))
+    val indexes: Vector[Int] =
+      (node \ "indexes").asOpt[Seq[Int]].map(_.toVector)
+        .orElse((node \ "indexes").asOpt[String].map(s => s.split(",").flatMap(_.toIntOption).toVector))
+        .getOrElse(Vector.empty)
+    val cpSeq = (node \ "cardPositions").asOpt[Seq[Seq[JsValue]]].getOrElse(Seq.empty)
+    val cardPositions: List[List[(Int, Int)]] =
+      cpSeq.map { rowSeq =>
+        rowSeq.map { cellJs =>
+          val r = (cellJs \ "row").asOpt[Int].getOrElse(0)
+          val c = (cellJs \ "col").asOpt[Int].getOrElse(0)
+          (r, c)
+        }.toList
+      }.toList
+
+    GameData(
+      table = table,
+      scoringStrategy = scoringStrategy,
+      playerCount = playerCount,
+      players = players,
+      currentPlayerIndex = currentPlayerIndex,
+      deck = deck,
+      indexes = indexes,
+      drawIndex = drawIndex,
+      gameRunning = gameRunning,
+      cardPositions = cardPositions
+    )

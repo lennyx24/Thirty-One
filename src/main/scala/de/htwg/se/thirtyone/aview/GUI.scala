@@ -16,9 +16,9 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
 
   val setupPanel = new BoxPanel(Orientation.Vertical) {
     border = Swing.EmptyBorder(15, 15, 15, 15)
-      contents += new GridPanel(1, 1) {
-        contents += new Label("Willkommen zu Schwimmen!")
-      }
+    contents += new GridPanel(1, 1) {
+      contents += new Label("Willkommen zu Schwimmen!")
+    }
     contents += Swing.VStrut(20)
 
     contents += new GridPanel(3, 2) {
@@ -98,15 +98,17 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       nameP3.visible = false
       nameP4.visible = false
 
-      contents += new Label("")
+      val loadGameButton = new Button("Load saved Game")
+      contents += loadGameButton
       val start = new Button("Spiel starten")
       contents += start
 
-      listenTo(start)
+      listenTo(start,loadGameButton)
       reactions += {
-        case ButtonClicked(`start`) => 
+        case ButtonClicked(`start`) =>
           val currentNames = nameFields.take(playerCount.text.toInt).map(_.text)
           controller.initialGame(playerCount.text, currentNames)
+        case ButtonClicked(`loadGameButton`) => controller.loadGame()
       }
       hGap = 5
       vGap = 5
@@ -140,11 +142,16 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
     preferredSize = new Dimension(600, 300)
   }
 
+
+
   val playingPanel = new BoxPanel(Orientation.Vertical) {
     contents += infoLabel
 
     contents += Swing.VStrut(25)
 
+    val saveButton = new Button("save")
+    val undoButton = new Button("<")
+    val redoButton = new Button(">")
     val passButton = new Button("Passen")
     val knockButton = new Button("Klopfen")
     val swapButton = new Button("Tauschen")
@@ -166,19 +173,26 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       contents += playerNameLabels(2)
       contents += scoreLabels(2)
 
-      contents += new Label("")
+      contents += new GridPanel(1, 3){
+        contents += undoButton
+        contents += redoButton
+        contents += saveButton
+      }
       contents += passButton
       contents += knockButton
       contents += swapButton
       contents += swapAllButton
     }
 
-    listenTo(passButton, knockButton, swapButton, swapAllButton)
+    listenTo(passButton, knockButton, swapButton, swapAllButton, saveButton, undoButton, redoButton)
     reactions += {
       case ButtonClicked(`passButton`) => controller.pass()
       case ButtonClicked(`knockButton`) => controller.knock()
       case ButtonClicked(`swapButton`) => controller.swap()
       case ButtonClicked(`swapAllButton`) => controller.selectAll()
+      case ButtonClicked(`saveButton`) => controller.saveGame()
+      case ButtonClicked(`undoButton`) => controller.undo()
+      case ButtonClicked(`redoButton`) => controller.redo()
     }
   }
 
@@ -266,6 +280,10 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
           contents = playingPanel
           pack()
           centerOnScreen()
+          val playerCount = controller.gameData.playerCount
+          for (i<-playerNameLabels.indices)
+            playerNameLabels(i).visible = i < playerCount
+            scoreLabels(i).visible = i < playerCount
           for i <- 0 until controller.gameData.players.length do
             if i < playerNameLabels.length then
               playerNameLabels(i).text = s"Spieler ${i + 1} (Leben: ${controller.gameData.getPlayersHealth(i)})"
