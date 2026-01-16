@@ -37,11 +37,11 @@ class TableSpec extends AnyWordSpec {
     "be able to get all values of a player" in {
       val newTab = tab.set((0, 1), h10).set((0, 2), d4).set((0, 3), s7)
       val cardPositions = List(
-        List((1, 3), (1, 4), (1, 5)), // middle
-        List((0, 1), (0, 2), (0, 3)), // player1
-        List((0, 5), (0, 6), (0, 7))  // player2
+        List((1, 3), (1, 4), (1, 5)),
+        List((0, 1), (0, 2), (0, 3)),
+        List((0, 5), (0, 6), (0, 7))
       )
-      val all = newTab.getAll(1, cardPositions) // Player 1 (index 1 in positions list)
+      val all = newTab.getAll(1, cardPositions)
 
       all.size should be(3)
       all should be(List(h10, d4, s7))
@@ -72,11 +72,11 @@ class TableSpec extends AnyWordSpec {
       val indexes = (0 until deck.size).toVector
 
       val cardPositions = List(
-        List((1, 3), (1, 4), (1, 5)), //Position Middle Cards
-        List((0, 1), (0, 2), (0, 3)), //Position Player 1
-        List((0, 5), (0, 6), (0, 7)), //Position Player 2
-        List((2, 5), (2, 6), (2, 7)), //Position Player 3
-        List((2, 1), (2, 2), (2, 3)), //Position Player 4
+        List((1, 3), (1, 4), (1, 5)),
+        List((0, 1), (0, 2), (0, 3)),
+        List((0, 5), (0, 6), (0, 7)),
+        List((2, 5), (2, 6), (2, 7)),
+        List((2, 1), (2, 2), (2, 3)),
       )
 
       val (table, _) = Table().createGameTable(playercount, indexes, cardPositions, deck)
@@ -106,21 +106,18 @@ class TableSpec extends AnyWordSpec {
       val deck = Deck().deck
       val indexes = (0 until deck.size).toVector
       val positions = List((1,3),(1,4),(1,5))
-      // provide positions for middle + player1 + player2 (createGameTable expects 0..playerCount inclusive)
       val player1Pos = List((0,1),(0,2),(0,3))
       val player2Pos = List((0,5),(0,6),(0,7))
       val (tableWithCards, drawIndex) = Table().createGameTable(2, indexes, List(positions, player1Pos, player2Pos), deck)
-      // use a fresh table and ensure drawIndex < indexes.length - 3
       val startDraw = 0
       val (newTable, newDraw) = tableWithCards.newMiddleCards(indexes, positions, deck, startDraw)
-      // if enough cards, drawIndex should advance by 3 and the middle positions should have non-empty cards
       newDraw shouldBe startDraw + 3
       newTable.get(positions(0)) shouldBe deck(startDraw)
     }
 
     "newMiddleCards should not change table when not enough cards available" in {
       val deck = Deck().deck
-      val indexes = Vector(0,1) // less than 3
+      val indexes = Vector(0,1)
       val positions = List((1,3),(1,4),(1,5))
       val table = Table()
       val (t2, d2) = table.newMiddleCards(indexes, positions, deck, 0)
@@ -131,7 +128,6 @@ class TableSpec extends AnyWordSpec {
     "indexes should return sequential indices for deck" in {
       val deck = Deck().deck
       val idxs = tab.indexes(deck)
-      // indexes() returns a shuffled permutation of indices; assert it's a valid permutation
       idxs.length should be(deck.length)
       idxs.sorted should equal (deck.indices.toVector)
       idxs.distinct.length should equal(idxs.length)
@@ -164,7 +160,7 @@ class TableSpec extends AnyWordSpec {
       loadedTab.grid(2)(2) shouldBe None
     }
 
-    "handle malformed/empty JSON gracefully (default empty table)" in {
+    "handle malformed/empty JSON gracefully" in {
       val emptyJson = Json.obj()
       val t = Table.fromJson(emptyJson)
       t.grid.flatten.flatten shouldBe empty

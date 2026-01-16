@@ -47,18 +47,15 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
 
     "setGameData, resetGame and dealDamage modify gameData" in {
       val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
-      // setGameData
       controller.setGameData(GameData(3))
       controller.gameData.playerCount shouldBe 3
 
-      // resetGame: make players with points and then reset
       val p = Player("P", hasKnocked = false, points = 10.0, playersHealth = 3)
       val modified = GameData(controller.gameData.playerCount).copy(players = List(p, p, p))
       controller.setGameData(modified)
       controller.resetGame()
       controller.gameData.players.foreach(pl => pl.points shouldBe 0)
 
-      // dealDamage: decrease health
       val before = controller.gameData.players.head.playersHealth
       controller.dealDamage(controller.gameData.players.head)
       controller.gameData.players.head.playersHealth shouldBe (before - 1)
@@ -68,7 +65,6 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
       val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val before = controller.gameData.players.map(_.points)
       controller.countPoints(controller, controller.gameData.players(0))
-      // should still be GameData and have players list
       controller.gameData.players.map(_.points).length shouldBe before.length
     }
 
@@ -145,13 +141,11 @@ class GameControllerSpec extends AnyWordSpec with Matchers {
 
     "gamePass and gameKnock should update gameData" in {
       val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
-      // pass
       controller.gamePass()
       controller.gameData.currentPlayerIndex shouldBe 1
 
-      // knock
       controller.gameKnock()
-      controller.gameData.currentPlayerIndex shouldBe 0 // 1 knocked -> next is 0 (since 2 players, index 1 -> 0)
+      controller.gameData.currentPlayerIndex shouldBe 0
       controller.gameData.players(1).hasKnocked shouldBe true
     }
   }
