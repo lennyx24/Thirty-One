@@ -62,5 +62,12 @@ class ConsoleViewSpec extends AnyWordSpec with Matchers {
       val swapped = captureOut { view.update(PlayerSwapped(player1)) }
       swapped should include("tauscht")
     }
+
+    "print PlayerNameSet message" in {
+      val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val view = ConsoleView(controller)
+      val out = captureOut { view.update(PlayerNameSet(1, "Lenny")) }
+      out should include("Spieler 1 heißt nun Lenny")
+    }
   }
 }

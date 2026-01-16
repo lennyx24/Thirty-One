@@ -45,6 +45,9 @@ case class ConsoleView(controller: ControllerInterface) extends Observer:
         case PlayerName(player) =>
             println(s"Name für Spieler $player: ")
 
+        case PlayerNameSet(index, name) =>
+            println(s"Spieler $index heißt nun $name.")
+
     def printNewRound(gameTable: String): Unit = 
         (1 until 20).foreach(x => println)
         print(gameTable)

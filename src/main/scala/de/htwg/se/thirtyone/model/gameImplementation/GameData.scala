@@ -10,17 +10,17 @@ import scala.util.{Failure, Success, Try}
 import scala.xml.{Elem, Node}
 
 case class GameData(
-                     table: Table,
-                     scoringStrategy: Strategy,
-                     playerCount: Int,
-                     players: List[Player],
-                     currentPlayerIndex: Int,
-                     deck: Vector[Card],
-                     indexes: Vector[Int],
-                     drawIndex: Int,
-                     gameRunning: Boolean,
-                     cardPositions: List[List[(Int, Int)]]
-                   ) extends GameInterface:
+table: Table,
+scoringStrategy: Strategy,
+playerCount: Int,
+players: List[Player],
+currentPlayerIndex: Int,
+deck: Vector[Card],
+indexes: Vector[Int],
+drawIndex: Int,
+gameRunning: Boolean,
+cardPositions: List[List[(Int, Int)]]
+) extends GameInterface:
   override def currentPlayer: Player = players(currentPlayerIndex)
 
   private def indexOfPlayer(player: Player): Option[Int] =
