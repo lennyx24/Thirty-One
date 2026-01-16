@@ -34,5 +34,26 @@ class GameScoringStrategySpec extends AnyWordSpec with Matchers {
       // ♠: 5 + 10 = 15, ♣: 5
       GameScoringStrategy.normalScoringStrategy(cards) shouldBe 15
     }
+
+    "convert to/from string identifiers" in {
+      (GameScoringStrategy.fromString("simple") eq GameScoringStrategy.simpleScoringStrategy) shouldBe true
+      (GameScoringStrategy.fromString("normal") eq GameScoringStrategy.normalScoringStrategy) shouldBe true
+      GameScoringStrategy.toString(GameScoringStrategy.simpleScoringStrategy) shouldBe "simple"
+      GameScoringStrategy.toString(GameScoringStrategy.normalScoringStrategy) shouldBe "normal"
+    }
+
+    "default to normal when strategy is unknown" in {
+      val custom: GameScoringStrategy.Strategy = _ => 42.0
+      GameScoringStrategy.toString(custom) shouldBe "normal"
+    }
+
+    "throw MatchError on unknown strategy name" in {
+      an [MatchError] should be thrownBy GameScoringStrategy.fromString("unknown")
+    }
+
+    "score face cards as 10 in normal strategy" in {
+      val cards = List(Card('♠', "J"), Card('♠', "Q"), Card('♠', "K"))
+      GameScoringStrategy.normalScoringStrategy(cards) shouldBe 30.0
+    }
   }
 }

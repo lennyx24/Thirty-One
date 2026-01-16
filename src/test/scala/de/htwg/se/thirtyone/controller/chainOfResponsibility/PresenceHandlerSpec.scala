@@ -40,5 +40,13 @@ class PresenceHandlerSpec extends AnyWordSpec with Matchers {
         case Failure(_: IndexOutOfBoundsException) => succeed // SwapHandler.passNext returns Failure when next is None
         case _ => fail("Expected Failure(IndexOutOfBoundsException) when next is None")
     }
+
+    "handle 'alle' path when both cells present" in {
+      val handler = PresenceHandler(Some(new de.htwg.se.thirtyone.controller.chainOfResponsibility.swap.PerformSwapHandler(None)))
+      val controller = new GameController(new de.htwg.se.thirtyone.controller.state.SwapState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+
+      val res = handler.handle(controller, "alle", "1")
+      res.isSuccess shouldBe true
+    }
   }
 }

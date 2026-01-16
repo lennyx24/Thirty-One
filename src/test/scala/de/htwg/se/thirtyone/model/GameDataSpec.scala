@@ -295,6 +295,45 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       afterPass.currentPlayerIndex shouldBe (gd.currentPlayerIndex + 1) % 3
     }
 
+    "changePlayerName updates existing player and ignores unknown player" in {
+      val gd = GameData(2)
+      val p1 = gd.players.head
+      val updated = gd.changePlayerName(p1, "Alice")
+      updated.players.head.name shouldBe "Alice"
+
+      val stranger = Player(name = "Stranger")
+      val unchanged = gd.changePlayerName(stranger, "Bob")
+      unchanged.players.map(_.name) shouldBe gd.players.map(_.name)
+    }
+
+    "return safe defaults for unknown player queries" in {
+      val gd = GameData(2)
+      val stranger = Player(name = "Stranger")
+      gd.getPlayersHealth(stranger) shouldBe 0
+      gd.getPlayerPoints(stranger) shouldBe 0.0
+      gd.calculatePlayerPoints(stranger) shouldBe gd
+      gd.doDamage(stranger) shouldBe gd
+    }
+
+    "swap should fail for unknown player" in {
+      val gd = GameData(2)
+      val stranger = Player(name = "Stranger")
+      gd.swap(stranger, "1", "1").isFailure shouldBe true
+    }
+
+    "loadGame should restore from XML and JSON" in {
+      val gd = GameData(2)
+      val named = gd.changePlayerName(gd.players.head, "Alice")
+
+      val fromXml = GameData.loadGame(named.toXml())
+      fromXml.playerCount shouldBe gd.playerCount
+      fromXml.players.head.name shouldBe "Alice"
+
+      val fromJson = GameData.loadGame(named.toJson())
+      fromJson.playerCount shouldBe gd.playerCount
+      fromJson.players.head.name shouldBe "Alice"
+    }
+
     "serialize to JSON and XML" in {
       val gd = GameData(2)
       noException should be thrownBy gd.toJson()

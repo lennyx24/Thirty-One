@@ -2,7 +2,7 @@ package de.htwg.se.thirtyone.controller.state
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Table}
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
 import de.htwg.se.thirtyone.controller.state._
@@ -54,6 +54,19 @@ class SwapStateSpec extends AnyWordSpec with Matchers {
 
       events.exists(e => e.contains("PlayerSwapped(") && e.contains(currentPlayer.name)) shouldBe true
       controller.state shouldBe PlayingState
+    }
+
+    "notify InvalidInput when swap fails after valid inputs" in {
+      events.clear()
+      val state = new SwapState
+      val controller = makeController(state)
+      controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(table = Table()))
+
+      state.execute("1", controller)
+      events.clear()
+      state.execute("1", controller)
+
+      events.exists(_.contains("InvalidInput")) shouldBe true
     }
 
     "when give already set and input is 'alle' -> InvalidInput" in {

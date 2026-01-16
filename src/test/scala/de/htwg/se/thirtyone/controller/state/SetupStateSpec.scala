@@ -70,5 +70,26 @@ class SetupStateSpec extends AnyWordSpec with Matchers {
       SetupState.selectNumber("abc", controller)
        events.exists(_.contains("InvalidInput")) shouldBe true
     }
+
+    "setupGame should start immediately with provided names" in {
+      events.clear()
+      SetupState.reset()
+      val controller = makeController()
+
+      SetupState.setupGame(2, List("Alice", "Bob"), controller)
+
+      controller.state shouldBe PlayingState
+      controller.gameData.players.head.name shouldBe "Alice"
+      events.exists(_.contains("RunningGame(")) shouldBe true
+    }
+
+    "setupGame should reject invalid player count" in {
+      events.clear()
+      SetupState.reset()
+      val controller = makeController()
+
+      SetupState.setupGame(1, List("A"), controller)
+      events.exists(_.contains("InvalidInput")) shouldBe true
+    }
   }
 }

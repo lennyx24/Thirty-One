@@ -82,6 +82,20 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       events.exists(_.contains(s"PlayerSwapGive($currentPlayer)")) shouldBe true
     }
 
+    "skip pass notifications when round ends" in {
+      events.clear()
+      val p1 = Player(name = "P1", points = 5.0, playersHealth = 1)
+      val p2 = Player(name = "P2", points = 10.0, playersHealth = 2)
+      val gd = GameData(2).copy(players = List(p1, p2), gameRunning = false)
+      val controller = makeController(gd)
+
+      PlayingState.pass(controller)
+
+      events.exists(_.contains("GameEnded")) shouldBe true
+      events.exists(_.contains("PlayerPassed")) shouldBe false
+      controller.state shouldBe GameEndedState
+    }
+
     "handle invalid input" in {
       events.clear()
       val controller = makeController(stubGameData())
