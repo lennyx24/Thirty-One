@@ -6,6 +6,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import java.nio.file.{Files, Paths, Path}
 import de.htwg.se.thirtyone.model.GameInterface
+import de.htwg.se.thirtyone.util.fileio.implementation.{JsonFileIO, XmlFileIO}
 
 class FileIOSpec extends AnyWordSpec with Matchers {
 

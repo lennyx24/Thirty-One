@@ -72,7 +72,7 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
 
         case 2 =>
           val p4 = if (players.length > 3) s"${players(2).name}: ${players(3).playersHealth} Leben, ${players(3).points} Punkte" else ""
-          val p3 = if (players.length > 2) s"S${players(3).name}: ${players(2).playersHealth} Leben, ${players(2).points} Punkte" else ""
+          val p3 = if (players.length > 2) s"${players(3).name}: ${players(2).playersHealth} Leben, ${players(2).points} Punkte" else ""
           if (p4.nonEmpty || p3.nonEmpty) " " * 13 + f"$p4%-52s" + p3 + "\n" else ""
 
         case _ => ""

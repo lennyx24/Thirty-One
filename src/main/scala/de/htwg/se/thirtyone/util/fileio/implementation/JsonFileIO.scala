@@ -1,6 +1,6 @@
-package de.htwg.se.thirtyone.fileio.implementation
+package de.htwg.se.thirtyone.util.fileio.implementation
 
-import de.htwg.se.thirtyone.fileio.FileIO
+import de.htwg.se.thirtyone.util.fileio.FileIO
 import de.htwg.se.thirtyone.model.GameInterface
 import de.htwg.se.thirtyone.model.gameImplementation.GameData
 import play.api.libs.json.*
