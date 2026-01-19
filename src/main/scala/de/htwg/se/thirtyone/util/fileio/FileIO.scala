@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.fileio
+package de.htwg.se.thirtyone.util.fileio
 
 import de.htwg.se.thirtyone.model.GameInterface
 

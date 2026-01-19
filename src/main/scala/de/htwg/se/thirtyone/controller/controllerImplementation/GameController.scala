@@ -8,8 +8,8 @@ import de.htwg.se.thirtyone.util._
 import de.htwg.se.thirtyone.model.gameImplementation.GameData
 import de.htwg.se.thirtyone.model.gameImplementation.Player
 import com.google.inject.Inject
-import de.htwg.se.thirtyone.fileio._
-import de.htwg.se.thirtyone.fileio.implementation.XmlFileIO
+import de.htwg.se.thirtyone.util.fileio.*
+import de.htwg.se.thirtyone.util.fileio.implementation.XmlFileIO
 
 class GameController @Inject() (var state: ControllerState, var gameData: GameInterface, val undoManager: UndoManager, val fileIO: FileIO) extends ControllerInterface:
 

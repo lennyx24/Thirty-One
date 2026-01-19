@@ -10,8 +10,8 @@ import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 import com.google.inject.AbstractModule
 import net.codingwell.scalaguice.ScalaModule
 import de.htwg.se.thirtyone.controller.state.ControllerState
-import de.htwg.se.thirtyone.fileio.FileIO
-import de.htwg.se.thirtyone.fileio.implementation._
+import de.htwg.se.thirtyone.util.fileio._
+import de.htwg.se.thirtyone.util.fileio.implementation._
 
 class ThirtyOneModule extends AbstractModule with ScalaModule{
     override def configure(): Unit =

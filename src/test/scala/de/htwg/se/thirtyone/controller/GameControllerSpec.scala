@@ -7,7 +7,7 @@ import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
 import de.htwg.se.thirtyone.model.gameImplementation.GameData
 import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.model.gameImplementation.Player
-import de.htwg.se.thirtyone.fileio.FileIO
+import de.htwg.se.thirtyone.util.fileio.FileIO
 import de.htwg.se.thirtyone.model.GameInterface
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer

@@ -9,7 +9,6 @@ import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 
 class GUISpec extends AnyWordSpec with Matchers {
-  private val isCI: Boolean = sys.env.get("GITHUB_ACTIONS").isDefined || sys.env.get("CI").isDefined
 
   private def captureOut(f: => Unit): String = {
     val baos = new java.io.ByteArrayOutputStream()
@@ -37,7 +36,6 @@ class GUISpec extends AnyWordSpec with Matchers {
 
   "GUI" should {
     "drawTable and update paths should behave without errors" in {
-      if (isCI) cancel("Skipping GUI tests in CI (no display)")
       val base = GameData(2)
       val custom = base.copy(players = List(Player(name = "Alice"), Player(name = "Bob")))
       val controller = new GameController(PlayingState, custom, new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
@@ -66,7 +64,6 @@ class GUISpec extends AnyWordSpec with Matchers {
     }
 
     "setup panel interactions (add/sub/start) and playing buttons call controller" in {
-      if (isCI) cancel("Skipping GUI tests in CI (no display)")
       import scala.collection.mutable.ArrayBuffer
       class SpyController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: de.htwg.se.thirtyone.model.gameImplementation.GameData) extends de.htwg.se.thirtyone.controller.controllerImplementation.GameController(state, gd, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
         val calls = ArrayBuffer.empty[String]
@@ -124,7 +121,6 @@ class GUISpec extends AnyWordSpec with Matchers {
     }
 
     "drawTable colors and take/give click behavior" in {
-      if (isCI) cancel("Skipping GUI tests in CI (no display)")
       val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val heart = de.htwg.se.thirtyone.model.gameImplementation.Card('♥', "A")
       val spade = de.htwg.se.thirtyone.model.gameImplementation.Card('♠', "K")
@@ -161,7 +157,6 @@ class GUISpec extends AnyWordSpec with Matchers {
     }
 
     "setup EditDone clamps and name field visibility" in {
-      if (isCI) cancel("Skipping GUI tests in CI (no display)")
       val controller = new GameController(SetupState, GameData(4), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val gui = new de.htwg.se.thirtyone.aview.GUI(controller)
       gui.update(GameStarted)
@@ -189,6 +184,158 @@ class GUISpec extends AnyWordSpec with Matchers {
       val playerNames = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.gameImplementation.GameData].players.map(_.name)
       playerNames.length shouldBe 4
       playerNames.forall(_ == "Max") shouldBe true
+    }
+
+    "handle Load, Save, Undo, Redo buttons" in {
+      import scala.collection.mutable.ArrayBuffer
+      class SpyController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: de.htwg.se.thirtyone.model.gameImplementation.GameData) extends de.htwg.se.thirtyone.controller.controllerImplementation.GameController(state, gd, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
+        val calls = ArrayBuffer.empty[String]
+        override def loadGame(): Unit = { calls += "load"; super.loadGame() }
+        override def saveGame(): Unit = { calls += "save"; super.saveGame() }
+        override def undo(): Unit = { calls += "undo"; super.undo() }
+        override def redo(): Unit = { calls += "redo"; super.redo() }
+      }
+
+      val spy = new SpyController(SetupState, GameData(2))
+      val gui = new de.htwg.se.thirtyone.aview.GUI(spy)
+      
+      // Test Load in Setup Panel
+      gui.update(GameStarted)
+      runOnEDT {}
+      val setup = gui.contents.head.asInstanceOf[scala.swing.Container]
+      val loadBtn = findButtons(setup).find(_.text == "Load saved Game").get
+      runOnEDT { loadBtn.peer.doClick() }
+      
+      // Test Save, Undo, Redo in Playing Panel
+      gui.update(PrintTable)
+      runOnEDT {}
+      val play = gui.contents.head.asInstanceOf[scala.swing.Container]
+      val buttons = findButtons(play)
+      val saveBtn = buttons.find(_.text == "save").get
+      val undoBtn = buttons.find(_.text == "<").get
+      val redoBtn = buttons.find(_.text == ">").get
+
+      runOnEDT { saveBtn.peer.doClick() }
+      runOnEDT { undoBtn.peer.doClick() }
+      runOnEDT { redoBtn.peer.doClick() }
+
+      spy.calls should contain allOf ("load", "save", "undo", "redo")
+    }
+
+    "handle Game Ended interactions" in {
+      import scala.collection.mutable.ArrayBuffer
+      class SpyController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: de.htwg.se.thirtyone.model.gameImplementation.GameData) extends de.htwg.se.thirtyone.controller.controllerImplementation.GameController(state, gd, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
+        val calls = ArrayBuffer.empty[String]
+        override def handleInput(input: String): Unit = { calls += s"input:$input"; super.handleInput(input) }
+      }
+      
+      val spy = new SpyController(GameEndedState, GameData(2))
+      val gui = new de.htwg.se.thirtyone.aview.GUI(spy)
+      val winner = Player("Winner")
+      
+      gui.update(GameEnded(winner))
+      runOnEDT {}
+      
+      val endPanel = gui.contents.head.asInstanceOf[scala.swing.Container]
+      val buttons = findButtons(endPanel)
+      val playAgainBtn = buttons.find(_.text.trim == "Nochmal spielen").get
+      val quitBtn = buttons.find(_.text == "Verlassen").get
+      
+      runOnEDT { playAgainBtn.peer.doClick() }
+      runOnEDT { quitBtn.peer.doClick() }
+      
+      spy.calls should contain ("input:j")
+      spy.calls should contain ("input:n")
+    }
+
+    "validate card clicks (wrong card / wrong mode)" in {
+      val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+      val base = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.gameImplementation.GameData]
+      
+      // P1 is at index 0 in players list, so index 1 in cardPositions (0 is table)
+      val posHand = base.cardPositions(1) 
+      val posTable = base.cardPositions(0)
+      
+      val cardInHand = de.htwg.se.thirtyone.model.gameImplementation.Card('♥', "7")
+      val cardOnTable = de.htwg.se.thirtyone.model.gameImplementation.Card('♠', "8")
+      
+      val t = base.table
+        .set(posHand(0), cardInHand)
+        .set(posTable(0), cardOnTable)
+      
+      val custom = base.copy(table = t)
+      controller.setGameData(custom)
+      
+      val gui = new de.htwg.se.thirtyone.aview.GUI(controller)
+      gui.drawTable()
+      
+      val btnHand = gui.cardGrid.contents.collectFirst { case b: scala.swing.Button if b.text.contains("♥") && b.text.contains("7") => b }.get
+      val btnTable = gui.cardGrid.contents.collectFirst { case b: scala.swing.Button if b.text.contains("♠") && b.text.contains("8") => b }.get
+
+      // Case 1: Mode "give", click card NOT in hand (e.g. table card)
+      gui.swapMode = "give"
+      runOnEDT { btnTable.peer.doClick() }
+      gui.infoLabel.text shouldBe "Das ist nicht deine Karte."
+      
+      // Case 2: Mode "take", click card NOT on table (e.g. hand card)
+      gui.swapMode = "take"
+      runOnEDT { btnHand.peer.doClick() }
+      gui.infoLabel.text shouldBe "Das ist nicht deine Karte."
+      
+      // Case 3: Mode "none", click any card
+      gui.swapMode = "none"
+      runOnEDT { btnHand.peer.doClick() }
+      gui.infoLabel.text shouldBe "Das ist nicht deine Karte."
+    }
+    
+    "handle PlayerNameSet and visibility logic in PrintTable" in {
+       val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+       val gui = new de.htwg.se.thirtyone.aview.GUI(controller)
+       
+       gui.update(GameStarted)
+       runOnEDT {}
+       
+       // Test PlayerNameSet
+       gui.update(PlayerNameSet(1, "UpdatedName"))
+       runOnEDT {}
+       
+       gui.nameFields(0).text shouldBe "UpdatedName"
+       
+       // Test PrintTable visibility for 2 players
+       gui.update(PrintTable)
+       runOnEDT {}
+       gui.nameLabels(0).visible shouldBe true
+       gui.nameLabels(1).visible shouldBe true
+       gui.nameLabels(2).visible shouldBe false
+       gui.nameLabels(3).visible shouldBe false
+    }
+    
+    "handle decrement button in setup" in {
+       val controller = new GameController(SetupState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
+       val gui = new de.htwg.se.thirtyone.aview.GUI(controller)
+       gui.update(GameStarted)
+       runOnEDT {}
+       
+       val setup = gui.contents.head.asInstanceOf[scala.swing.Container]
+       val buttons = findButtons(setup)
+       val addBtn = buttons.find(_.text == "▲").get
+       val subBtn = buttons.find(_.text == "▼").get
+       val countField = findTextFields(setup).find(_.text.matches("\\d")).get
+       
+       // Default is 2. Click sub -> should stay 2
+       runOnEDT { subBtn.peer.doClick() }
+       runOnEDT {}
+       countField.text shouldBe "2"
+       
+       // Click add -> 3
+       runOnEDT { addBtn.peer.doClick() }
+       runOnEDT {}
+       countField.text shouldBe "3"
+       
+       // Click sub -> 2
+       runOnEDT { subBtn.peer.doClick() }
+       runOnEDT {}
+       countField.text shouldBe "2"
     }
   }
 }
