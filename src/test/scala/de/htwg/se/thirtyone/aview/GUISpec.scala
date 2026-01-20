@@ -126,7 +126,8 @@ class GUISpec extends AnyWordSpec with Matchers {
       val heart = de.htwg.se.thirtyone.model.game.Card('♥', "A")
       val spade = de.htwg.se.thirtyone.model.game.Card('♠', "K")
       val base = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.game.GameData]
-      val t1 = base.table.set((0,0), heart).set((0,1), spade)
+      // make cards visible to the current player: use positions that belong to player 1 (cardPositions(1))
+      val t1 = base.table.set((0,1), heart).set((0,2), spade)
       controller.setGameData(base.copy(table = t1))
 
       val gui = new de.htwg.se.thirtyone.aview.GUI(controller)

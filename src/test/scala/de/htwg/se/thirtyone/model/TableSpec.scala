@@ -91,7 +91,8 @@ class TableSpec extends AnyWordSpec {
 
     "be able to print table" in {
       val newTab = tab.set((0, 0), h10)
-      val s = newTab.printTable(List())
+      // no players, pass a default current player and empty visibility
+      val s = newTab.printTable(List(), Player(), Nil, Nil)
       s should include("+")
       s should include("|")
     }
@@ -103,7 +104,8 @@ class TableSpec extends AnyWordSpec {
         Player(name = "P3", playersHealth = 1, points = 7.0),
         Player(name = "P4", playersHealth = 3, points = 9.0)
       )
-      val s = tab.printTable(players)
+      // use the first player as current, no visible specific positions or cards
+      val s = tab.printTable(players, players.head, Nil, Nil)
       s should include("P1")
       s should include("P2")
       s should include("P3")
