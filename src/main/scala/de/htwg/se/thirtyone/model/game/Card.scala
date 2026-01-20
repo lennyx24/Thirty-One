@@ -13,7 +13,7 @@ case class Card(symbol: Char, value: String, size: Int = 10):
 
   def topCell: String = "| " + valueString + (" " * (size - valueString.length - 1)) + "| "
 
-  def cells: String = "|" + (" " * size) + "| "
+  def cells: String = "|" + (" " * size) + "| " 
 
   override def toString: String =
     bar + "\n" +

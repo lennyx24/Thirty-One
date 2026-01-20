@@ -16,7 +16,8 @@ case class ConsoleView(controller: ControllerInterface) extends Observer:
             print(s"Das ist keine valide Option\n: ")
 
         case PrintTable =>
-            printNewRound(controller.gameData.table.printTable(controller.gameData.players))
+            val currentPlayer = controller.gameData.currentPlayer
+            printNewRound(controller.gameData.table.printTable(controller.gameData.players, currentPlayer, controller.gameData.playerPositions(currentPlayer), controller.gameData.getTableCard()))
 
         case PlayerScore(playerInfo) =>
             val points = findPlayer(playerInfo).map(controller.gameData.getPlayerPoints).getOrElse(0.0)
