@@ -341,6 +341,17 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       fromJson.players.head.name shouldBe "Alice"
     }
 
+    "loadGame should handle XML without deck" in {
+      val gd = GameData(2)
+      val xml = gd.toXml()
+      val xmlNoDeck = xml.copy(child = xml.child.filterNot {
+        case e: scala.xml.Elem => e.label == "deck"
+        case _ => false
+      })
+      val loaded = GameData.loadGame(xmlNoDeck)
+      loaded.deck shouldBe Vector.empty
+    }
+
     "loadGame should accept JSON with string indexes" in {
       val gd = GameData(2)
       val js = Json.obj(
@@ -361,6 +372,32 @@ class GameDataSpec extends AnyWordSpec with Matchers {
       loaded.indexes shouldBe Vector(1, 2, 3)
       loaded.cardPositions shouldBe Nil
     }
+
+    "loadGame should parse deck and cardPositions from JSON arrays" in {
+      val gd = GameData(2)
+      val js = Json.obj(
+        "GameData" -> Json.obj(
+          "table" -> gd.table.toJson,
+          "strategy" -> "normal",
+          "playerCount" -> gd.playerCount,
+          "players" -> Json.toJson(gd.players.map(_.toJson)),
+          "currentPlayerIndex" -> gd.currentPlayerIndex,
+          "deck" -> Json.toJson(gd.deck.take(1).map(_.toJson)),
+          "indexes" -> Json.toJson(gd.indexes),
+          "drawIndex" -> gd.drawIndex,
+          "gameRunning" -> gd.gameRunning,
+          "cardPositions" -> Json.toJson(
+            gd.cardPositions.map { posList =>
+              Json.toJson(posList.map { case (r, c) => Json.obj("row" -> r, "col" -> c) })
+            }
+          )
+        )
+      )
+      val loaded = GameData.loadGame(js)
+      loaded.deck.nonEmpty shouldBe true
+      loaded.cardPositions.nonEmpty shouldBe true
+    }
+
 
     "serialize to JSON and XML" in {
       val gd = GameData(2)

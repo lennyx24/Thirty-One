@@ -200,14 +200,12 @@ class GUISpec extends AnyWordSpec with Matchers {
       val spy = new SpyController(SetupState, GameData(2))
       val gui = new de.htwg.se.thirtyone.aview.GUI(spy)
       
-      // Test Load in Setup Panel
       gui.update(GameStarted)
       runOnEDT {}
       val setup = gui.contents.head.asInstanceOf[scala.swing.Container]
       val loadBtn = findButtons(setup).find(_.text == "Load saved Game").get
       runOnEDT { loadBtn.peer.doClick() }
       
-      // Test Save, Undo, Redo in Playing Panel
       gui.update(PrintTable)
       runOnEDT {}
       val play = gui.contents.head.asInstanceOf[scala.swing.Container]
@@ -253,7 +251,6 @@ class GUISpec extends AnyWordSpec with Matchers {
       val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       val base = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.game.GameData]
       
-      // P1 is at index 0 in players list, so index 1 in cardPositions (0 is table)
       val posHand = base.cardPositions(1) 
       val posTable = base.cardPositions(0)
       
@@ -273,17 +270,14 @@ class GUISpec extends AnyWordSpec with Matchers {
       val btnHand = gui.cardGrid.contents.collectFirst { case b: scala.swing.Button if b.text.contains("♥") && b.text.contains("7") => b }.get
       val btnTable = gui.cardGrid.contents.collectFirst { case b: scala.swing.Button if b.text.contains("♠") && b.text.contains("8") => b }.get
 
-      // Case 1: Mode "give", click card NOT in hand (e.g. table card)
       gui.update(PlayerSwapGive(info(controller.gameData.currentPlayer)))
       runOnEDT { btnTable.peer.doClick() }
       gui.infoLabel.text shouldBe "Das ist nicht deine Karte."
       
-      // Case 2: Mode "take", click card NOT on table (e.g. hand card)
       gui.update(PlayerSwapTake(info(controller.gameData.currentPlayer)))
       runOnEDT { btnHand.peer.doClick() }
       gui.infoLabel.text shouldBe "Das ist nicht deine Karte."
       
-      // Case 3: Mode "none", click any card
       gui.update(RunningGame(info(controller.gameData.currentPlayer)))
       runOnEDT { btnHand.peer.doClick() }
       gui.infoLabel.text shouldBe "Das ist nicht deine Karte."
@@ -296,13 +290,11 @@ class GUISpec extends AnyWordSpec with Matchers {
        gui.update(GameStarted)
        runOnEDT {}
        
-       // Test PlayerNameSet
        gui.update(PlayerNameSet(1, "UpdatedName"))
        runOnEDT {}
        
        gui.nameFields(0).text shouldBe "UpdatedName"
        
-       // Test PrintTable visibility for 2 players
        gui.update(PrintTable)
        runOnEDT {}
        gui.nameLabels(0).visible shouldBe true
@@ -323,17 +315,14 @@ class GUISpec extends AnyWordSpec with Matchers {
        val subBtn = buttons.find(_.text == "▼").get
        val countField = findTextFields(setup).find(_.text.matches("\\d")).get
        
-       // Default is 2. Click sub -> should stay 2
        runOnEDT { subBtn.peer.doClick() }
        runOnEDT {}
        countField.text shouldBe "2"
        
-       // Click add -> 3
        runOnEDT { addBtn.peer.doClick() }
        runOnEDT {}
        countField.text shouldBe "3"
        
-       // Click sub -> 2
        runOnEDT { subBtn.peer.doClick() }
        runOnEDT {}
        countField.text shouldBe "2"

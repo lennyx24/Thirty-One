@@ -19,7 +19,7 @@ class GameEndedStateSpec extends AnyWordSpec with Matchers {
       controller.state shouldBe SetupState
       events.exists(_.contains("GameStarted")) shouldBe true
       events.clear()
-      SetupState.execute("2", controller)
+      controller.handleInput("2")
       events.exists(_.contains("PlayerName(1)")) shouldBe true
     }
 
