@@ -8,8 +8,11 @@ RUN apt-get update && apt-get install -y \
     libxi6 \
     libxrandr2 \
     && rm -rf /var/lib/apt/lists/*
+
+RUN sbt compile
+
 CMD sbt run
 
-#docker run -it -e DISPLAY=host.docker.internal:0 \
+# docker run -it -e DISPLAY=host.docker.internal:0 \
 #           -v /tmp/.X11-unix:/tmp/.X11-unix \
 #           thirty-one
