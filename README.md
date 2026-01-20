@@ -2,7 +2,7 @@
 
 AIN Semester 3 HTWG, project in software engineering by Daniel Sauer and Lenny Jung
 
-## Schnellstart (lokal mit sbt)
+## Schnellstart
 
 ```bash
 git clone https://github.com/lennyx24/Thirty-One.git
@@ -31,26 +31,26 @@ sbt run
 
   Beispiel: Herz‑A, Herz‑K, Kreuz‑10 → zählt 11 + 10 = 21 (nur Herz‑Farbe).
 
-## Docker (alle OS)
+## Docker
 
   ### Build
   docker build -t thirty-one:latest .
 
-  ### Windows (GUI)
+  ### Windows
   X-Server: VcXsrv oder Xming (VcXsrv empfohlen)
   1. VcXsrv starten (Multiple windows, Display 0).
   2. In VcXsrv: "Disable access control" aktivieren.
   3. Run:
   docker run --rm -it -e DISPLAY=host.docker.internal:0 thirty-one:latest
 
-  ### Linux (GUI)
+  ### Linux
   X-Server: der lokale X-Server (Xorg/Wayland mit Xwayland)
   1. Zugriff erlauben:
   xhost +local:root
   2. Run:
   docker run --rm -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix thirty-one:latest
 
-  ### macOS (GUI mit XQuartz)
+  ### macOS
   1. XQuartz starten.
   2. Allow connections from network clients.
   3. xhost + 127.0.0.1
