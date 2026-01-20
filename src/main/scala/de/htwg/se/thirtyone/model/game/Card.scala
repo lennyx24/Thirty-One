@@ -1,28 +1,25 @@
-package de.htwg.se.thirtyone.model.gameImplementation
+package de.htwg.se.thirtyone.model.game
 
 import play.api.libs.json.*
 
 import scala.xml.Elem
 
-case class Card(symbol: Char, value: String, size: Int = 10) {
+case class Card(symbol: Char, value: String, size: Int = 10):
   require(size > 3)
 
-  private val valueString: String = value + symbol.toString
-  
-  val cardString: String = toString
+  private val valueString: String = s"$value$symbol"
 
   def bar: String = "+" + ("-" * size) + "+ "
 
   def topCell: String = "| " + valueString + (" " * (size - valueString.length - 1)) + "| "
 
-  def cells: String = "|" + (" " * (size)) + "| "
+  def cells: String = "|" + (" " * size) + "| "
 
-  override def toString: String = {
+  override def toString: String =
     bar + "\n" +
       topCell + "\n" +
       (cells + "\n") * (size / 2 - 1) +
       bar + "\n"
-  }
 
   def toXml: Elem =
     <card>
@@ -36,7 +33,6 @@ case class Card(symbol: Char, value: String, size: Int = 10) {
     "value" -> value,
     "size" -> size
   )
-}
 
 object Card:
   def fromXml(node: xml.Node): Card =

@@ -1,6 +1,6 @@
 package de.htwg.se.thirtyone.model.factory
 
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.game.GameData
 
 trait GameFactory:
-  def createGame(playerAmount: Int): GameData
+  def createGame(playerCount: Int): GameData

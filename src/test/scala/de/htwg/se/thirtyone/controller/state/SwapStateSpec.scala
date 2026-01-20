@@ -2,11 +2,11 @@ package de.htwg.se.thirtyone.controller.state
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Table}
+import de.htwg.se.thirtyone.model.game.{GameData, Table}
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
 import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
+import de.htwg.se.thirtyone.controller.implementation.GameController
 import de.htwg.se.thirtyone.controller.command.UndoManager
 
 class SwapStateSpec extends AnyWordSpec with Matchers {
@@ -74,7 +74,7 @@ class SwapStateSpec extends AnyWordSpec with Matchers {
       val state = new SwapState
       val controller = makeController(state)
 
-      state.give = "1"
+      state.execute("1", controller)
       state.execute("alle", controller)
 
       events.exists(_.contains("InvalidInput")) shouldBe true

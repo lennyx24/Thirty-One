@@ -2,12 +2,12 @@ package de.htwg.se.thirtyone.controller.state
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Player}
+import de.htwg.se.thirtyone.model.game.{GameData, Player}
 import de.htwg.se.thirtyone.util._
 
 import scala.collection.mutable.ArrayBuffer
 import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
+import de.htwg.se.thirtyone.controller.implementation.GameController
 import de.htwg.se.thirtyone.controller.command.UndoManager
 
 class PlayingStateSpec extends AnyWordSpec with Matchers {
@@ -37,7 +37,6 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       val controller = makeController(stubGameData())
       val beforeIndex = controller.gameData.currentPlayerIndex
 
-      controller.subscribers.size should be > 0
       controller.notifyObservers(PrintTable)
       events.exists(_.contains("PrintTable")) shouldBe true
       events.clear()
@@ -51,7 +50,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       val actedPlayer = controller.gameData.players(beforeIndex)
 
       events.exists(_.contains("PrintTable")) shouldBe true
-      events.exists(_.contains(s"PlayerPassed($actedPlayer)")) shouldBe true
+      events.exists(e => e.contains("PlayerPassed") && e.contains(actedPlayer.name)) shouldBe true
       events.exists(_.contains("RunningGame")) shouldBe true
     }
 
@@ -64,7 +63,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       val actedPlayer = controller.gameData.players(beforeIndex)
 
       events.exists(_.contains("PrintTable")) shouldBe true
-      events.exists(_.contains(s"PlayerKnocked($actedPlayer)")) shouldBe true
+      events.exists(e => e.contains("PlayerKnocked") && e.contains(actedPlayer.name)) shouldBe true
       events.exists(_.contains("RunningGame")) shouldBe true
     }
 
@@ -76,7 +75,7 @@ class PlayingStateSpec extends AnyWordSpec with Matchers {
       PlayingState.swap(controller)
 
       controller.state should not be PlayingState
-      events.exists(_.contains(s"PlayerSwapGive($currentPlayer)")) shouldBe true
+      events.exists(e => e.contains("PlayerSwapGive") && e.contains(currentPlayer.name)) shouldBe true
     }
 
     "skip pass notifications when round ends" in {

@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.model.gameImplementation
+package de.htwg.se.thirtyone.model.game
 
 import play.api.libs.json.{JsValue, Json}
 
@@ -6,15 +6,16 @@ import java.util.UUID
 import scala.xml.{Elem, Node}
 
 case class Player(
-                   name: String = "Nameless Player",
-                   hasKnocked: Boolean = false,
-                   points: Double = 0,
-                   playersHealth: Int = 3,
-                   isAlive: Boolean = true,
-                   hasPassed: Boolean = false,
-                   id: String = UUID.randomUUID().toString
-                 ):
-  def receiveDamage(amount: Int): Player = if playersHealth > 1 then copy(playersHealth = playersHealth - 1) else copy(isAlive = false)
+  name: String = "Nameless Player",
+  hasKnocked: Boolean = false,
+  points: Double = 0,
+  playersHealth: Int = 3,
+  isAlive: Boolean = true,
+  hasPassed: Boolean = false,
+  id: String = UUID.randomUUID().toString
+):
+  def receiveDamage(amount: Int): Player =
+    if playersHealth > 1 then copy(playersHealth = playersHealth - 1) else copy(isAlive = false)
 
   def changeName(newName: String): Player = copy(name = newName)
 

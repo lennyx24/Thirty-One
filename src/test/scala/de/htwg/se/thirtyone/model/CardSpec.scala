@@ -2,7 +2,7 @@ package de.htwg.se.thirtyone.model
 
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model.gameImplementation.Card
+import de.htwg.se.thirtyone.model.game.Card
 
 class CardSpec extends AnyWordSpec {
   "Card" should {
@@ -32,11 +32,6 @@ class CardSpec extends AnyWordSpec {
       Card('♦', "K", 5).toString should be("+-----+ \n| K♦  | \n|     | \n+-----+ \n")
       Card('♦', "9", 8).toString should be("+--------+ \n| 9♦     | \n|        | \n|        | \n|        | \n+--------+ \n")
       Card('♦', "9").toString should be("+----------+ \n| 9♦       | \n|          | \n|          | \n|          | \n|          | \n+----------+ \n")
-    }
-
-    "have a cardString equal to toString" in {
-      val c = Card('♦', "K", 5)
-      c.cardString should be(c.toString)
     }
 
     "require size > 3" in {

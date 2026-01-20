@@ -2,8 +2,8 @@ package de.htwg.se.thirtyone.model
 
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
-import de.htwg.se.thirtyone.model.gameImplementation.Table
+import de.htwg.se.thirtyone.model.game.GameData
+import de.htwg.se.thirtyone.model.game.Table
 
 class newGameSpec extends AnyWordSpec {
   "GameState.apply" should {

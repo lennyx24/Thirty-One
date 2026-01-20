@@ -2,12 +2,11 @@ package de.htwg.se.thirtyone.controller.state
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.game.GameData
 import de.htwg.se.thirtyone.util._
-import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
+import de.htwg.se.thirtyone.controller.implementation.GameController
 import de.htwg.se.thirtyone.controller.command.UndoManager
 import scala.collection.mutable.ArrayBuffer
-import java.security.Permission
 
 class GameEndedStateSpec extends AnyWordSpec with Matchers {
   "GameEndedState" should {
@@ -19,7 +18,9 @@ class GameEndedStateSpec extends AnyWordSpec with Matchers {
       GameEndedState.execute("j", controller)
       controller.state shouldBe SetupState
       events.exists(_.contains("GameStarted")) shouldBe true
-      SetupState.playerAmount shouldBe 0
+      events.clear()
+      controller.handleInput("2")
+      events.exists(_.contains("PlayerName(1)")) shouldBe true
     }
 
     "notify InvalidInput on other input" in {
@@ -32,19 +33,13 @@ class GameEndedStateSpec extends AnyWordSpec with Matchers {
     }
 
     "call System.exit on 'n'" in {
-      class NoExitSecurityManager extends SecurityManager {
-        override def checkPermission(perm: Permission): Unit = ()
-        override def checkPermission(perm: Permission, context: Object): Unit = ()
-        override def checkExit(status: Int): Unit = throw new SecurityException(status.toString)
-      }
-
       val controller = new GameController(GameEndedState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
-      val original = System.getSecurityManager
+      val original = ExitHandler.exit
       try {
-        System.setSecurityManager(new NoExitSecurityManager)
+        ExitHandler.exit = _ => throw new SecurityException("exit")
         an [SecurityException] should be thrownBy GameEndedState.execute("n", controller)
       } finally {
-        System.setSecurityManager(original)
+        ExitHandler.exit = original
       }
     }
   }

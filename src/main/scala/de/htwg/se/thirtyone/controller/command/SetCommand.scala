@@ -1,28 +1,27 @@
 package de.htwg.se.thirtyone.controller.command
 
-import de.htwg.se.thirtyone.controller._
-import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.model._
+import de.htwg.se.thirtyone.controller.ControllerInterface
+import de.htwg.se.thirtyone.controller.state.ControllerState
+import de.htwg.se.thirtyone.model.GameInterface
 
-class SetCommand(controller: ControllerInterface, action: () => Unit) extends Command {
-  var oGameData: Option[GameInterface] = None
-  var oState: Option[ControllerState] = None
-  var nGameData: Option[GameInterface] = None
-  var nState: Option[ControllerState] = None
+class SetCommand(controller: ControllerInterface, action: () => Unit) extends Command:
+  private var beforeGameData: Option[GameInterface] = None
+  private var beforeState: Option[ControllerState] = None
+  private var afterGameData: Option[GameInterface] = None
+  private var afterState: Option[ControllerState] = None
 
   override def doStep(): Unit =
-    oGameData = Some(controller.gameData)
-    oState = Some(controller.state)
+    beforeGameData = Some(controller.gameData)
+    beforeState = Some(controller.state)
 
     action()
-    nGameData = Some(controller.gameData)
-    nState = Some(controller.state)
+    afterGameData = Some(controller.gameData)
+    afterState = Some(controller.state)
 
   override def undoStep(): Unit =
-    oGameData.foreach(g => controller.setGameData(g))
-    oState.foreach(s => controller.setState(s))
+    beforeGameData.foreach(controller.setGameData)
+    beforeState.foreach(controller.setState)
 
   override def redoStep(): Unit =
-    nGameData.foreach(g => controller.setGameData(g))
-    nState.foreach(s => controller.setState(s))
-}
+    afterGameData.foreach(controller.setGameData)
+    afterState.foreach(controller.setState)

@@ -1,14 +1,18 @@
 package de.htwg.se.thirtyone.controller.state
 
-import de.htwg.se.thirtyone.controller._
+import de.htwg.se.thirtyone.controller.ControllerInterface
 import de.htwg.se.thirtyone.controller.command.SetCommand
 import de.htwg.se.thirtyone.controller.chainOfResponsibility.SwapProcessor
 import de.htwg.se.thirtyone.util._
+import de.htwg.se.thirtyone.model.game.Player
 
 import scala.util._
 
 class SwapState extends ControllerState:
-  var give: String = ""
+  private var give: String = ""
+
+  private def resolveActedPlayer(c: ControllerInterface, index: Int, fallback: Player) =
+    if index >= 0 && index < c.gameData.players.length then c.gameData.players(index) else fallback
 
   override def execute(input: String, c: ControllerInterface): Unit =
     input match
@@ -17,7 +21,7 @@ class SwapState extends ControllerState:
         val currentPlayer = c.gameData.currentPlayer
         if give == "" then
           give = input.toLowerCase()
-          if give != "alle" then c.notifyObservers(PlayerSwapTake(currentPlayer))
+          if give != "alle" then c.notifyObservers(PlayerSwapTake(toPlayerInfo(currentPlayer)))
           else handleInput("1", c) // When input is "all" call same Method to get into else part, "1" to make recursion in GameData work and change all
         else if input != "alle" then
           val take = input
@@ -27,9 +31,7 @@ class SwapState extends ControllerState:
             SwapProcessor.process(c, give, take) match
               case Success(_) =>
                 swapSuccess = true
-                val actedPlayer =
-                  if actedIndex >= 0 && actedIndex < c.gameData.players.length then c.gameData.players(actedIndex)
-                  else currentPlayer
+                val actedPlayer = resolveActedPlayer(c, actedIndex, currentPlayer)
                 c.countPoints(c, actedPlayer)
                 roundEnded = checkIfRoundEnded(c, actedPlayer)
                 c.setState(PlayingState)
@@ -39,14 +41,12 @@ class SwapState extends ControllerState:
           c.undoManager.doStep(command)
 
           if swapSuccess then
-            val actedPlayer =
-              if actedIndex >= 0 && actedIndex < c.gameData.players.length then c.gameData.players(actedIndex)
-              else currentPlayer
+            val actedPlayer = resolveActedPlayer(c, actedIndex, currentPlayer)
             if !roundEnded then
               c.notifyObservers(PrintTable)
-              c.notifyObservers(PlayerScore(actedPlayer))
-              c.notifyObservers(PlayerSwapped(actedPlayer))
-              c.notifyObservers(RunningGame(c.gameData.currentPlayer))
+              c.notifyObservers(PlayerScore(toPlayerInfo(actedPlayer)))
+              c.notifyObservers(PlayerSwapped(toPlayerInfo(actedPlayer)))
+              c.notifyObservers(RunningGame(toPlayerInfo(c.gameData.currentPlayer)))
             give = ""
           else
             c.notifyObservers(InvalidInput)

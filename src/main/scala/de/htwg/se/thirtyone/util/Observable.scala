@@ -1,12 +1,10 @@
 package de.htwg.se.thirtyone.util
 
+class Observable:
+  private var subscribers: Vector[Observer] = Vector.empty
 
-class Observable {
-  var subscribers: Vector[Observer] = Vector()
+  def add(observer: Observer): Unit = subscribers = subscribers :+ observer
 
-  def add(s: Observer): Unit = subscribers = subscribers :+ s
+  def remove(observer: Observer): Unit = subscribers = subscribers.filterNot(_ == observer)
 
-  def remove(s: Observer): Unit = subscribers = subscribers.filterNot(o => o == s)
-
-  def notifyObservers(event: GameEvent): Unit = subscribers.foreach(o => o.update(event))
-}
+  def notifyObservers(event: GameEvent): Unit = subscribers.foreach(_.update(event))

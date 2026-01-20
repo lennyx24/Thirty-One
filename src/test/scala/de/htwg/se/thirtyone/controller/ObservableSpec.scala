@@ -13,8 +13,8 @@ class ObservableSpec extends AnyWordSpec with Matchers {
       val observable = new Observable
       val observer = new TestObserver
       observable.add(observer)
-      observable.subscribers should have size 1
-      observable.subscribers should contain(observer)
+      observable.notifyObservers(GameStarted)
+      observer.lastEvent shouldBe Some(GameStarted)
     }
 
     "remove a subscriber" in {
@@ -22,7 +22,8 @@ class ObservableSpec extends AnyWordSpec with Matchers {
       val observer = new TestObserver
       observable.add(observer)
       observable.remove(observer)
-      observable.subscribers shouldBe empty
+      observable.notifyObservers(GameStarted)
+      observer.lastEvent shouldBe None
     }
   }
 
@@ -34,5 +35,4 @@ class ObservableSpec extends AnyWordSpec with Matchers {
     }
   }
 
-  case class TestEvent() extends GameEvent
 }

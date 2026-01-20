@@ -3,9 +3,9 @@ package de.htwg.se.thirtyone.controller.command
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.controller.command.SetCommand
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.game.GameData
 import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
+import de.htwg.se.thirtyone.controller.implementation.GameController
 import de.htwg.se.thirtyone.controller.command.UndoManager
 
 class SetCommandSpec extends AnyWordSpec with Matchers {
