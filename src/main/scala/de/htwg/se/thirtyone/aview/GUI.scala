@@ -227,36 +227,43 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
   def drawTable(): Unit =
     cardGrid.contents.clear()
     val gridData = controller.gameData.table.grid
-
     val playerHand = controller.gameData.getPlayersHand()
     val tableCards = controller.gameData.getTableCard()
+    val currentPlayer = controller.gameData.currentPlayer
+    val currentPositions = controller.gameData.playerPositions(currentPlayer)
 
     for (row <- 0 until 3) {
       for (col <- 0 until 9) {
         gridData(row)(col) match {
           case Some(card) =>
-            val btn = new Button(card.value + card.symbol)
-            if (card.symbol == '♥' || card.symbol == '♦') {
-              btn.foreground = Color.RED
-            } else {
-              btn.foreground = Color.BLACK
-            }
+            val pos = (row, col)
+            val isMiddleCard = tableCards.indexOf(card) != -1
+            if isMiddleCard || currentPositions.contains(pos) then
+              val btn = new Button(card.value + card.symbol)
+              if (card.symbol == '♥' || card.symbol == '♦') {
+                btn.foreground = Color.RED
+              } else {
+                btn.foreground = Color.BLACK
+              }
 
-            val handIndex = playerHand.indexOf(card)
-            val tableIndex = tableCards.indexOf(card)
+              val handIndex = playerHand.indexOf(card)
+              val tableIndex = tableCards.indexOf(card)
 
-            listenTo(btn)
-            reactions += {
-              case ButtonClicked(`btn`) =>
-                if swapMode == SwapMode.Give && handIndex != -1 then
-                  controller.selectNumber((handIndex + 1).toString())
-                else if swapMode == SwapMode.Take && tableIndex != -1 then
-                  controller.selectNumber((tableIndex + 1).toString())
-                else
-                  infoLabel.text = "Das ist nicht deine Karte."
-
-            }
-            cardGrid.contents += btn
+              listenTo(btn)
+              reactions += {
+                case ButtonClicked(`btn`) =>
+                  if swapMode == SwapMode.Give && handIndex != -1 then
+                    controller.selectNumber((handIndex + 1).toString())
+                  else if swapMode == SwapMode.Take && tableIndex != -1 then
+                    controller.selectNumber((tableIndex + 1).toString())
+                  else
+                    infoLabel.text = "Das ist nicht deine Karte."
+              }
+              cardGrid.contents += btn
+            else
+              val hidden = new Button("??")
+              hidden.enabled = false
+              cardGrid.contents += hidden
           case None =>
             val emptyLbl = new Label("")
             cardGrid.contents += emptyLbl
@@ -281,22 +288,24 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
           contents = playingPanel
           pack()
           centerOnScreen()
-        
         drawTable()
 
         for i <- 0 until 4 do
           if i < controller.gameData.playerCount then
             val player = controller.gameData.players(i)
+            val current = controller.gameData.currentPlayer
             nameLabels(i).text = player.name
             livesLabels(i).text = s"Leben: ${controller.gameData.getPlayersHealth(player)}"
             pointsLabels(i).text = s"Punkte: ${controller.gameData.getPlayerScore(player)}"
             nameLabels(i).visible = true
             livesLabels(i).visible = true
-            pointsLabels(i).visible = true
+            if(player.equals(current)) pointsLabels(i).visible = true
+            else pointsLabels(i).visible = false
           else
             nameLabels(i).visible = false
             livesLabels(i).visible = false
             pointsLabels(i).visible = false
+        
 
         repaint()
       })

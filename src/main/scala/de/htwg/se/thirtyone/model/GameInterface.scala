@@ -13,7 +13,7 @@ trait GameInterface:
   def currentPlayerIndex: Int
   def gameRunning: Boolean
   def cardPositions: List[List[(Int, Int)]]
-
+  def playerPositions(player: Player): List[(Int, Int)]
   def currentPlayer: Player
   def nextPlayer(): GameInterface
   def calculatePlayerPoints(player: Player): GameInterface
