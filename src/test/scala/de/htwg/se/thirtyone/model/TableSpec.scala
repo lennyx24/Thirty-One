@@ -2,10 +2,10 @@ package de.htwg.se.thirtyone.model
 
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model.gameImplementation.Card
-import de.htwg.se.thirtyone.model.gameImplementation.Deck
-import de.htwg.se.thirtyone.model.gameImplementation.Player
-import de.htwg.se.thirtyone.model.gameImplementation.Table
+import de.htwg.se.thirtyone.model.game.Card
+import de.htwg.se.thirtyone.model.game.Deck
+import de.htwg.se.thirtyone.model.game.Player
+import de.htwg.se.thirtyone.model.game.Table
 import play.api.libs.json.Json
 
 class TableSpec extends AnyWordSpec {

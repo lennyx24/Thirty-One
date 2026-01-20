@@ -1,17 +1,20 @@
-package de.htwg.se.thirtyone.controller.controllerImplementation
+package de.htwg.se.thirtyone.controller.implementation
 
-import de.htwg.se.thirtyone.controller.command.UndoManager
-import de.htwg.se.thirtyone.controller.state.*
-import de.htwg.se.thirtyone.controller.*
-import de.htwg.se.thirtyone.model._
-import de.htwg.se.thirtyone.util._
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
-import de.htwg.se.thirtyone.model.gameImplementation.Player
 import com.google.inject.Inject
-import de.htwg.se.thirtyone.util.fileio.*
-import de.htwg.se.thirtyone.util.fileio.implementation.XmlFileIO
+import de.htwg.se.thirtyone.controller.ControllerInterface
+import de.htwg.se.thirtyone.controller.command.UndoManager
+import de.htwg.se.thirtyone.controller.state.{ControllerState, PlayingState}
+import de.htwg.se.thirtyone.model.GameInterface
+import de.htwg.se.thirtyone.model.game.{GameData, Player}
+import de.htwg.se.thirtyone.util._
+import de.htwg.se.thirtyone.util.fileio.FileIO
 
-class GameController @Inject() (var state: ControllerState, var gameData: GameInterface, val undoManager: UndoManager, val fileIO: FileIO) extends ControllerInterface:
+class GameController @Inject() (
+  var state: ControllerState,
+  var gameData: GameInterface,
+  val undoManager: UndoManager,
+  val fileIO: FileIO
+) extends ControllerInterface:
 
   override def handleInput(input: String): Unit = state.handleInput(input, this)
 
@@ -24,18 +27,17 @@ class GameController @Inject() (var state: ControllerState, var gameData: GameIn
   override def initialGame(idx: String, playerNames: List[String]): Unit =
     state.setupGame(idx.toInt, playerNames, this)
 
-  override def changePlayerName(player: Player, newName: String): Unit = gameData = gameData.changePlayerName(player, newName)
+  override def changePlayerName(player: Player, newName: String): Unit =
+    gameData = gameData.changePlayerName(player, newName)
 
-  override def loadGame(): Unit = {
+  override def loadGame(): Unit =
     val game = fileIO.load()
-    game match {
+    game match
       case gd: GameInterface =>
         this.gameData = gd
-        if(game.gameRunning) setState(PlayingState)
+        if game.gameRunning then setState(PlayingState)
         notifyObservers(GameStarted)
         notifyObservers(PrintTable)
-    }
-  }
 
   override def saveGame(): Unit =
     fileIO.save(gameData)
@@ -64,9 +66,9 @@ class GameController @Inject() (var state: ControllerState, var gameData: GameIn
   override def undo(): Unit =
     undoManager.undoStep()
     notifyObservers(PrintTable)
-    notifyObservers(RunningGame(gameData.currentPlayer))
+    notifyObservers(RunningGame(PlayerInfo(gameData.currentPlayer.id, gameData.currentPlayer.name)))
 
   override def redo(): Unit =
     undoManager.redoStep()
     notifyObservers(PrintTable)
-    notifyObservers(RunningGame(gameData.currentPlayer))
+    notifyObservers(RunningGame(PlayerInfo(gameData.currentPlayer.id, gameData.currentPlayer.name)))

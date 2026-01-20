@@ -2,6 +2,14 @@
 
 AIN Semester 3 HTWG, project in software engineering by Daniel Sauer and Lenny Jung
 
+## Schnellstart (lokal mit sbt)
+
+```bash
+git clone https://github.com/lennyx24/Thirty-One.git
+cd Thirty-One
+sbt run
+```
+
 ## Spielanleitung
 
   - Ziel: Erreiche 31 Punkte mit drei Handkarten (gleiche Farbe zählt am meisten).
@@ -23,32 +31,31 @@ AIN Semester 3 HTWG, project in software engineering by Daniel Sauer and Lenny J
 
   Beispiel: Herz‑A, Herz‑K, Kreuz‑10 → zählt 11 + 10 = 21 (nur Herz‑Farbe).
 
-## Docker + XQuartz (macOS)
+## Docker (alle OS)
 
-### Build
+  ### Build
+  docker build -t thirty-one:latest .
 
-```bash
-docker build -t thirty-one:latest .
-```
+  ### Windows (GUI)
+  X-Server: VcXsrv oder Xming (VcXsrv empfohlen)
+  1. VcXsrv starten (Multiple windows, Display 0).
+  2. In VcXsrv: "Disable access control" aktivieren.
+  3. Run:
+  docker run --rm -it -e DISPLAY=host.docker.internal:0 thirty-one:latest
 
-### XQuartz vorbereiten
+  ### Linux (GUI)
+  X-Server: der lokale X-Server (Xorg/Wayland mit Xwayland)
+  1. Zugriff erlauben:
+  xhost +local:root
+  2. Run:
+  docker run --rm -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix thirty-one:latest
 
-1. XQuartz starten.
-2. XQuartz -> Settings/Preferences -> Security: "Allow connections from network clients" aktivieren.
-3. Im Terminal:
-
-```bash
-xhost + 127.0.0.1
-```
-
-### Run (GUI + TUI)
-
-```bash
-docker run --rm -it \
-  -e DISPLAY=host.docker.internal:0 \
-  -v /tmp/.X11-unix:/tmp/.X11-unix \
-  thirty-one:latest
-```
+  ### macOS (GUI mit XQuartz)
+  1. XQuartz starten.
+  2. Allow connections from network clients.
+  3. xhost + 127.0.0.1
+  4. Run:
+  docker run --rm -it -e DISPLAY=host.docker.internal:0 -v /tmp/.X11-unix:/tmp/.X11-unix thirty-one:latest
 
 ### Troubleshooting (schwarzes Fenster/Buttons)
 
@@ -58,16 +65,6 @@ Wenn die GUI in XQuartz komplett schwarz ist, hilft oft das Abschalten von XRend
 docker run --rm -it \
   -e DISPLAY=host.docker.internal:0 \
   -e JAVA_TOOL_OPTIONS="-Dsun.java2d.xrender=false -Dsun.java2d.opengl=false" \
-  -v /tmp/.X11-unix:/tmp/.X11-unix \
-  thirty-one:latest
-```
-
-Optional kann ein fixes Swing Look-and-Feel helfen:
-
-```bash
-docker run --rm -it \
-  -e DISPLAY=host.docker.internal:0 \
-  -e JAVA_TOOL_OPTIONS="-Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel" \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   thirty-one:latest
 ```

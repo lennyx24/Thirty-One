@@ -2,9 +2,9 @@ package de.htwg.se.thirtyone.aview
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
+import de.htwg.se.thirtyone.controller.implementation.GameController
 import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Player, Table}
+import de.htwg.se.thirtyone.model.game.{GameData, Player, Table}
 import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 
@@ -34,6 +34,9 @@ class GUISpec extends AnyWordSpec with Matchers {
   private def runOnEDT(f: => Unit): Unit =
     javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = f })
 
+  private def info(player: Player): PlayerInfo =
+    PlayerInfo(player.id, player.name)
+
   "GUI" should {
     "drawTable and update paths should behave without errors" in {
       val base = GameData(2)
@@ -45,27 +48,25 @@ class GUISpec extends AnyWordSpec with Matchers {
       gui.cardGrid.contents.size shouldBe 27
       gui.cardGrid.contents.exists(_.isInstanceOf[scala.swing.Button]) shouldBe true
 
-      gui.update(RunningGame(controller.gameData.currentPlayer))
+      gui.update(RunningGame(info(controller.gameData.currentPlayer)))
       gui.infoLabel.text.toLowerCase should include ("dran")
-      gui.swapMode shouldBe "none"
+      gui.swapAllButton.visible shouldBe false
 
       val swapPlayer = controller.gameData.currentPlayer
-      gui.update(PlayerSwapGive(swapPlayer))
-      gui.swapMode shouldBe "give"
+      gui.update(PlayerSwapGive(info(swapPlayer)))
       gui.swapAllButton.visible shouldBe true
 
-      gui.update(PlayerSwapTake(swapPlayer))
-      gui.swapMode shouldBe "take"
+      gui.update(PlayerSwapTake(info(swapPlayer)))
 
       val scorePlayer = controller.gameData.players(1)
-      gui.update(PlayerScore(scorePlayer))
+      gui.update(PlayerScore(info(scorePlayer)))
       runOnEDT { }
       gui.pointsLabels(0).text should include ("Punkte")
     }
 
     "setup panel interactions (add/sub/start) and playing buttons call controller" in {
       import scala.collection.mutable.ArrayBuffer
-      class SpyController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: de.htwg.se.thirtyone.model.gameImplementation.GameData) extends de.htwg.se.thirtyone.controller.controllerImplementation.GameController(state, gd, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
+      class SpyController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: de.htwg.se.thirtyone.model.game.GameData) extends de.htwg.se.thirtyone.controller.implementation.GameController(state, gd, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
         val calls = ArrayBuffer.empty[String]
         override def selectNumber(idx: String): Unit = { calls += s"select:$idx"; super.selectNumber(idx) }
         override def pass(): Unit = { calls += "pass"; super.pass() }
@@ -122,9 +123,9 @@ class GUISpec extends AnyWordSpec with Matchers {
 
     "drawTable colors and take/give click behavior" in {
       val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
-      val heart = de.htwg.se.thirtyone.model.gameImplementation.Card('♥', "A")
-      val spade = de.htwg.se.thirtyone.model.gameImplementation.Card('♠', "K")
-      val base = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.gameImplementation.GameData]
+      val heart = de.htwg.se.thirtyone.model.game.Card('♥', "A")
+      val spade = de.htwg.se.thirtyone.model.game.Card('♠', "K")
+      val base = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.game.GameData]
       val t1 = base.table.set((0,0), heart).set((0,1), spade)
       controller.setGameData(base.copy(table = t1))
 
@@ -137,7 +138,7 @@ class GUISpec extends AnyWordSpec with Matchers {
       spadeBtn.foreground shouldBe Color.BLACK
 
       val calls = scala.collection.mutable.ArrayBuffer.empty[String]
-      class Spy(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd2: de.htwg.se.thirtyone.model.gameImplementation.GameData) extends de.htwg.se.thirtyone.controller.controllerImplementation.GameController(state, gd2, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
+      class Spy(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd2: de.htwg.se.thirtyone.model.game.GameData) extends de.htwg.se.thirtyone.controller.implementation.GameController(state, gd2, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
         override def selectNumber(idx: String): Unit = { calls += idx; super.selectNumber(idx) }
       }
 
@@ -150,7 +151,7 @@ class GUISpec extends AnyWordSpec with Matchers {
       val btnOpt = gui2.cardGrid.contents.collectFirst { case b: scala.swing.Button if b.text.contains("A") && b.text.contains("♥") => b }
       btnOpt.isDefined shouldBe true
       val btn = btnOpt.get
-      gui2.swapMode = "take"
+      gui2.update(PlayerSwapTake(info(spy.gameData.currentPlayer)))
       javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = btn.peer.doClick() })
       javax.swing.SwingUtilities.invokeAndWait(new Runnable { def run(): Unit = {} })
       calls.length should be >= 1
@@ -181,14 +182,14 @@ class GUISpec extends AnyWordSpec with Matchers {
       runOnEDT { startBtnOpt.get.peer.doClick() }
       runOnEDT { }
 
-      val playerNames = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.gameImplementation.GameData].players.map(_.name)
+      val playerNames = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.game.GameData].players.map(_.name)
       playerNames.length shouldBe 4
       playerNames.forall(_ == "Max") shouldBe true
     }
 
     "handle Load, Save, Undo, Redo buttons" in {
       import scala.collection.mutable.ArrayBuffer
-      class SpyController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: de.htwg.se.thirtyone.model.gameImplementation.GameData) extends de.htwg.se.thirtyone.controller.controllerImplementation.GameController(state, gd, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
+      class SpyController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: de.htwg.se.thirtyone.model.game.GameData) extends de.htwg.se.thirtyone.controller.implementation.GameController(state, gd, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
         val calls = ArrayBuffer.empty[String]
         override def loadGame(): Unit = { calls += "load"; super.loadGame() }
         override def saveGame(): Unit = { calls += "save"; super.saveGame() }
@@ -224,7 +225,7 @@ class GUISpec extends AnyWordSpec with Matchers {
 
     "handle Game Ended interactions" in {
       import scala.collection.mutable.ArrayBuffer
-      class SpyController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: de.htwg.se.thirtyone.model.gameImplementation.GameData) extends de.htwg.se.thirtyone.controller.controllerImplementation.GameController(state, gd, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
+      class SpyController(state: de.htwg.se.thirtyone.controller.state.ControllerState, gd: de.htwg.se.thirtyone.model.game.GameData) extends de.htwg.se.thirtyone.controller.implementation.GameController(state, gd, new de.htwg.se.thirtyone.controller.command.UndoManager(), de.htwg.se.thirtyone.StubFileIO) {
         val calls = ArrayBuffer.empty[String]
         override def handleInput(input: String): Unit = { calls += s"input:$input"; super.handleInput(input) }
       }
@@ -233,7 +234,7 @@ class GUISpec extends AnyWordSpec with Matchers {
       val gui = new de.htwg.se.thirtyone.aview.GUI(spy)
       val winner = Player("Winner")
       
-      gui.update(GameEnded(winner))
+      gui.update(GameEnded(info(winner)))
       runOnEDT {}
       
       val endPanel = gui.contents.head.asInstanceOf[scala.swing.Container]
@@ -250,14 +251,14 @@ class GUISpec extends AnyWordSpec with Matchers {
 
     "validate card clicks (wrong card / wrong mode)" in {
       val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
-      val base = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.gameImplementation.GameData]
+      val base = controller.gameData.asInstanceOf[de.htwg.se.thirtyone.model.game.GameData]
       
       // P1 is at index 0 in players list, so index 1 in cardPositions (0 is table)
       val posHand = base.cardPositions(1) 
       val posTable = base.cardPositions(0)
       
-      val cardInHand = de.htwg.se.thirtyone.model.gameImplementation.Card('♥', "7")
-      val cardOnTable = de.htwg.se.thirtyone.model.gameImplementation.Card('♠', "8")
+      val cardInHand = de.htwg.se.thirtyone.model.game.Card('♥', "7")
+      val cardOnTable = de.htwg.se.thirtyone.model.game.Card('♠', "8")
       
       val t = base.table
         .set(posHand(0), cardInHand)
@@ -273,17 +274,17 @@ class GUISpec extends AnyWordSpec with Matchers {
       val btnTable = gui.cardGrid.contents.collectFirst { case b: scala.swing.Button if b.text.contains("♠") && b.text.contains("8") => b }.get
 
       // Case 1: Mode "give", click card NOT in hand (e.g. table card)
-      gui.swapMode = "give"
+      gui.update(PlayerSwapGive(info(controller.gameData.currentPlayer)))
       runOnEDT { btnTable.peer.doClick() }
       gui.infoLabel.text shouldBe "Das ist nicht deine Karte."
       
       // Case 2: Mode "take", click card NOT on table (e.g. hand card)
-      gui.swapMode = "take"
+      gui.update(PlayerSwapTake(info(controller.gameData.currentPlayer)))
       runOnEDT { btnHand.peer.doClick() }
       gui.infoLabel.text shouldBe "Das ist nicht deine Karte."
       
       // Case 3: Mode "none", click any card
-      gui.swapMode = "none"
+      gui.update(RunningGame(info(controller.gameData.currentPlayer)))
       runOnEDT { btnHand.peer.doClick() }
       gui.infoLabel.text shouldBe "Das ist nicht deine Karte."
     }

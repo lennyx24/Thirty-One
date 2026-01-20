@@ -2,7 +2,7 @@ package de.htwg.se.thirtyone.model
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
-import de.htwg.se.thirtyone.model.gameImplementation.InvisibleCard
+import de.htwg.se.thirtyone.model.game.InvisibleCard
 
 class InvCardSpec extends AnyWordSpec{
   "InvisibleCard" should {

@@ -1,16 +1,14 @@
 package de.htwg.se.thirtyone
 
-import de.htwg.se.thirtyone.aview._
-import de.htwg.se.thirtyone.controller._
-import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.model._
-import de.htwg.se.thirtyone.util._
+import com.google.inject.Guice
+import de.htwg.se.thirtyone.aview.{ConsoleView, GUI}
+import de.htwg.se.thirtyone.controller.ControllerInterface
+import de.htwg.se.thirtyone.util.GameStarted
 
 import scala.io.StdIn.readLine
-import com.google.inject.Guice
 
 object ThirtyOneApp:
-  val injector = Guice.createInjector(new ThirtyOneModule)
+  private val injector = Guice.createInjector(new ThirtyOneModule)
 
   def main(args: Array[String]): Unit =
     val controller = injector.getInstance(classOf[ControllerInterface])

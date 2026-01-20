@@ -1,6 +1,6 @@
 package de.htwg.se.thirtyone.fileio.implementation
 
-import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Player, Table}
+import de.htwg.se.thirtyone.model.game.{GameData, Player, Table}
 import de.htwg.se.thirtyone.model.factory.StandardGameFactory
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
