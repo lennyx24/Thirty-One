@@ -45,8 +45,8 @@ case class ConsoleView(controller: ControllerInterface) extends Observer:
             println(s"${playerInfo.name} hat die Runde gewonnen. Glückwunsch!")
             println("Wollt ihr noch eine Runde spielen? (j/n):")
 
-        case RoundEnded(winnerInfo) =>
-            println(s"Runde beendet. Gewinner: ${winnerInfo.name}")
+        case RoundEnded(loserInfo) =>
+            println(s"Runde beendet. ${loserInfo.name} verliert ein Leben")
 
         case PlayerName(player) =>
             println(s"Name für Spieler $player: ")

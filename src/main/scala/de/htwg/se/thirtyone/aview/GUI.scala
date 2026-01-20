@@ -341,6 +341,11 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
           nameFields(index - 1).text = name
       })
 
+    case RoundEnded(loser) =>
+      javax.swing.SwingUtilities.invokeLater(() =>
+        Dialog.showMessage(this, s"${loser.name} hat ein Leben verloren", title = "Runde vorbei", messageType = Dialog.Message.Info)
+      )
+
     case GameEnded(winner) =>
       javax.swing.SwingUtilities.invokeLater(() => {
         findPlayer(winner).foreach(p => winningPlayer = Some(p))

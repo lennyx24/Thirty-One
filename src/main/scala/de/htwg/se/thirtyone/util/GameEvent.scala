@@ -24,7 +24,7 @@ case class PlayerKnocked(player: PlayerInfo) extends GameEvent
 
 case class PlayerSwapped(player: PlayerInfo) extends GameEvent
 
-case class RoundEnded(winner: PlayerInfo) extends GameEvent
+case class RoundEnded(loser: PlayerInfo) extends GameEvent
 
 case class GameEnded(winner: PlayerInfo) extends GameEvent
 

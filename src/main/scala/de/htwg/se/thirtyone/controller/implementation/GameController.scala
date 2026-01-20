@@ -53,7 +53,10 @@ class GameController @Inject() (
 
   override def gameDataSetup(idx: String): Unit = gameData = GameData(idx.toInt)
 
-  override def dealDamage(worstPlayer: Player): Unit = gameData = gameData.doDamage(worstPlayer)
+  override def dealDamage(worstPlayer: Player): Unit = { 
+    gameData = gameData.doDamage(worstPlayer)
+    notifyObservers(RoundEnded(PlayerInfo(worstPlayer.id, worstPlayer.name)))
+  }
 
   override def resetGame(): Unit = gameData = gameData.resetNewRound()
 
