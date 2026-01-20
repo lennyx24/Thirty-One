@@ -45,16 +45,13 @@ sbt run
 
   ### Linux
   X-Server: der lokale X-Server (Xorg/Wayland mit Xwayland)
-  1. Zugriff erlauben:
-  xhost +local:root
-  2. Run:
+  Run:
   docker run --rm -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix thirty-one:latest
 
   ### macOS
   1. XQuartz starten.
   2. Allow connections from network clients.
-  3. xhost + 127.0.0.1
-  4. Run:
+  3. Run:
   docker run --rm -it -e DISPLAY=host.docker.internal:0 -v /tmp/.X11-unix:/tmp/.X11-unix thirty-one:latest
 
 ### Troubleshooting (schwarzes Fenster/Buttons)
