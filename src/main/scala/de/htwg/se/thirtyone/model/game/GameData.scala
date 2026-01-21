@@ -58,7 +58,9 @@ case class GameData(
 
   override def getPlayersHand(): List[Card] = table.getAll(currentPlayerIndex + 1, cardPositions)
 
-  override def playerPositions(player: Player): List[(Int, Int)] = positionIndex(player) match {case Some(i) => cardPositions(i)}
+  override def playerPositions(player: Player): List[(Int, Int)] = positionIndex(player) match
+    case None => Nil
+    case Some(i) => cardPositions(i)
 
   override def getPlayersHealth(player: Player): Int =
     indexOfPlayer(player).map(players(_).playersHealth).getOrElse(0)
