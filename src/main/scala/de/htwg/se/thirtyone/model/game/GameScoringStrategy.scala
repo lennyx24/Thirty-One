@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.model.gameImplementation
+package de.htwg.se.thirtyone.model.game
 
 object GameScoringStrategy:
   type Strategy = List[Card] => Double
@@ -23,12 +23,12 @@ object GameScoringStrategy:
 
     Math.max(pointsPerSymbol.max, threeOfAKind)
 
-  def fromString (name: String): Strategy =
-    name match {
+  def fromString(name: String): Strategy =
+    name match
       case "simple" => simpleScoringStrategy
       case "normal" => normalScoringStrategy
-    }
-  def toString (strategy: Strategy): String =
+
+  def toString(strategy: Strategy): String =
     if strategy eq simpleScoringStrategy then "simple"
     else if strategy eq normalScoringStrategy then "normal"
     else "normal"

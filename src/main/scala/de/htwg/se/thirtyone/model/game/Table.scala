@@ -1,4 +1,4 @@
-package de.htwg.se.thirtyone.model.gameImplementation
+package de.htwg.se.thirtyone.model.game
 
 import play.api.libs.json.{JsNull, JsValue, Json}
 
@@ -61,28 +61,33 @@ case class Table(grid: Vector[Vector[Option[Card]]] = Vector.fill(3, 9)(Option.e
     }
     (newTab, drawIndex + 3)
 
-  def printTable(players: List[Player]): String = {
+  def printTable(players: List[Player], current: Player, playerPositions: List[(Int,Int)], visibleCards: List[Card]): String = {
+    def maskedPoints(p: Player): String =
+      if current.id == p.id then s"${p.points} Punkte" else "?? Punkte"
     val invisibleCard: InvisibleCard = InvisibleCard()
     grid.zipWithIndex.foldLeft("") { case (output, (row, rowIndex)) =>
       val playerHeader = rowIndex match {
         case 0 =>
-          val p1 = if (players.nonEmpty) s"${players(0).name}: ${players(0).playersHealth} Leben, ${players(0).points} Punkte" else ""
-          val p2 = if (players.length > 1) s"${players(1).name}: ${players(1).playersHealth} Leben, ${players(1).points} Punkte" else ""
+          val p1 = if (players.nonEmpty) s"${players(0).name}: ${players(0).playersHealth} Leben, ${maskedPoints(players(0))}" else ""
+          val p2 = if (players.length > 1) s"${players(1).name}: ${players(1).playersHealth} Leben, ${maskedPoints(players(1))}" else ""
           if (p1.nonEmpty || p2.nonEmpty) " " * 13 + f"$p1%-52s" + p2 + "\n" else ""
 
         case 2 =>
-          val p4 = if (players.length > 3) s"${players(2).name}: ${players(3).playersHealth} Leben, ${players(3).points} Punkte" else ""
-          val p3 = if (players.length > 2) s"S${players(3).name}: ${players(2).playersHealth} Leben, ${players(2).points} Punkte" else ""
+          val p4 = if (players.length > 3) s"${players(3).name}: ${players(3).playersHealth} Leben, ${maskedPoints(players(3))}" else ""
+          val p3 = if (players.length > 2) s"${players(2).name}: ${players(2).playersHealth} Leben, ${maskedPoints(players(2))}" else ""
           if (p4.nonEmpty || p3.nonEmpty) " " * 13 + f"$p4%-52s" + p3 + "\n" else ""
 
         case _ => ""
       }
 
       val (barString, topCellString, cellString, sizeCard) =
-        row.foldLeft(("", "", "", 0)) { case ((bar, topCell, cell, size), idx) =>
+        row.zipWithIndex.foldLeft(("", "", "", 0)) { case ((bar, topCell, cell, size), (idx, colIndex)) =>
           idx match
             case Some(card) =>
-              (bar + card.bar, topCell + card.topCell, cell + card.cells, card.size)
+              if (playerPositions.contains((rowIndex, colIndex)) || visibleCards.contains(card))
+                (bar + card.bar, topCell + card.topCell, cell + card.cells, card.size)
+              else
+                (bar + card.bar, topCell + card.cells, cell + card.cells, card.size)
             case None =>
               (bar + invisibleCard.invCell, topCell + invisibleCard.invCell, cell + invisibleCard.invCell, size)
         }

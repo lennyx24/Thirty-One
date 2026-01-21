@@ -1,14 +1,13 @@
-package de.htwg.se.thirtyone.fileio
+package de.htwg.se.thirtyone.util.fileio
 
 import de.htwg.se.thirtyone.model.GameInterface
 
-import java.nio.file._
+import java.nio.file.{Path, Paths}
 
-trait FileIO {
+trait FileIO:
   def save(game: GameInterface): Unit
   def load(): GameInterface
-  def filepath = Paths.get(
+  def filepath: Path = Paths.get(
     System.getProperty("user.dir"),
     "src", "main", "scala", "de", "htwg", "se", "thirtyone", "savedGame"
   )
-}

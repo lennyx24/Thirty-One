@@ -6,19 +6,36 @@ import de.htwg.se.thirtyone.util._
 import java.awt.Color
 import scala.swing._
 import scala.swing.event._
-import de.htwg.se.thirtyone.model.gameImplementation.Player
+import de.htwg.se.thirtyone.model.game.Player
 
 class GUI(controller: ControllerInterface) extends Frame with Observer {
   title = "Thirty-One"
   peer.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE)
 
-  var swapMode: String = "none"
+  private enum SwapMode {
+    case None, Give, Take
+  }
+
+  private val minPlayers = 2
+  private val maxPlayers = 4
+
+  private var swapMode: SwapMode = SwapMode.None
 
   val nameP1 = new TextField("Player 1")
   val nameP2 = new TextField("Player 2")
   val nameP3 = new TextField("Player 3")
   val nameP4 = new TextField("Player 4")
+  val playerCountField = new TextField(minPlayers.toString)
   val nameFields = Vector(nameP1, nameP2, nameP3, nameP4)
+
+  private def clampPlayerCount(count: Int): Int =
+    math.max(minPlayers, math.min(maxPlayers, count))
+
+  private def setPlayerCount(count: Int): Unit =
+    val clamped = clampPlayerCount(count)
+    playerCountField.text = clamped.toString
+    nameP3.visible = clamped >= 3
+    nameP4.visible = clamped >= 4
 
   val setupPanel = new BoxPanel(Orientation.Vertical) {
     border = Swing.EmptyBorder(15, 15, 15, 15)
@@ -30,28 +47,16 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
     contents += new GridPanel(3, 2) {
       contents += new Label("Wie viele Spieler seit ihr?")
 
-      val playerCount = new TextField("2")
-      listenTo(playerCount)
+      listenTo(playerCountField)
       reactions += {
-        case EditDone(playerCount) =>
-          if (playerCount.text.toInt < 2) playerCount.text = "2"
-          else if (playerCount.text.toInt > 4) playerCount.text = "4"
-          playerCount.text match {
-            case "2" =>
-              nameP3.visible = false
-              nameP4.visible = false
-            case "3" =>
-              nameP3.visible = true
-              nameP4.visible = false
-            case "4" =>
-              nameP3.visible = true
-              nameP4.visible = true
-          }
+        case EditDone(`playerCountField`) =>
+          val parsed = playerCountField.text.toIntOption.getOrElse(minPlayers)
+          setPlayerCount(parsed)
       }
       val buttonAdd = new Button("▲")
       val buttonSub = new Button("▼")
       contents += new GridPanel(1, 3) {
-        contents += playerCount
+        contents += playerCountField
         contents += new GridPanel(2, 1) {
           contents += buttonAdd
           contents += buttonSub
@@ -60,35 +65,15 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       listenTo(buttonAdd, buttonSub)
       reactions += {
         case ButtonClicked(`buttonAdd`) =>
-          if (playerCount.text.toInt < 4) playerCount.text = (playerCount.text.toInt + 1).toString
-          playerCount.text match {
-            case "2" =>
-              nameP3.visible = false
-              nameP4.visible = false
-            case "3" =>
-              nameP3.visible = true
-              nameP4.visible = false
-            case "4" =>
-              nameP3.visible = true
-              nameP4.visible = true
-          }
+          val current = playerCountField.text.toIntOption.getOrElse(minPlayers)
+          setPlayerCount(current + 1)
         case ButtonClicked(`buttonSub`) =>
-          if (playerCount.text.toInt > 2) playerCount.text = (playerCount.text.toInt - 1).toString
-          playerCount.text match {
-            case "2" =>
-              nameP3.visible = false
-              nameP4.visible = false
-            case "3" =>
-              nameP3.visible = true
-              nameP4.visible = false
-            case "4" =>
-              nameP3.visible = true
-              nameP4.visible = true
-          }
+          val current = playerCountField.text.toIntOption.getOrElse(minPlayers)
+          setPlayerCount(current - 1)
       }
       contents += new Label("Namen der Spieler: ")
 
-      contents += new GridPanel(playerCount.text.toInt, 2) {
+      contents += new GridPanel(playerCountField.text.toInt, 2) {
         contents += nameP1
         contents += nameP2
         contents += nameP3
@@ -105,8 +90,9 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       listenTo(start,loadGameButton)
       reactions += {
         case ButtonClicked(`start`) =>
-          val currentNames = nameFields.take(playerCount.text.toInt).map(_.text).toList
-          controller.initialGame(playerCount.text, currentNames)
+          val count = playerCountField.text.toIntOption.getOrElse(minPlayers)
+          val currentNames = nameFields.take(count).map(_.text).toList
+          controller.initialGame(count.toString, currentNames)
         case ButtonClicked(`loadGameButton`) => controller.loadGame()
       }
       hGap = 5
@@ -117,6 +103,9 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
   val infoLabel = new Label("Spiel beginnt...") {
     xLayoutAlignment = 0.5
   }
+
+  private def findPlayer(info: PlayerInfo): Option[Player] =
+    controller.gameData.players.find(_.id == info.id)
 
   val p1NameL = new Label("Player 1")
   val p1LivesL = new Label("Leben: ")
@@ -210,6 +199,7 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
     }
   }
 
+  private val winnerLabel = new Label("")
   var winningPlayer: Option[Player] = None
 
   val gameEndedPanel = new BoxPanel(Orientation.Vertical) {
@@ -217,11 +207,8 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
       val playAgainButton = new Button(" Nochmal spielen")
       val quitButton = new Button("Verlassen")
       
-      val playerDummy = Player("None")
-      val winnerName = winningPlayer.getOrElse(playerDummy).name
-
       contents += new GridPanel(1, 1) {
-        contents += new Label(s"Glückwunsch Spieler $winnerName du hast das Spiel gewonnen!")
+        contents += winnerLabel
       }
 
       contents += Swing.VStrut(25)
@@ -240,36 +227,43 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
   def drawTable(): Unit =
     cardGrid.contents.clear()
     val gridData = controller.gameData.table.grid
-
     val playerHand = controller.gameData.getPlayersHand()
     val tableCards = controller.gameData.getTableCard()
+    val currentPlayer = controller.gameData.currentPlayer
+    val currentPositions = controller.gameData.playerPositions(currentPlayer)
 
     for (row <- 0 until 3) {
       for (col <- 0 until 9) {
         gridData(row)(col) match {
           case Some(card) =>
-            val btn = new Button(card.value + card.symbol)
-            if (card.symbol == '♥' || card.symbol == '♦') {
-              btn.foreground = Color.RED
-            } else {
-              btn.foreground = Color.BLACK
-            }
+            val pos = (row, col)
+            val isMiddleCard = tableCards.indexOf(card) != -1
+            if isMiddleCard || currentPositions.contains(pos) then
+              val btn = new Button(card.value + card.symbol)
+              if (card.symbol == '♥' || card.symbol == '♦') {
+                btn.foreground = Color.RED
+              } else {
+                btn.foreground = Color.BLACK
+              }
 
-            val handIndex = playerHand.indexOf(card)
-            val tableIndex = tableCards.indexOf(card)
+              val handIndex = playerHand.indexOf(card)
+              val tableIndex = tableCards.indexOf(card)
 
-            listenTo(btn)
-            reactions += {
-              case ButtonClicked(`btn`) =>
-                if swapMode == "give" && handIndex != -1 then
-                  controller.selectNumber((handIndex + 1).toString())
-                else if swapMode == "take" && tableIndex != -1 then
-                  controller.selectNumber((tableIndex + 1).toString())
-                else
-                  infoLabel.text = "Das ist nicht deine Karte."
-
-            }
-            cardGrid.contents += btn
+              listenTo(btn)
+              reactions += {
+                case ButtonClicked(`btn`) =>
+                  if swapMode == SwapMode.Give && handIndex != -1 then
+                    controller.selectNumber((handIndex + 1).toString())
+                  else if swapMode == SwapMode.Take && tableIndex != -1 then
+                    controller.selectNumber((tableIndex + 1).toString())
+                  else
+                    infoLabel.text = "Das ist nicht deine Karte."
+              }
+              cardGrid.contents += btn
+            else
+              val hidden = new Button("??")
+              hidden.enabled = false
+              cardGrid.contents += hidden
           case None =>
             val emptyLbl = new Label("")
             cardGrid.contents += emptyLbl
@@ -294,49 +288,52 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
           contents = playingPanel
           pack()
           centerOnScreen()
-        
         drawTable()
 
         for i <- 0 until 4 do
           if i < controller.gameData.playerCount then
             val player = controller.gameData.players(i)
+            val current = controller.gameData.currentPlayer
             nameLabels(i).text = player.name
             livesLabels(i).text = s"Leben: ${controller.gameData.getPlayersHealth(player)}"
             pointsLabels(i).text = s"Punkte: ${controller.gameData.getPlayerScore(player)}"
             nameLabels(i).visible = true
             livesLabels(i).visible = true
-            pointsLabels(i).visible = true
+            if(player.equals(current)) pointsLabels(i).visible = true
+            else pointsLabels(i).visible = false
           else
             nameLabels(i).visible = false
             livesLabels(i).visible = false
             pointsLabels(i).visible = false
+        
 
         repaint()
       })
 
-    case RunningGame(player) =>
-      infoLabel.text = s"${player.name} ist dran"
+    case RunningGame(playerInfo) =>
+      infoLabel.text = s"${playerInfo.name} ist dran"
       swapAllButton.visible = false
-      swapMode = "none"
+      swapMode = SwapMode.None
 
-    case PlayerScore(player) =>
-      val playerIndex = controller.gameData.players.indexWhere(p => p.id == player.id)
-      val points = controller.gameData.getPlayerScore(player)
+    case PlayerScore(playerInfo) =>
+      val playerIndex = controller.gameData.players.indexWhere(p => p.id == playerInfo.id)
+      val points = findPlayer(playerInfo).map(controller.gameData.getPlayerScore).getOrElse(0.0)
       javax.swing.SwingUtilities.invokeLater(() => {
         if playerIndex >= 0 && playerIndex < nameLabels.length then
           pointsLabels(playerIndex).text = s"Punkte: $points"
+          val player = controller.gameData.players(playerIndex)
           livesLabels(playerIndex).text = s"Leben: ${controller.gameData.getPlayersHealth(player)}"
           nameLabels(playerIndex).text = player.name
       })
 
-    case PlayerSwapGive(player) =>
-      infoLabel.text = s"${player.name}, wähle eine Karte zum abgeben"
+    case PlayerSwapGive(playerInfo) =>
+      infoLabel.text = s"${playerInfo.name}, wähle eine Karte zum abgeben"
       swapAllButton.visible = true
-      swapMode = "give"
+      swapMode = SwapMode.Give
 
-    case PlayerSwapTake(player) =>
-      infoLabel.text = s"${player.name}, wähle eine Karte zum nehmen"
-      swapMode = "take"
+    case PlayerSwapTake(playerInfo) =>
+      infoLabel.text = s"${playerInfo.name}, wähle eine Karte zum nehmen"
+      swapMode = SwapMode.Take
 
     case PlayerNameSet(index, name) =>
       javax.swing.SwingUtilities.invokeLater(() => {
@@ -344,9 +341,15 @@ class GUI(controller: ControllerInterface) extends Frame with Observer {
           nameFields(index - 1).text = name
       })
 
+    case RoundEnded(loser) =>
+      javax.swing.SwingUtilities.invokeLater(() =>
+        Dialog.showMessage(this, s"${loser.name} hat ein Leben verloren", title = "Runde vorbei", messageType = Dialog.Message.Info)
+      )
+
     case GameEnded(winner) =>
       javax.swing.SwingUtilities.invokeLater(() => {
-        winningPlayer = Some(winner)
+        findPlayer(winner).foreach(p => winningPlayer = Some(p))
+        winnerLabel.text = s"Glückwunsch Spieler ${winner.name} du hast das Spiel gewonnen!"
         contents = gameEndedPanel
         pack()
         centerOnScreen()

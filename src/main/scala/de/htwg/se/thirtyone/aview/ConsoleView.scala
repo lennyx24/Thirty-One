@@ -1,10 +1,12 @@
 package de.htwg.se.thirtyone.aview
 
 import de.htwg.se.thirtyone.controller._
-import de.htwg.se.thirtyone.model._
 import de.htwg.se.thirtyone.util._
 
-case class ConsoleView(controller: ControllerInterface) extends Observer:    
+case class ConsoleView(controller: ControllerInterface) extends Observer:
+    private def findPlayer(info: PlayerInfo) =
+        controller.gameData.players.find(_.id == info.id)
+
     override def update(event: GameEvent): Unit = event match
         case GameStarted =>
             println("-- Willkommen zu Thirty One, auch bekannt als Schwimmen! --")
@@ -14,33 +16,37 @@ case class ConsoleView(controller: ControllerInterface) extends Observer:
             print(s"Das ist keine valide Option\n: ")
 
         case PrintTable =>
-            printNewRound(controller.gameData.table.printTable(controller.gameData.players))
+            val currentPlayer = controller.gameData.currentPlayer
+            printNewRound(controller.gameData.table.printTable(controller.gameData.players, currentPlayer, controller.gameData.playerPositions(currentPlayer), controller.gameData.getTableCard()))
 
-        case PlayerScore(player) =>
-            val points = controller.gameData.getPlayerPoints(player)
-            println(s"Spieler ${player.name} hat $points Punkte.")
+        case PlayerScore(playerInfo) =>
+            val points = findPlayer(playerInfo).map(controller.gameData.getPlayerPoints).getOrElse(0.0)
+            println(s"Spieler ${playerInfo.name} hat $points Punkte.")
 
-        case RunningGame(player) =>
-            println(s"${player.name} ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
+        case RunningGame(playerInfo) =>
+            println(s"${playerInfo.name} ist dran, welchen Zug willst du machen? (Passen, Klopfen, Tauschen):")
 
-        case PlayerSwapGive(player) =>
-            println(s"${player.name}, welche Karte willst du abgeben? (1, 2, 3 oder alle):")
+        case PlayerSwapGive(playerInfo) =>
+            println(s"${playerInfo.name}, welche Karte willst du abgeben? (1, 2, 3 oder alle):")
 
-        case PlayerSwapTake(player) =>
+        case PlayerSwapTake(playerInfo) =>
             println(s"Welche Karte willst du dafür erhalten? (1, 2 oder 3):")
 
-        case PlayerPassed(player) =>
-            println(s"${player.name} setzt diese Runde aus.")
+        case PlayerPassed(playerInfo) =>
+            println(s"${playerInfo.name} setzt diese Runde aus.")
 
-        case PlayerKnocked(player) =>
-            println(s"${player.name} hat diese Runde geklopft, es darf jeder noch einen Zug machen!")
+        case PlayerKnocked(playerInfo) =>
+            println(s"${playerInfo.name} hat diese Runde geklopft, es darf jeder noch einen Zug machen!")
 
-        case PlayerSwapped(player) =>
-            println(s"${player.name} tauscht diese Runde.")
+        case PlayerSwapped(playerInfo) =>
+            println(s"${playerInfo.name} tauscht diese Runde.")
 
-        case GameEnded(player) =>
-            println(s"${player.name} hat die Runde gewonnen. Glückwunsch!")
+        case GameEnded(playerInfo) =>
+            println(s"${playerInfo.name} hat die Runde gewonnen. Glückwunsch!")
             println("Wollt ihr noch eine Runde spielen? (j/n):")
+
+        case RoundEnded(loserInfo) =>
+            println(s"Runde beendet. ${loserInfo.name} verliert ein Leben")
 
         case PlayerName(player) =>
             println(s"Name für Spieler $player: ")
@@ -48,7 +54,7 @@ case class ConsoleView(controller: ControllerInterface) extends Observer:
         case PlayerNameSet(index, name) =>
             println(s"Spieler $index heißt nun $name.")
 
-    def printNewRound(gameTable: String): Unit = 
-        (1 until 20).foreach(x => println)
+    private def printNewRound(gameTable: String): Unit =
+        for _ <- 1 until 20 do println()
         print(gameTable)
-        (1 until 5).foreach(x => println)
+        for _ <- 1 until 5 do println()

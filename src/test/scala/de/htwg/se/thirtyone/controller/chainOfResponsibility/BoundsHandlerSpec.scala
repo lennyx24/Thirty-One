@@ -2,10 +2,10 @@ package de.htwg.se.thirtyone.controller.chainOfResponsibility
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.game.GameData
 import de.htwg.se.thirtyone.controller.chainOfResponsibility.swap.BoundsHandler
 import scala.util._
-import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
+import de.htwg.se.thirtyone.controller.implementation.GameController
 import de.htwg.se.thirtyone.controller.command.UndoManager
 
 class BoundsHandlerSpec extends AnyWordSpec with Matchers {

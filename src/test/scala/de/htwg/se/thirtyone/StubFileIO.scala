@@ -1,8 +1,8 @@
 package de.htwg.se.thirtyone
 
-import de.htwg.se.thirtyone.fileio.FileIO
+import de.htwg.se.thirtyone.util.fileio.FileIO
 import de.htwg.se.thirtyone.model.GameInterface
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.game.GameData
 
 object StubFileIO extends FileIO {
   override def save(game: GameInterface): Unit = ()

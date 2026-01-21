@@ -1,47 +1,43 @@
 package de.htwg.se.thirtyone.controller.state
 
 import de.htwg.se.thirtyone.controller.ControllerInterface
-import de.htwg.se.thirtyone.controller.command._
+import de.htwg.se.thirtyone.controller.command.SetCommand
 import de.htwg.se.thirtyone.util._
 
 object PlayingState extends ControllerState:
+  private def actedPlayer(c: ControllerInterface, index: Int) =
+    if index >= 0 && index < c.gameData.players.length then c.gameData.players(index)
+    else c.gameData.currentPlayer
+
   override def pass(c: ControllerInterface): Unit =
     val actedIndex = c.gameData.currentPlayerIndex
     var roundEnded = false
     val command = new SetCommand(c, () => {
       c.gamePass()
-      val actedPlayer =
-        if actedIndex >= 0 && actedIndex < c.gameData.players.length then c.gameData.players(actedIndex)
-        else c.gameData.currentPlayer
-      roundEnded = checkIfRoundEnded(c, actedPlayer)
+      val player = actedPlayer(c, actedIndex)
+      roundEnded = checkIfRoundEnded(c, player)
     })
     c.undoManager.doStep(command)
-    val actedPlayer =
-      if actedIndex >= 0 && actedIndex < c.gameData.players.length then c.gameData.players(actedIndex)
-      else c.gameData.currentPlayer
+    val player = actedPlayer(c, actedIndex)
     if !roundEnded then
       c.notifyObservers(PrintTable)
-      c.notifyObservers(PlayerPassed(actedPlayer))
-      c.notifyObservers(RunningGame(c.gameData.currentPlayer))
+      c.notifyObservers(PlayerPassed(toPlayerInfo(player)))
+      c.notifyObservers(RunningGame(toPlayerInfo(c.gameData.currentPlayer)))
 
   override def knock(c: ControllerInterface): Unit =
     val actedIndex = c.gameData.currentPlayerIndex
     var roundEnded = false
     val command = new SetCommand(c, () => {
       c.gameKnock()
-      val actedPlayer =
-        if actedIndex >= 0 && actedIndex < c.gameData.players.length then c.gameData.players(actedIndex)
-        else c.gameData.currentPlayer
-      roundEnded = checkIfRoundEnded(c, actedPlayer)
+      val player = actedPlayer(c, actedIndex)
+      roundEnded = checkIfRoundEnded(c, player)
     })
     c.undoManager.doStep(command)
-    val actedPlayer =
-      if actedIndex >= 0 && actedIndex < c.gameData.players.length then c.gameData.players(actedIndex)
-      else c.gameData.currentPlayer
+    val player = actedPlayer(c, actedIndex)
     if !roundEnded then
       c.notifyObservers(PrintTable)
-      c.notifyObservers(PlayerKnocked(actedPlayer))
-      c.notifyObservers(RunningGame(c.gameData.currentPlayer))
+      c.notifyObservers(PlayerKnocked(toPlayerInfo(player)))
+      c.notifyObservers(RunningGame(toPlayerInfo(c.gameData.currentPlayer)))
 
   override def swap(c: ControllerInterface): Unit =
     val currentPlayer = c.gameData.currentPlayer
@@ -50,4 +46,4 @@ object PlayingState extends ControllerState:
     })
     c.undoManager.doStep(command)
 
-    c.notifyObservers(PlayerSwapGive(currentPlayer))
+    c.notifyObservers(PlayerSwapGive(toPlayerInfo(currentPlayer)))

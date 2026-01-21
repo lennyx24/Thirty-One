@@ -2,14 +2,13 @@ package de.htwg.se.thirtyone.controller.state
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import de.htwg.se.thirtyone.model.gameImplementation.{Player, GameData}
+import de.htwg.se.thirtyone.model.game.{Player, GameData}
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer
 import de.htwg.se.thirtyone.controller.state._
 import de.htwg.se.thirtyone.controller._
-import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
+import de.htwg.se.thirtyone.controller.implementation.GameController
 import de.htwg.se.thirtyone.controller.command.UndoManager
-import java.security.Permission
 
 class ControllerStateSpec extends AnyWordSpec with Matchers {
   "ControllerState.checkIfGameEnded" should {
@@ -47,12 +46,6 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
     }
 
     "call System.exit on quit" in {
-      class NoExitSecurityManager extends SecurityManager {
-        override def checkPermission(perm: Permission): Unit = ()
-        override def checkPermission(perm: Permission, context: Object): Unit = ()
-        override def checkExit(status: Int): Unit = throw new SecurityException(status.toString)
-      }
-
       val controller = new GameController(PlayingState, GameData(2), new UndoManager(), de.htwg.se.thirtyone.StubFileIO)
       var executed = false
       val stub = new ControllerState {
@@ -61,13 +54,13 @@ class ControllerStateSpec extends AnyWordSpec with Matchers {
         }
       }
 
-      val original = System.getSecurityManager
+      val original = ExitHandler.exit
       try {
-        System.setSecurityManager(new NoExitSecurityManager)
+        ExitHandler.exit = _ => throw new SecurityException("exit")
         an [SecurityException] should be thrownBy stub.handleInput("quit", controller)
         executed shouldBe false
       } finally {
-        System.setSecurityManager(original)
+        ExitHandler.exit = original
       }
     }
 

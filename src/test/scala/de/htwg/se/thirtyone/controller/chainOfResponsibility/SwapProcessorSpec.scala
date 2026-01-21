@@ -2,8 +2,8 @@ package de.htwg.se.thirtyone.controller.chainOfResponsibility
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
-import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Table}
+import de.htwg.se.thirtyone.controller.implementation.GameController
+import de.htwg.se.thirtyone.model.game.{GameData, Table}
 import de.htwg.se.thirtyone.controller.command.UndoManager
 import de.htwg.se.thirtyone.util._
 import scala.util._
@@ -51,9 +51,10 @@ class SwapProcessorSpec extends AnyWordSpec with Matchers {
       val badPositions = List(List.empty[(Int, Int)], List.empty[(Int, Int)])
       controller.setGameData(controller.gameData.asInstanceOf[GameData].copy(cardPositions = badPositions))
 
-      intercept[IndexOutOfBoundsException] {
-        SwapProcessor.process(controller, "1", "1")
-      }
+      val res = SwapProcessor.process(controller, "1", "1")
+      res match
+        case Failure(_: IndexOutOfBoundsException) => succeed
+        case _ => fail("Expected Failure(IndexOutOfBoundsException)")
     }
   }
 }

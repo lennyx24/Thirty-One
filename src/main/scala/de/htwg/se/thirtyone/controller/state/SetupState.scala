@@ -4,8 +4,10 @@ import de.htwg.se.thirtyone.controller.ControllerInterface
 import de.htwg.se.thirtyone.util._
 
 object SetupState extends ControllerState:
-  var playerAmount: Int = 0
-  var names: Vector[String] = Vector.empty
+  private val minPlayers = 2
+  private val maxPlayers = 4
+  private var playerAmount: Int = 0
+  private var names: Vector[String] = Vector.empty
 
   private def normalizeName(name: String, index: Int): String =
     val trimmed = name.trim
@@ -22,16 +24,16 @@ object SetupState extends ControllerState:
     c.setState(PlayingState)
     for (player <- c.gameData.players) do
       c.countPoints(c, player)
-      c.notifyObservers(PlayerScore(player))
+      c.notifyObservers(PlayerScore(toPlayerInfo(player)))
     c.notifyObservers(PrintTable)
-    c.notifyObservers(RunningGame(c.gameData.currentPlayer))
+    c.notifyObservers(RunningGame(toPlayerInfo(c.gameData.currentPlayer)))
 
   def reset(): Unit =
     playerAmount = 0
     names = Vector.empty
 
   override def setupGame(playerCount: Int, playerNames: List[String], c: ControllerInterface): Unit =
-    if playerCount < 2 || playerCount > 4 then
+    if playerCount < minPlayers || playerCount > maxPlayers then
       c.notifyObservers(InvalidInput)
     else
       playerAmount = playerCount
@@ -41,7 +43,7 @@ object SetupState extends ControllerState:
   override def execute(input: String, c: ControllerInterface): Unit =
     if playerAmount == 0 then
       val count = input.toIntOption.getOrElse(0)
-      if count < 2 || count > 4 then
+      if count < minPlayers || count > maxPlayers then
         c.notifyObservers(InvalidInput)
       else
         playerAmount = count

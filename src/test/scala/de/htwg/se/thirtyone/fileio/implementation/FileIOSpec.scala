@@ -1,11 +1,12 @@
 package de.htwg.se.thirtyone.fileio.implementation
 
-import de.htwg.se.thirtyone.model.gameImplementation.{GameData, Player, Table}
+import de.htwg.se.thirtyone.model.game.{GameData, Player, Table}
 import de.htwg.se.thirtyone.model.factory.StandardGameFactory
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import java.nio.file.{Files, Paths, Path}
 import de.htwg.se.thirtyone.model.GameInterface
+import de.htwg.se.thirtyone.util.fileio.implementation.{JsonFileIO, XmlFileIO}
 
 class FileIOSpec extends AnyWordSpec with Matchers {
 

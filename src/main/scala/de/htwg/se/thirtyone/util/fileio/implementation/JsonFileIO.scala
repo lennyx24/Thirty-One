@@ -1,14 +1,14 @@
-package de.htwg.se.thirtyone.fileio.implementation
+package de.htwg.se.thirtyone.util.fileio.implementation
 
-import de.htwg.se.thirtyone.fileio.FileIO
 import de.htwg.se.thirtyone.model.GameInterface
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.model.game.GameData
+import de.htwg.se.thirtyone.util.fileio.FileIO
 import play.api.libs.json.*
 import java.nio.charset.StandardCharsets
 import java.nio.file.*
 
-class JsonFileIO extends FileIO{
-  val file = filepath.toString + ".json"
+class JsonFileIO extends FileIO:
+  private val file = filepath.toString + ".json"
   override def save(game: GameInterface): Unit =
     val json = game.toJson()
     val str = Json.prettyPrint(json)
@@ -20,4 +20,3 @@ class JsonFileIO extends FileIO{
     val str = new String(Files.readAllBytes(path), StandardCharsets.UTF_8)
     val js = Json.parse(str)
     GameData.loadGame(js)
-}

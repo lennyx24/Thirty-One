@@ -3,11 +3,11 @@ package de.htwg.se.thirtyone.controller
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.se.thirtyone.controller.state._
-import de.htwg.se.thirtyone.controller.controllerImplementation.GameController
-import de.htwg.se.thirtyone.model.gameImplementation.GameData
+import de.htwg.se.thirtyone.controller.implementation.GameController
+import de.htwg.se.thirtyone.model.game.GameData
 import de.htwg.se.thirtyone.controller.command.UndoManager
-import de.htwg.se.thirtyone.model.gameImplementation.Player
-import de.htwg.se.thirtyone.fileio.FileIO
+import de.htwg.se.thirtyone.model.game.Player
+import de.htwg.se.thirtyone.util.fileio.FileIO
 import de.htwg.se.thirtyone.model.GameInterface
 import de.htwg.se.thirtyone.util._
 import scala.collection.mutable.ArrayBuffer

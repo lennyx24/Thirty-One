@@ -12,7 +12,7 @@ object GameEndedState extends ControllerState:
         c.notifyObservers(GameStarted)
 
       case "n" =>
-        System.exit(0)
+        ExitHandler.exit(0)
 
       case _ =>
         c.notifyObservers(InvalidInput)
