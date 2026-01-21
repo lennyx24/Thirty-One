@@ -11,6 +11,9 @@ import scala.util._
 class SwapState extends ControllerState:
   private var give: String = ""
 
+  def reset(): Unit =
+    give = ""
+
   private def resolveActedPlayer(c: ControllerInterface, index: Int, fallback: Player) =
     if index >= 0 && index < c.gameData.players.length then c.gameData.players(index) else fallback
 

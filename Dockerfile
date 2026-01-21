@@ -19,4 +19,4 @@ RUN sbt -batch update
 COPY src/ /thirty-one/src/
 RUN sbt -batch compile
 
-CMD ["sbt", "run"]
+CMD sbt run

@@ -3,7 +3,7 @@ package de.htwg.se.thirtyone.controller.implementation
 import com.google.inject.Inject
 import de.htwg.se.thirtyone.controller.ControllerInterface
 import de.htwg.se.thirtyone.controller.command.UndoManager
-import de.htwg.se.thirtyone.controller.state.{ControllerState, PlayingState}
+import de.htwg.se.thirtyone.controller.state.{ControllerState, PlayingState, SwapState}
 import de.htwg.se.thirtyone.model.GameInterface
 import de.htwg.se.thirtyone.model.game.{GameData, Player}
 import de.htwg.se.thirtyone.util._
@@ -69,9 +69,17 @@ class GameController @Inject() (
   override def undo(): Unit =
     undoManager.undoStep()
     notifyObservers(PrintTable)
-    notifyObservers(RunningGame(PlayerInfo(gameData.currentPlayer.id, gameData.currentPlayer.name)))
+    state match
+      case _: SwapState =>
+        notifyObservers(PlayerSwapGive(PlayerInfo(gameData.currentPlayer.id, gameData.currentPlayer.name)))
+      case _ =>
+        notifyObservers(RunningGame(PlayerInfo(gameData.currentPlayer.id, gameData.currentPlayer.name)))
 
   override def redo(): Unit =
     undoManager.redoStep()
     notifyObservers(PrintTable)
-    notifyObservers(RunningGame(PlayerInfo(gameData.currentPlayer.id, gameData.currentPlayer.name)))
+    state match
+      case _: SwapState =>
+        notifyObservers(PlayerSwapGive(PlayerInfo(gameData.currentPlayer.id, gameData.currentPlayer.name)))
+      case _ =>
+        notifyObservers(RunningGame(PlayerInfo(gameData.currentPlayer.id, gameData.currentPlayer.name)))

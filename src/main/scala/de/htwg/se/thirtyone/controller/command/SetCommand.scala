@@ -1,7 +1,7 @@
 package de.htwg.se.thirtyone.controller.command
 
 import de.htwg.se.thirtyone.controller.ControllerInterface
-import de.htwg.se.thirtyone.controller.state.ControllerState
+import de.htwg.se.thirtyone.controller.state.{ControllerState, SwapState}
 import de.htwg.se.thirtyone.model.GameInterface
 
 class SetCommand(controller: ControllerInterface, action: () => Unit) extends Command:
@@ -20,8 +20,18 @@ class SetCommand(controller: ControllerInterface, action: () => Unit) extends Co
 
   override def undoStep(): Unit =
     beforeGameData.foreach(controller.setGameData)
-    beforeState.foreach(controller.setState)
+    beforeState.foreach { state =>
+      state match
+        case swapState: SwapState => swapState.reset()
+        case _ =>
+      controller.setState(state)
+    }
 
   override def redoStep(): Unit =
     afterGameData.foreach(controller.setGameData)
-    afterState.foreach(controller.setState)
+    afterState.foreach { state =>
+      state match
+        case swapState: SwapState => swapState.reset()
+        case _ =>
+      controller.setState(state)
+    }
