@@ -34,7 +34,9 @@ sbt run
 ## Docker
 
   ### Build
+  ```bash
   docker build -t thirty-one:latest .
+  ```
 
   ### Windows
   X-Server: VcXsrv oder Xming (VcXsrv empfohlen)
